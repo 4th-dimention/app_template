@@ -264,5 +264,7 @@ This is where you may call `R_Begin` `R_End` and any draw calls, and process eve
 
 # Info
 `readme.md` by Allen Webster (allenwebster@4coder.net)
+
 App Template by Ryan Fleury with extensions by Allen Webster
+
 This documentation is provided as is without warranty, express or implied, of suitability for a particular purpose.

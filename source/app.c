@@ -76,6 +76,7 @@ APP_UPDATE
     p.y += dim.y;
     dim = R_String(p, 0.6f, string, cl_white, 1.f);
     p.y += dim.y;
+    
     R_SelectFont(&vars->test_font_small);
     dim = R_String(p, 1.f, string, cl_white, 1.f);
     p.y += dim.y;

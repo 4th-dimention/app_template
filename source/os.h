@@ -18,26 +18,6 @@ enum
     KeyModifier_Alt   = (1<<2),
 };
 
-internal String8
-KeyName(Key index)
-{
-    local_persist char *strings[Key_Max] =
-    {
-#define Key(name, str) str,
-#include "os_key_list.inc"
-#undef Key
-    };
-    char *string = "(Invalid Key)";
-    if(index >= 0 && index < ArrayCount(strings))
-    {
-        string = strings[index];
-    }
-    String8 result;
-    result.str = string;
-    result.size = CalculateCStringLength(result.str);
-    return result;
-}
-
 //~ NOTE(rjf): Mouse
 
 typedef enum MouseButton
@@ -58,26 +38,6 @@ typedef enum GamepadButton
     GamepadButton_Max
 }
 GamepadButton;
-
-internal String8
-GamepadButtonName(GamepadButton index)
-{
-    local_persist char *strings[GamepadButton_Max] =
-    {
-#define GamepadButton(name, str) str,
-#include "os_gamepad_button_list.inc"
-#undef GamepadButton
-    };
-    char *string = "(Invalid Gamepad Button)";
-    if(index >= 0 && index < ArrayCount(strings))
-    {
-        string = strings[index];
-    }
-    String8 result;
-    result.str = string;
-    result.size = CalculateCStringLength(result.str);
-    return result;
-}
 
 //~ NOTE(rjf): Platform Directory Listing
 
@@ -159,6 +119,40 @@ struct OS_Event
     v2 scroll;
 };
 
+//~ NOTE(allen): Thread Context
+
+typedef struct OS_ArenaInlineRestore OS_ArenaInlineRestore;
+struct OS_ArenaInlineRestore{
+    OS_ArenaInlineRestore *next;
+};
+
+typedef struct OS_ArenaNode OS_ArenaNode;
+struct OS_ArenaNode
+{
+    OS_ArenaNode *next;
+    OS_ArenaNode *prev;
+    M_Arena arena;
+    OS_ArenaInlineRestore *restore;
+    u64 ref_count;
+};
+
+typedef struct OS_File_Line OS_File_Line;
+struct OS_File_Line
+{
+    char *file_name;
+    u64 line_number;
+};
+
+typedef struct OS_ThreadContext OS_ThreadContext;
+struct OS_ThreadContext
+{
+    OS_ArenaNode *free;
+    OS_ArenaNode *first_used;
+    OS_ArenaNode *last_used;
+    char *file_name;
+    u64 line_number;
+};
+
 //~ NOTE(rjf): Platform Data
 
 typedef struct OS_State OS_State;
@@ -217,6 +211,7 @@ struct OS_State
     void (*SetCursorToIBar)(void);
     void (*RefreshScreen)(void);
     void *(*LoadOpenGLProcedure)(char *name);
+    OS_ThreadContext *(*GetThreadContext)(void);
 };
 
 global OS_State *os = 0;

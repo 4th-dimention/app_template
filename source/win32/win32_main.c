@@ -18,13 +18,12 @@
 // NOTE(rjf): Headers
 #include "program_options.h"
 #include "language_layer.h"
-#include "memory.h"
-#include "strings.h"
+#include "app_memory.h"
 #include "os.h"
 #include "win32_timer.h"
+
 #include "language_layer.c"
-#include "memory.c"
-#include "strings.c"
+#include "app_memory.c"
 #include "os.c"
 
 // NOTE(rjf): Globals
@@ -59,6 +58,7 @@ W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 #include "win32_xinput.c"
 #include "win32_wasapi.c"
 #include "win32_opengl.c"
+#include "win32_thread.c"
 
 //~
 
@@ -529,10 +529,16 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.SetCursorToVerticalResize      = W32_SetCursorToVerticalResize;
         global_os.LoadOpenGLProcedure            = W32_LoadOpenGLProcedure;
         global_os.RefreshScreen                  = W32_OpenGLRefreshScreen;
+        global_os.GetThreadContext               = W32_GetThreadContext;
         
         global_os.permanent_arena = M_ArenaInitialize();
         global_os.frame_arena = M_ArenaInitialize();
     }
+    
+    // NOTE(allen): Thread Context
+    OS_ThreadContext tctx_;
+    OS_ArenaNode tctx_scratch_nodes[3];
+    W32_ThreadInit(&tctx_, tctx_scratch_nodes, 3);
     
     // NOTE(rjf): OpenGL initialization
     {

@@ -1,4 +1,4 @@
 @echo off
 pushd build
-app.exe
+appWin32.exe
 popd

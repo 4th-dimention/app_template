@@ -4,12 +4,12 @@ Version on: July 3rd 2020 2:30pm
 This layer is meant to be copy-pasted into a fresh project to start new applications. It comes with several pre-built systems common at the beginning of any application development.
 
 Target Support List
-OS: Win32
-Renderer: OpenGL
+- OS: Win32
+- Renderer: OpenGL
 
 Main Feature Support List
-Input processing from mouse and keyboard
-Render mono-color shapes and textures
+- Input processing from mouse and keyboard
+- Render mono-color shapes and textures
 
 See `app.c` and `app.h` for the main "hello world" example program.
 
@@ -26,25 +26,25 @@ Convenient integer and float type names:
 
 ## Helper Macros
 Macros that get used all over the place such as:
-`#define internal static` for functions
-`#define ArrayCount(c) ...` for static array counts
-`#define Assert(c) ...`
-`#define Min(a,b) ...`
-`#define Swap(T,a,b) ...`
-`#define IntFromPtr(ptr) ...`
+- `#define internal static` for functions
+- `#define ArrayCount(c) ...` for static array counts
+- `#define Assert(c) ...`
+- `#define Min(a,b) ...`
+- `#define Swap(T,a,b) ...`
+- `#define IntFromPtr(ptr) ...`
 
 ## Linked Lists
 Macros for conveniently managing linked lists
 
-`DLL` macros deal with doubly linked lists
-`SLLQueue` macros deal with singly linked lists in queue order
-`SLLStack` macros deal with singly linked lists in stack order
+- `DLL` macros deal with doubly linked lists
+- `SLLQueue` macros deal with singly linked lists in queue order
+- `SLLStack` macros deal with singly linked lists in stack order
 
 Most linked list macros have an equivalent version that allow you to alter the names for `next` and `prev` pointers. For example
 
-`#define DLLPushBack(f,l,n) ...` pushes a node `n` onto the list formed by `f` `l` the types of the arguments
+- `#define DLLPushBack(f,l,n) ...` pushes a node `n` onto the list formed by `f` `l` the types of the arguments
 must match and contain a `next` and `prev` pointer.
-`#define DLLPushBack_NP(f,l,n,next,prev) ...` still requires the pointers to exist, now you can supply the names
+- `#define DLLPushBack_NP(f,l,n,next,prev) ...` still requires the pointers to exist, now you can supply the names
 
 ## Constants
 A few enums for universal names of various concepts such as.
@@ -62,73 +62,76 @@ typedef enum
 ## Scalar
 A handful of scalar math functions, many simply wrapping `<math.h>`
 
-`AbsoluteValue`
-`SquareRoot`
-`Sin`
-`i32Ceil` floating point ceiling, evaluates to `i32`
-`f32Ceil` floating point ceiling, evaluates to `f32`
-`Lerp(a,t,b)`
+- `AbsoluteValue`
+- `SquareRoot`
+- `Sin`
+- `i32Ceil` floating point ceiling, evaluates to `i32`
+- `f32Ceil` floating point ceiling, evaluates to `f32`
+- `Lerp(a,t,b)`
 
 ## Vector
 Small fixed-size array types with helpful accessors and math functions.
 
 `v2, v3, v4` are the floating point vectors
+
 `iv2, iv3, iv4` are the integer vectors
 
 Via a C macro these can be constructed with the syntax:
+
 `v2 p = v2(x, y)`
 
 The floating point vectors have math functions such as:
-`V2Add`
-`V2Sub`
-`V2Mul`
-`V2Dot`
-`V2Hadamard`
-`V2Length`
-`V2Normalize`
+- `V2Add`
+- `V2Sub`
+- `V2Mul`
+- `V2Dot`
+- `V2Hadamard`
+- `V2Length`
+- `V2Normalize`
 
 ## Matrix
 A 4x4 floating point matrix with all sorts of miscellanious functions.
 
-`M4MultiplyM4`
-`M4TranslateV3`
-`M4ScaleV3`
-`M4Perspective`
-`M4Inverse`
+- `M4MultiplyM4`
+- `M4TranslateV3`
+- `M4ScaleV3`
+- `M4Perspective`
+- `M4Inverse`
 
 ## Color
 RGB <-> HSV conversions
 
-`RGBToHSV`
-`HSVToRGB`
+- `RGBToHSV`
+- `HSVToRGB`
 
 ## Interval
 Types for one dimensional intervals and axis aligned rectangles
 
 `Range` floating point interval
+
 `Rangei` `Rangeu` signed and unsigned integer ranges
 
 Ranges have `min` and `max` and by convention encode the partially open interval `[min,max)`
 
 There are various functions on ranges
-`RangeSize`
-`RangeUnion`
-`RangeGrow`
-`RangeOverlaps`
+- `RangeSize`
+- `RangeUnion`
+- `RangeGrow`
+- `RangeOverlaps`
 
 `Rect` is a floating point rectangle encoded as an range on two axes.
 
 Rectangles contain `x0` `y0` `x1` `y1` plus several other union-ed accessors like `p0` `p1`
 
-`MakeRect(x0,y0,x1,y1)`
-`MakeRectVec(p0,p1)`
-`MakeRectRanges(x,y)`
+- `MakeRect(x0,y0,x1,y1)`
+- `MakeRectVec(p0,p1)`
+- `MakeRectRanges(x,y)`
 
 Anything a range can do, so also a rectangle can do by applying the logic on each axis and then combining the result however necessary:
 
-`RectUnion`
-`RectGrow`
-`RectOverlaps`
+- `RectUnion`
+- `RectGrow`
+- `RectOverlaps`
 
 ## String
 The lengthed string type, and helper types and functions.
@@ -142,26 +145,26 @@ struct String8
 ```
 
 There are helpers on single characters:
-`CharIsAlpha`
-`CharIsSymbol`
-`CharToLower`
+- `CharIsAlpha`
+- `CharIsSymbol`
+- `CharToLower`
 
 Constructors for `String8`:
-`S8(str,size)`
-`S8Lit("")`
-`String8FromCString(str)`
-`StringSubstring(string,range)`
+- `S8(str,size)`
+- `S8Lit("")`
+- `String8FromCString(str)`
+- `StringSubstring(string,range)`
 
 Predicates for `String8`:
-`StringMatch`
+- `StringMatch`
 
 Format string based `String8` constructors (with an arena):
-`PushStringF(arena, fmt, ...)`
+- `PushStringF(arena, fmt, ...)`
 
 There are string lists, which are simple linked lists of strings with helper functions for constructing and then linearizing them:
-`StringListPush`
-`StringListPushF`
-`StringListJoin`
+- `StringListPush`
+- `StringListPushF`
+- `StringListJoin`
 
 ## Additional String Stuff
 A hard to categorize assemblence of various string functions - possible to ignore but has some neat stuff too.
@@ -176,9 +179,9 @@ The list of primary functions can be found in `os.h` in the `OS_State` struct, w
 The event handling is done through a "waterfall" architecture. Each frame a list of events is made available by the platform layer implementation, and the application can query for and remove events by type in any order.
 
 Functions for this system include:
-`KeyName`
-`OS_GetNextEvent`
-`OS_EatEvent`
+- `KeyName`
+- `OS_GetNextEvent`
+- `OS_EatEvent`
 
 The intended use goes:
 ```C
@@ -198,52 +201,50 @@ The template does not supply any multi-threading systems, but it does supply a t
 
 The functions for getting scratch memory return scratch memory as an arena pointer. The intended use is usually to close a scratch arena pointer at the end of any scope that opened it. For arenas that persist longer, a new arena should be constructed and it's lifetime managed manually instead.
 
-`OS_GetScratch`
-`OS_ReleaseScratch`
-
-`OS_ThreadSaveFileLine` remembers the `__FILE__,__LINE__` where it is invoked and saves it to the thread context.
-
-`OS_ThreadRememberFileLine` recalls the most recently saved `__FILE__,__LINE__`
+- `OS_GetScratch`
+- `OS_ReleaseScratch`
+- `OS_ThreadSaveFileLine` remembers the `__FILE__,__LINE__` where it is invoked and saves it to the thread context.
+- `OS_ThreadRememberFileLine` recalls the most recently saved `__FILE__,__LINE__`
 
 
 # Memory
 In `app_memory.h` and `app_memory.c`, the only built in memory management primitive is `M_Arena`, which uses contiguous linear allocations, with excessively large pre-reserved memory regions and commits to grow as needed.
 
 They can be created:
-`M_AreaInitialize`
+- `M_AreaInitialize`
 
 Allocations can be made:
-`M_ArenaPush`
-`PushArray`
+- `M_ArenaPush`
+- `PushArray`
 
 They can be freed, but strictly in reverse order:
-`M_ArenaPop`
-`M_BeginTemp`
-`M_EndTemp`
+- `M_ArenaPop`
+- `M_BeginTemp`
+- `M_EndTemp`
 
 Their initial memory reserve and commits can be fully released:
-`M_ArenaRelease`
+- `M_ArenaRelease`
 
 
 # Render
 The render system is a basic OpenGL 3.3 implementation of mono-chrome polygon shapes and mono-chrome texturing. It supplies primitive batching, a single shader, font rasterization and metrics through `stb_truetype.h`, and a couple of starter draw primitives.
 
 Begin and end each frame:
-`R_Begin`
-`R_End`
+- `R_Begin`
+- `R_End`
 
 Initialize fonts, set custom bitmaps into the font texture and metrics data, get string metrics:
-`R_InitFont`
-`R_FontSetSlot`
-`R_StringDimWithFont`
+- `R_InitFont`
+- `R_FontSetSlot`
+- `R_StringDimWithFont`
 
 Select a font into the render context and render with it:
-`R_SelectFont`
-`R_String`
+- `R_SelectFont`
+- `R_String`
 
 Draw basic shapes:
-`R_Rect`
-`R_RectOutline`
+- `R_Rect`
+- `R_RectOutline`
 
 
 # App

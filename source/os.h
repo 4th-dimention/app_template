@@ -171,7 +171,7 @@ struct OS_State
     volatile B32 quit;
     B32 vsync;
     B32 fullscreen;
-    iv2 window_size;
+    V2S32 window_size;
     F32 current_time;
     F32 target_frames_per_second;
     B32 wait_for_events_to_update;

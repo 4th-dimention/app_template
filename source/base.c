@@ -242,10 +242,10 @@ V3Cross(V3F32 a, V3F32 b)
 ////////////////////////////////
 // NOTE(allen): matrix
 
-function m4
+function M4x4F32
 M4InitD(F32 diagonal)
 {
-    m4 m =
+    M4x4F32 m =
     {
         {
             { diagonal                },
@@ -257,10 +257,10 @@ M4InitD(F32 diagonal)
     return m;
 }
 
-function m4
-M4MultiplyM4(m4 a, m4 b)
+function M4x4F32
+M4MultiplyM4(M4x4F32 a, M4x4F32 b)
 {
-    m4 c = {0};
+    M4x4F32 c = {0};
     
     for(int j = 0; j < 4; ++j)
     {
@@ -276,8 +276,8 @@ M4MultiplyM4(m4 a, m4 b)
     return c;
 }
 
-function m4
-M4MultiplyF32(m4 a, F32 b)
+function M4x4F32
+M4MultiplyF32(M4x4F32 a, F32 b)
 {
     for(int j = 0; j < 4; ++j)
     {
@@ -291,7 +291,7 @@ M4MultiplyF32(m4 a, F32 b)
 }
 
 function V4F32
-V4MultiplyM4(V4F32 v, m4 m)
+V4MultiplyM4(V4F32 v, M4x4F32 m)
 {
     V4F32 result = {0};
     
@@ -306,30 +306,30 @@ V4MultiplyM4(V4F32 v, m4 m)
     return result;
 }
 
-function m4
+function M4x4F32
 M4TranslateV3(V3F32 translation)
 {
-    m4 result = M4InitD(1.f);
+    M4x4F32 result = M4InitD(1.f);
     result.v[3][0] = translation.x;
     result.v[3][1] = translation.y;
     result.v[3][2] = translation.z;
     return result;
 }
 
-function m4
+function M4x4F32
 M4ScaleV3(V3F32 scale)
 {
-    m4 result = M4InitD(1.f);
+    M4x4F32 result = M4InitD(1.f);
     result.v[0][0] = scale.x;
     result.v[1][1] = scale.y;
     result.v[2][2] = scale.z;
     return result;
 }
 
-function m4
+function M4x4F32
 M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
 {
-    m4 result = {0};
+    M4x4F32 result = {0};
     F32 tan_theta_over_2 = Tan(fov * (PI / 360.f));
     result.v[0][0] = 1.f / tan_theta_over_2;
     result.v[1][1] = aspect_ratio / tan_theta_over_2;
@@ -340,10 +340,10 @@ M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
     return result;
 }
 
-function m4
+function M4x4F32
 M4LookAt(V3F32 eye, V3F32 center, V3F32 up)
 {
-    m4 result;
+    M4x4F32 result;
     
     V3F32 f = V3Normalize(V3Sub(center, eye));
     V3F32 s = V3Normalize(V3Cross(f, up));
@@ -372,8 +372,8 @@ M4LookAt(V3F32 eye, V3F32 center, V3F32 up)
     return result;
 }
 
-function m4
-M4Inverse(m4 m)
+function M4x4F32
+M4Inverse(M4x4F32 m)
 {
     F32 coef00 = m.v[2][2] * m.v[3][3] - m.v[3][2] * m.v[2][3];
     F32 coef02 = m.v[1][2] * m.v[3][3] - m.v[3][2] * m.v[1][3];
@@ -414,7 +414,7 @@ M4Inverse(m4 m)
     V4F32 sign_a = { +1, -1, +1, -1 };
     V4F32 sign_b = { -1, +1, -1, +1 };
     
-    m4 inverse;
+    M4x4F32 inverse;
     for(U32 i = 0; i < 4; ++i)
     {
         inverse.v[0][i] = inv0.v[i] * sign_a.v[i];
@@ -433,8 +433,8 @@ M4Inverse(m4 m)
     return M4MultiplyF32(inverse, one_over_det);
 }
 
-function m4
-M4RemoveRotation(m4 mat)
+function M4x4F32
+M4RemoveRotation(M4x4F32 mat)
 {
     V3F32 scale =
     {

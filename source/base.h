@@ -238,74 +238,32 @@ union V4F32
     F32 v[4];
 };
 
-typedef union iv2 iv2;
-union iv2
+typedef union V2S32 V2S32;
+union V2S32
 {
-    struct
-    {
-        S32 x;
-        S32 y;
-    };
-    
-    struct
-    {
-        S32 width;
-        S32 height;
-    };
-    
-    S32 elements[2];
+    struct { S32 x; S32 y; };
     S32 v[2];
 };
 
-typedef union iv3 iv3;
-union iv3
+typedef union V3S32 V3S32;
+union V3S32
 {
-    struct
-    {
-        S32 x;
-        S32 y;
-        S32 z;
-    };
-    
-    struct
-    {
-        S32 r;
-        S32 g;
-        S32 b;
-    };
-    
-    S32 elements[3];
+    struct { S32 x; S32 y; S32 z; };
     S32 v[3];
 };
 
-typedef union iv4 iv4;
-union iv4
+typedef union V4S32 V4S32;
+union V4S32
 {
-    struct
-    {
-        S32 x;
-        S32 y;
-        S32 z;
-        S32 w;
-    };
-    
-    struct
-    {
-        S32 r;
-        S32 g;
-        S32 b;
-        S32 a;
-    };
-    
-    S32 elements[4];
+    struct { S32 x; S32 y; S32 z; S32 w; };
     S32 v[4];
 };
 
 ////////////////////////////////
 //~ NOTE(allen): Matrix
 
-typedef struct m4 m4;
-struct m4
+typedef struct M4x4F32 M4x4F32;
+struct M4x4F32
 {
     F32 v[4][4];
 };

@@ -47,7 +47,6 @@ W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 #include "win32_utilities.c"
 #include "win32_timer.c"
 #include "win32_file_io.c"
-#include "win32_app_code.c"
 #include "win32_xinput.c"
 #include "win32_wasapi.c"
 #include "win32_opengl.c"
@@ -434,7 +433,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     global_instance_handle = instance;
     
     W32_TimerInit(&global_win32_timer);
-    W32_AppCode win32_game_code = {0};
     W32_SoundOutput win32_sound_output = {0};
     
     // NOTE(rjf): Calculate executable name and path to DLL
@@ -493,13 +491,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         W32_OutputError("Fatal Error", "Window creation failure.");
         goto quit;
     }
-    
-    // NOTE(rjf): Load application code
-    W32_AppCode win32_app_code = {0};
-    win32_app_code.PermanentLoad = PermanentLoad;
-    win32_app_code.HotLoad = HotLoad;
-    win32_app_code.HotUnload = HotUnload;
-    win32_app_code.Update = Update;
     
     // NOTE(rjf): Sound initialization
     {
@@ -588,8 +579,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     
     W32_LoadXInput();
     
-    win32_app_code.PermanentLoad(&global_os);
-    win32_app_code.HotLoad(&global_os);
+    PermanentLoad(&global_os);
+    HotLoad(&global_os);
     
     ShowWindow(window_handle, n_show_cmd);
     UpdateWindow(window_handle);
@@ -659,7 +650,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         {
             B32 last_fullscreen = global_os.fullscreen;
             
-            win32_app_code.Update();
+            Update();
             
             // NOTE(rjf): Update fullscreen if necessary
             if(last_fullscreen != global_os.fullscreen)

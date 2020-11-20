@@ -20,9 +20,6 @@
 #include "win32_timer.h"
 
 // NOTE(rjf): Globals
-global char global_executable_path[256];
-global char global_executable_directory[256];
-global char global_working_directory[256];
 global OS_State global_os;
 global HDC global_device_context;
 global HINSTANCE global_instance_handle;
@@ -432,28 +429,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     
     W32_TimerInit(&global_win32_timer);
     W32_SoundOutput win32_sound_output = {0};
-    
-    // NOTE(rjf): Calculate executable name and path to DLL
-    {
-        DWORD size_of_executable_path =
-            GetModuleFileNameA(0, global_executable_path, sizeof(global_executable_path));
-        
-        // NOTE(rjf): Calculate executable directory
-        {
-            MemoryCopy(global_executable_directory, global_executable_path, size_of_executable_path);
-            char *one_past_last_slash = global_executable_directory;
-            for(S32 i = 0; global_executable_directory[i]; ++i)
-            {
-                if(global_executable_directory[i] == '\\')
-                {
-                    one_past_last_slash = global_executable_directory + i + 1;
-                }
-            }
-            *one_past_last_slash = 0;
-        }
-        
-        GetCurrentDirectory(sizeof(global_working_directory), global_working_directory);
-    }
     
     WNDCLASS window_class = {0};
     {

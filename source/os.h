@@ -204,7 +204,6 @@ struct OS_State
     B32   (*MakeDirectory)(String8 path);
     B32   (*DoesFileExist)(String8 path);
     B32   (*DoesDirectoryExist)(String8 path);
-    B32   (*CopyFile)(String8 dest, String8 source);
     OS_DirectoryList (*ListDirectory)(M_Arena *arena, String8 path, S32 flags);
     F32   (*GetTime)(void);
     U64   (*GetCycles)(void);

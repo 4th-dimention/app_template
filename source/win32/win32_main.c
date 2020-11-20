@@ -17,14 +17,7 @@
 
 // NOTE(rjf): Headers
 #include "program_options.h"
-#include "base.h"
-#include "app_memory.h"
-#include "os.h"
 #include "win32_timer.h"
-
-#include "base.c"
-#include "app_memory.c"
-#include "os.c"
 
 // NOTE(rjf): Globals
 global char global_executable_path[256];
@@ -503,14 +496,10 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     
     // NOTE(rjf): Load application code
     W32_AppCode win32_app_code = {0};
-    {
-        if(!W32_AppCodeLoad(&win32_app_code))
-        {
-            // NOTE(rjf): ERROR: Application code load failure
-            W32_OutputError("Fatal Error", "Application code load failure.");
-            goto quit;
-        }
-    }
+    win32_app_code.PermanentLoad = PermanentLoad;
+    win32_app_code.HotLoad = HotLoad;
+    win32_app_code.HotUnload = HotUnload;
+    win32_app_code.Update = Update;
     
     // NOTE(rjf): Sound initialization
     {
@@ -565,7 +554,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.MakeDirectory                  = W32_MakeDirectory;
         global_os.DoesFileExist                  = W32_DoesFileExist;
         global_os.DoesDirectoryExist             = W32_DoesDirectoryExist;
-        global_os.CopyFile                       = W32_CopyFile;
         global_os.ListDirectory                  = W32_DirectoryListLoad;
         global_os.GetTime                        = W32_GetTime;
         global_os.GetCycles                      = W32_GetCycles;
@@ -691,14 +679,11 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             OS_EndFrame();
         }
         
-        W32_AppCodeUpdate(&win32_app_code);
-        
         W32_TimerEndFrame(&global_win32_timer, 1000.0 * (1.0 / (F64)global_os.target_frames_per_second));
     }
     
     ShowWindow(window_handle, SW_HIDE);
     
-    W32_AppCodeUnload(&win32_app_code);
     W32_CleanUpOpenGL(&global_device_context);
     
     quit:;

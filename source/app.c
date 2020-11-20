@@ -95,3 +95,6 @@ APP_UPDATE
     R_End();
 }
 
+////////////////////////////////
+
+#include "win32/win32_main.c"

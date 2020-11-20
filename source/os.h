@@ -168,7 +168,6 @@ typedef struct OS_State OS_State;
 struct OS_State
 {
     // NOTE(rjf): Options
-    B32 vsync;
     B32 fullscreen;
     V2S32 window_size;
     

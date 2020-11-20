@@ -491,7 +491,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     {
         os = &global_os;
         
-        global_os.vsync                     = 1;
         global_os.fullscreen                = 0;
         global_os.window_size.x             = os_default_window_width;
         global_os.window_size.y             = os_default_window_height;

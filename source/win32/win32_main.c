@@ -579,8 +579,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     
     W32_LoadXInput();
     
-    PermanentLoad(&global_os);
-    HotLoad(&global_os);
+    APP_Init();
     
     ShowWindow(window_handle, n_show_cmd);
     UpdateWindow(window_handle);
@@ -650,7 +649,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         {
             B32 last_fullscreen = global_os.fullscreen;
             
-            Update();
+            APP_Update();
             
             // NOTE(rjf): Update fullscreen if necessary
             if(last_fullscreen != global_os.fullscreen)

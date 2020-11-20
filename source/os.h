@@ -227,22 +227,5 @@ global OS_State *os = 0;
 #define APP_ENTRY_POINT
 #endif
 
-/* Loaded as "PermanentLoad" */
-#define APP_PERMANENT_LOAD APP_ENTRY_POINT void PermanentLoad(OS_State *os_)
-typedef void ApplicationPermanentLoadCallback(OS_State *);
-function void ApplicationPermanentLoadStub(OS_State *_) {}
-
-/* Loaded as "HotLoad" */
-#define APP_HOT_LOAD APP_ENTRY_POINT void HotLoad(OS_State *os_)
-typedef void ApplicationHotLoadCallback(OS_State *);
-function void ApplicationHotLoadStub(OS_State *_) {}
-
-/* Loaded as "HotUnload" */
-#define APP_HOT_UNLOAD APP_ENTRY_POINT void HotUnload(void)
-typedef void ApplicationHotUnloadCallback(void);
-function void ApplicationHotUnloadStub(void) {}
-
-/* Loaded as "Update" */
-#define APP_UPDATE APP_ENTRY_POINT void Update(void)
-typedef void ApplicationUpdateCallback(void);
-function void ApplicationUpdateStub(void) {}
+void APP_Init(void);
+void APP_Update(void);

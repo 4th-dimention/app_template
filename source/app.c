@@ -26,10 +26,8 @@ global V3F32 cl_awful  = {1.f, 0.f, 1.f};
 
 global APP_Variables *vars = 0;
 
-APP_PERMANENT_LOAD
+void APP_Init(void)
 {
-    os = os_;
-    
     {
         M_Arena arena_ = M_ArenaInitialize();
         vars = PushArray(&arena_, APP_Variables, 1);
@@ -42,14 +40,7 @@ APP_PERMANENT_LOAD
     R_InitFont(&vars->test_font_small, str8_lit("liberation-mono.ttf"), 24);
 }
 
-APP_HOT_LOAD
-{
-    os = os_;
-}
-
-APP_HOT_UNLOAD {}
-
-APP_UPDATE
+void APP_Update(void)
 {
     for (OS_Event *event = 0;
          OS_GetNextEvent(&event);)

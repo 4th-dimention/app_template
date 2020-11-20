@@ -324,7 +324,7 @@ struct String8
 typedef U32 StringMatchFlags;
 enum
 {
-    StringMatchFlag_MatchCase       = (1<<0),
+    StringMatchFlag_CaseInsensitive = (1<<0),
     StringMatchFlag_RightSideSloppy = (1<<1),
 };
 

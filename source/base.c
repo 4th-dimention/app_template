@@ -2,7 +2,6 @@
 // NOTE(allen): Scalar
 
 #define FMod fmodf
-#define AbsoluteValue fabsf
 #define SquareRoot sqrtf
 #define Sin sinf
 #define Cos cosf
@@ -61,9 +60,42 @@ F32Floor(F32 x)
 }
 
 function F32
+F32Round(F32 x)
+{
+    return(F32Floor(x + 0.5f));
+}
+
+function F32
 Lerp(F32 a, F32 t, F32 b)
 {
     return(a + (b - a)*t);
+}
+
+function F32
+AbsoluteValueF(F32 f){
+    union { U32 u; F32 f; } x;
+    x.f = f;
+    x.u &= ~Sign32;
+    return(x.f);
+}
+
+function F32
+Inf32(void){
+    union { U32 u; F32 f; } x;
+    x.u = Exponent32;
+    return(x.f);
+}
+
+function F32
+NegInf32(void){
+    union { U32 u; F32 f; } x;
+    x.u = Sign32 | Exponent32;
+    return(x.f);
+}
+
+function F32
+SignOfSide(Side side){
+    return((side == Side_Min)?-1.f:1.f);
 }
 
 ////////////////////////////////
@@ -188,41 +220,135 @@ V4Hadamard(V4F32 a, V4F32 b)
     V4F32 v = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w};
     return(v);
 }
+function F32
+V2Length1(V2F32 a)
+{
+    return(AbsoluteValue(a.x) + AbsoluteValue(a.y));
+}
+function F32
+V3Length1(V3F32 a)
+{
+    return(AbsoluteValue(a.x) + AbsoluteValue(a.y) + AbsoluteValue(a.z));
+}
+function F32
+V4Length1(V4F32 a)
+{
+    return(AbsoluteValue(a.x) + AbsoluteValue(a.y) + AbsoluteValue(a.z) + AbsoluteValue(a.w));
+}
 
 function F32
-V2Length(V2F32 a)
+V2Length2(V2F32 a)
 {
     return SquareRoot(V2Dot(a,a));
 }
 function F32
-V3Length(V3F32 a)
+V3Length2(V3F32 a)
 {
     return SquareRoot(V3Dot(a,a));
 }
 function F32
-V4Length(V4F32 a)
+V4Length2(V4F32 a)
 {
     return SquareRoot(V4Dot(a,a));
 }
 
-function V2F32
-V2Normalize(V2F32 v)
+function F32
+V2LengthInf(V2F32 a)
 {
-    F32 inv_length = 1.f/V2Length(v);
+    F32 f1 = AbsoluteValue(a.x);
+    F32 f2 = AbsoluteValue(a.y);
+    f1 = Max(f1, f2);
+    return(f1);
+}
+function F32
+V3LengthInf(V3F32 a)
+{
+    F32 f1 = AbsoluteValue(a.x);
+    F32 f2 = AbsoluteValue(a.y);
+    F32 f3 = AbsoluteValue(a.z);
+    f1 = Max(f1, f2);
+    f1 = Max(f1, f3);
+    return(f1);
+}
+function F32
+V4LengthInf(V4F32 a)
+{
+    F32 f1 = AbsoluteValue(a.x);
+    F32 f2 = AbsoluteValue(a.y);
+    F32 f3 = AbsoluteValue(a.z);
+    F32 f4 = AbsoluteValue(a.w);
+    f1 = Max(f1, f2);
+    f1 = Max(f1, f3);
+    f1 = Max(f1, f4);
+    return(f1);
+}
+
+function V2F32
+V2Norm1(V2F32 v)
+{
+    F32 inv_length = 1.f/V2Length1(v);
     V2F32 result = { v.x*inv_length, v.y*inv_length, };
     return result;
 }
 function V3F32
-V3Normalize(V3F32 v)
+V3Norm1(V3F32 v)
 {
-    F32 inv_length = 1.f/V3Length(v);
+    F32 inv_length = 1.f/V3Length1(v);
     V3F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
     return result;
 }
 function V4F32
-V4Normalize(V4F32 v)
+V4Norm1(V4F32 v)
 {
-    F32 inv_length = 1.f/V4Length(v);
+    F32 inv_length = 1.f/V4Length1(v);
+    V4F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
+    return result;
+}
+
+function V2F32
+V2Norm2(V2F32 v)
+{
+    F32 inv_length = 1.f/V2Length2(v);
+    V2F32 result = { v.x*inv_length, v.y*inv_length, };
+    return result;
+}
+function V3F32
+V3Norm2(V3F32 v)
+{
+    F32 inv_length = 1.f/V3Length2(v);
+    V3F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
+    return result;
+}
+function V4F32
+V4Norm2(V4F32 v)
+{
+    F32 inv_length = 1.f/V4Length2(v);
+    V4F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
+    return result;
+}
+
+#define V2Normalize V2Norm2
+#define V3Normalize V3Norm2
+#define V4Normalize V4Norm2
+
+function V2F32
+V2NormInf(V2F32 v)
+{
+    F32 inv_length = 1.f/V2LengthInf(v);
+    V2F32 result = { v.x*inv_length, v.y*inv_length, };
+    return result;
+}
+function V3F32
+V3NormInf(V3F32 v)
+{
+    F32 inv_length = 1.f/V3LengthInf(v);
+    V3F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
+    return result;
+}
+function V4F32
+V4NormInf(V4F32 v)
+{
+    F32 inv_length = 1.f/V4LengthInf(v);
     V4F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
     return result;
 }
@@ -438,9 +564,9 @@ M4RemoveRotation(M4x4F32 mat)
 {
     V3F32 scale =
     {
-        V3Length(v3F32(mat.v[0][0], mat.v[0][1], mat.v[0][2])),
-        V3Length(v3F32(mat.v[1][0], mat.v[1][1], mat.v[1][2])),
-        V3Length(v3F32(mat.v[2][0], mat.v[2][1], mat.v[2][2])),
+        V3Length(V3F32F32(mat.v[0][0], mat.v[0][1], mat.v[0][2])),
+        V3Length(V3F32F32(mat.v[1][0], mat.v[1][1], mat.v[1][2])),
+        V3Length(V3F32F32(mat.v[2][0], mat.v[2][1], mat.v[2][2])),
     };
     
     mat.v[0][0] = scale.x;
@@ -600,6 +726,30 @@ RangeOverlaps(RangeF32 a, RangeF32 b)
     return(a.min < b.max && b.min < a.max);
 }
 
+function RangeF32
+RangeSplit(RangeF32 *free_range, Side side, F32 amt){
+    RangeF32 range;
+    if (side == Side_Min){
+        range.min = free_range->min;
+        range.max = range.min + amt;
+        range.max = ClampTop(range.max, free_range->max);
+        free_range->min = range.max;
+    }
+    else{
+        range.max = free_range->max;
+        range.min = range.max - amt;
+        range.min = ClampBot(range.min, free_range->min);
+        free_range->max = range.min;
+    }
+    return(range);
+}
+
+function B32
+RangeU64Contains(RangeU64 range, U64 x)
+{
+    return(range.min <= x && x < range.max);
+}
+
 function RectF32
 MakeRect(F32 x0, F32 y0, F32 x1, F32 y1)
 {
@@ -675,13 +825,13 @@ RectGetRange(RectF32 rect, Dimension dim)
 function B32
 RectContains(RectF32 rect, V2F32 p)
 {
-    return(rect.x0 <= p.x && p.x < rect.x0 && rect.y0 <= p.y && p.y < rect.y0);
+    return(rect.x0 <= p.x && p.x < rect.x1 && rect.y0 <= p.y && p.y < rect.y1);
 }
 
 function B32
 RectOverlaps(RectF32 a, RectF32 b)
 {
-    return(a.x0 < b.x0 && b.x0 < a.x0 && a.y0 < b.y0 && b.y0 < a.y0);
+    return(a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1);
 }
 
 function V2F32
@@ -777,6 +927,13 @@ str8(U8 *str, U64 size)
 }
 
 function String8
+str8_range(U8 *first, U8 *opl)
+{
+    String8 result = {first, opl - first};
+    return(result);
+}
+
+function String8
 String8FromCString(char *cstring)
 {
     String8 string = {0};
@@ -792,7 +949,7 @@ StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
     
     if(a.size == b.size || (flags & StringMatchFlag_RightSideSloppy))
     {
-        B32 insensitive = (flags & StringMatchFlag_MatchCase);
+        B32 insensitive = (flags & StringMatchFlag_CaseInsensitive);
         U64 size = Min(a.size, b.size);
         result = 1;
         for(U64 i = 0; i < size; ++i)
@@ -818,7 +975,7 @@ StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
 function B32
 StringMatch(String8 a, String8 b)
 {
-    return StringMatchGeneric(a, b, StringMatchFlag_MatchCase);
+    return StringMatchGeneric(a, b, StringMatchFlag_CaseInsensitive);
 }
 
 function B32
@@ -845,11 +1002,28 @@ StringPrefix(String8 string, U64 size)
 }
 
 function String8
+StringSkip(String8 string, U64 val)
+{
+    val = ClampTop(val, string.size);
+    string.str += val;
+    string.size -= val;
+    return(string);
+}
+
+function String8
 StringPostfix(String8 string, U64 size)
 {
     size = ClampTop(size, string.size);
     string.str = (string.str + string.size) - size;
     string.size = size;
+    return(string);
+}
+
+function String8
+StringChop(String8 string, U64 val)
+{
+    val = ClampTop(val, string.size);
+    string.size -= val;
     return(string);
 }
 
@@ -923,11 +1097,46 @@ StringListPushFrontF(M_Arena *arena, String8List *list, char *fmt, ...)
     return(result);
 }
 
+function String8List
+StringSplit(M_Arena *arena, String8 string, U8 *split_chars, U64 split_char_count)
+{
+    String8List list = {0};
+    
+    U8 *ptr = string.str;
+    U8 *opl = string.str + string.size;
+    for (;ptr < opl;)
+    {
+        U8 *first = ptr;
+        for (;ptr < opl; ptr += 1)
+        {
+            U8 c = *ptr;
+            B32 is_split = 0;
+            for (U64 i = 0; i < split_char_count; i += 1)
+            {
+                if (split_chars[i] == c)
+                {
+                    is_split = 1;
+                    break;
+                }
+            }
+            if (is_split)
+            {
+                break;
+            }
+        }
+        
+        StringListPush(arena, &list, str8_range(first, ptr));
+        ptr += 1;
+    }
+    
+    return(list);
+}
+
 function String8
 StringListJoin(M_Arena *arena, String8List *list, StringJoin *optional_join)
 {
     StringJoin join = {0};
-    if (optional_join == 0)
+    if (optional_join != 0)
     {
         MemoryCopyStruct(&join, optional_join);
     }

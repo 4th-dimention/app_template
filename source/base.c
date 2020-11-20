@@ -879,10 +879,10 @@ PushStringF(M_Arena *arena, char *fmt, ...)
 ////////////////////////////////
 //~ NOTE(allen): String List
 
-function String8_Node*
-StringListPush(M_Arena *arena, String8_List *list, String8 string)
+function String8Node*
+StringListPush(M_Arena *arena, String8List *list, String8 string)
 {
-    String8_Node *node = PushArray(arena, String8_Node, 1);
+    String8Node *node = PushArray(arena, String8Node, 1);
     SLLQueuePush(list->first, list->last, node);
     list->node_count += 1;
     list->total_size += string.size;
@@ -890,10 +890,10 @@ StringListPush(M_Arena *arena, String8_List *list, String8 string)
     return(node);
 }
 
-function String8_Node*
-StringListPushFront(M_Arena *arena, String8_List *list, String8 string)
+function String8Node*
+StringListPushFront(M_Arena *arena, String8List *list, String8 string)
 {
-    String8_Node *node = PushArray(arena, String8_Node, 1);
+    String8Node *node = PushArray(arena, String8Node, 1);
     SLLQueuePushFront(list->first, list->last, node);
     list->node_count += 1;
     list->total_size += string.size;
@@ -901,32 +901,32 @@ StringListPushFront(M_Arena *arena, String8_List *list, String8 string)
     return(node);
 }
 
-function String8_Node*
-StringListPushF(M_Arena *arena, String8_List *list, char *fmt, ...)
+function String8Node*
+StringListPushF(M_Arena *arena, String8List *list, char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
     String8 string = PushStringFV(arena, fmt, args);
-    String8_Node *result = StringListPush(arena, list, string);
+    String8Node *result = StringListPush(arena, list, string);
     va_end(args);
     return(result);
 }
 
-function String8_Node*
-StringListPushFrontF(M_Arena *arena, String8_List *list, char *fmt, ...)
+function String8Node*
+StringListPushFrontF(M_Arena *arena, String8List *list, char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
     String8 string = PushStringFV(arena, fmt, args);
-    String8_Node *result = StringListPushFront(arena, list, string);
+    String8Node *result = StringListPushFront(arena, list, string);
     va_end(args);
     return(result);
 }
 
 function String8
-StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
+StringListJoin(M_Arena *arena, String8List *list, StringJoin *optional_join)
 {
-    String_Join join = {0};
+    StringJoin join = {0};
     if (optional_join == 0)
     {
         MemoryCopyStruct(&join, optional_join);
@@ -938,7 +938,7 @@ StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
     
     MemoryCopy(ptr, join.pre.str, join.pre.size);
     ptr += join.pre.size;
-    for (String8_Node *node = list->first;
+    for (String8Node *node = list->first;
          node != 0;
          node = node->next)
     {

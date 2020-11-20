@@ -321,24 +321,24 @@ enum
     StringMatchFlag_RightSideSloppy = (1<<1),
 };
 
-typedef struct String8_Node String8_Node;
-struct String8_Node
+typedef struct String8Node String8Node;
+struct String8Node
 {
-    String8_Node *next;
+    String8Node *next;
     String8 string;
 };
 
-typedef struct String8_List String8_List;
-struct String8_List
+typedef struct String8List String8List;
+struct String8List
 {
-    String8_Node *first;
-    String8_Node *last;
+    String8Node *first;
+    String8Node *last;
     U64 total_size;
     U64 node_count;
 };
 
-typedef struct String_Join String_Join;
-struct String_Join
+typedef struct StringJoin StringJoin;
+struct StringJoin
 {
     String8 pre;
     String8 sep;

@@ -114,9 +114,9 @@ struct OS_Event
     KeyModifiers modifiers;
     S32 gamepad_index;
     U64 character;
-    v2 position;
-    v2 delta;
-    v2 scroll;
+    V2F32 position;
+    V2F32 delta;
+    V2F32 scroll;
 };
 
 //~ NOTE(allen): Thread Context
@@ -178,7 +178,7 @@ struct OS_State
     B32 pump_events;
     
     // NOTE(rjf): Event Queue and Input Data
-    v2 mouse_position;
+    V2F32 mouse_position;
     U64 event_count;
     OS_Event events[4096];
     

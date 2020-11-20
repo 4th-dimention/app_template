@@ -99,7 +99,7 @@ OS_CharacterInputEvent(U64 character)
 }
 
 function OS_Event
-OS_MouseMoveEvent(v2 position, v2 delta)
+OS_MouseMoveEvent(V2F32 position, V2F32 delta)
 {
     OS_Event event =
     {
@@ -111,7 +111,7 @@ OS_MouseMoveEvent(v2 position, v2 delta)
 }
 
 function OS_Event
-OS_MousePressEvent(MouseButton button, v2 position)
+OS_MousePressEvent(MouseButton button, V2F32 position)
 {
     OS_Event event =
     {
@@ -123,7 +123,7 @@ OS_MousePressEvent(MouseButton button, v2 position)
 }
 
 function OS_Event
-OS_MouseReleaseEvent(MouseButton mouse_button, v2 position)
+OS_MouseReleaseEvent(MouseButton mouse_button, V2F32 position)
 {
     OS_Event event =
     {
@@ -135,7 +135,7 @@ OS_MouseReleaseEvent(MouseButton mouse_button, v2 position)
 }
 
 function OS_Event
-OS_MouseScrollEvent(v2 delta, KeyModifiers modifiers)
+OS_MouseScrollEvent(V2F32 delta, KeyModifiers modifiers)
 {
     OS_Event event =
     {

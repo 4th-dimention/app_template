@@ -41,8 +41,8 @@ typedef struct W32_GamepadInput W32_GamepadInput;
 struct W32_GamepadInput
 {
     B32 connected;
-    v2 joystick_1;
-    v2 joystick_2;
+    V2F32 joystick_1;
+    V2F32 joystick_2;
     F32 trigger_left;
     F32 trigger_right;
     S32 button_states[GamepadButton_Max];
@@ -73,10 +73,10 @@ W32_CursorStyle;
 
 global W32_CursorStyle global_cursor_style = 0;
 
-function v2
+function V2F32
 W32_GetMousePosition(HWND window)
 {
-    v2 result = {0};
+    V2F32 result = {0};
     POINT mouse;
     GetCursorPos(&mouse);
     ScreenToClient(window, &mouse);
@@ -131,11 +131,11 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     {
         S16 x_position = LOWORD(l_param);
         S16 y_position = HIWORD(l_param);
-        v2 last_mouse = global_os.mouse_position;
+        V2F32 last_mouse = global_os.mouse_position;
         global_os.mouse_position = W32_GetMousePosition(window_handle);
         OS_PushEvent(OS_MouseMoveEvent(global_os.mouse_position,
-                                       v2(global_os.mouse_position.x - last_mouse.x,
-                                          global_os.mouse_position.y - last_mouse.y)));
+                                       v2F32(global_os.mouse_position.x - last_mouse.x,
+                                             global_os.mouse_position.y - last_mouse.y)));
         
         if(mouse_hover_active_because_windows_makes_me_cry == 0)
         {
@@ -157,12 +157,12 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     else if(message == WM_MOUSEWHEEL)
     {
         S16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2(0, (F32)wheel_delta), modifiers));
+        OS_PushEvent(OS_MouseScrollEvent(v2F32(0, (F32)wheel_delta), modifiers));
     }
     else if(message == WM_MOUSEHWHEEL)
     {
         S16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2((F32)wheel_delta, 0), modifiers));
+        OS_PushEvent(OS_MouseScrollEvent(v2F32((F32)wheel_delta, 0), modifiers));
     }
     else if(message == WM_SETCURSOR)
     {

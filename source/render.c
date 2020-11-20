@@ -6,7 +6,7 @@
 typedef struct R_GL_Vertex R_GL_Vertex;
 struct R_GL_Vertex
 {
-    v2 xy;
+    V2F32 xy;
     v3 uvw;
     v4 rgba;
 };
@@ -14,7 +14,7 @@ struct R_GL_Vertex
 typedef struct R_GL_State R_GL_State;
 struct R_GL_State
 {
-    v2 render_resolution;
+    V2F32 render_resolution;
     
     GLuint vertex_buffer;
     
@@ -243,7 +243,7 @@ _R_AllocVertices(U64 count)
 }
 
 function void
-R_Begin(v2 render_size, v3 color)
+R_Begin(V2F32 render_size, v3 color)
 {
     global_render->render_resolution = render_size;
     R_SetClip(MakeRect(0.f, 0.f, V2Expand(render_size)));
@@ -461,10 +461,10 @@ R_SelectFont(R_Font *font)
     }
 }
 
-function v2
+function V2F32
 R_StringDimWithFont(R_Font *font, F32 scale, String8 string)
 {
-    v2 result = {0};
+    V2F32 result = {0};
     U8 *ptr = string.str;
     U8 *end = ptr + string.size;
     F32 *advances = font->advance;
@@ -479,7 +479,7 @@ R_StringDimWithFont(R_Font *font, F32 scale, String8 string)
     return(result);
 }
 
-function v2  
+function V2F32
 R_StringDim(F32 scale, String8 string)
 {
     return(R_StringDimWithFont(global_render->selected_font, scale, string));
@@ -498,8 +498,8 @@ R_Rect(Rect rect, v3 color, F32 a)
 {
     R_GL_Vertex *vertices = _R_AllocVertices(6);
     vertices[0].xy = rect.p0;
-    vertices[1].xy = v2(rect.x1, rect.y0);
-    vertices[2].xy = v2(rect.x0, rect.y1);
+    vertices[1].xy = v2F32(rect.x1, rect.y0);
+    vertices[2].xy = v2F32(rect.x0, rect.y1);
     
     DupVert(3); DupVert(4);
     vertices[5].xy = rect.p1;
@@ -507,8 +507,8 @@ R_Rect(Rect rect, v3 color, F32 a)
     R_GL_Vertex *v = vertices;
     for (U64 i = 0; i < 6; i += 1, v += 1)
     {
-        v->uvw = v3(0.f, 0.f, 0.f);
-        v->rgba = v4(color.r, color.g, color.b, a);
+        v->uvw = v3F32(0.f, 0.f, 0.f);
+        v->rgba = v4F32(color.r, color.g, color.b, a);
     }
 }
 
@@ -519,43 +519,43 @@ R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
     Rect inner = RectShrink(rect, thickness);
     
     R_GL_Vertex *vertices = _R_AllocVertices(24);
-    vertices[0].xy = v2(outer.x0, outer.y0);
-    vertices[1].xy = v2(inner.x0, inner.y0);
-    vertices[2].xy = v2(outer.x1, outer.y0);
+    vertices[0].xy = v2F32(outer.x0, outer.y0);
+    vertices[1].xy = v2F32(inner.x0, inner.y0);
+    vertices[2].xy = v2F32(outer.x1, outer.y0);
     
     DupVert(3); DupVert(4);
-    vertices[5].xy = v2(inner.x1, inner.y0);
+    vertices[5].xy = v2F32(inner.x1, inner.y0);
     
     DupVert(6); DupVert(7);
-    vertices[8].xy = v2(outer.x1, outer.y1);
+    vertices[8].xy = v2F32(outer.x1, outer.y1);
     
     DupVert(9); DupVert(10);
-    vertices[11].xy = v2(inner.x1, inner.y1);
+    vertices[11].xy = v2F32(inner.x1, inner.y1);
     
     DupVert(12); DupVert(13);
-    vertices[14].xy = v2(outer.x0, outer.y1);
+    vertices[14].xy = v2F32(outer.x0, outer.y1);
     
     DupVert(15); DupVert(16);
-    vertices[17].xy = v2(inner.x0, inner.y1);
+    vertices[17].xy = v2F32(inner.x0, inner.y1);
     
     DupVert(18); DupVert(19);
-    vertices[20].xy = v2(outer.x0, outer.y0);
+    vertices[20].xy = v2F32(outer.x0, outer.y0);
     
     DupVert(21); DupVert(22);
-    vertices[23].xy = v2(inner.x0, inner.y0);
+    vertices[23].xy = v2F32(inner.x0, inner.y0);
     
     R_GL_Vertex *v = vertices;
     for (U64 i = 0; i < 24; i += 1, v += 1)
     {
-        v->uvw = v3(0.f, 0.f, 0.f);
-        v->rgba = v4(color.r, color.g, color.b, a);
+        v->uvw = v3F32(0.f, 0.f, 0.f);
+        v->rgba = v4F32(color.r, color.g, color.b, a);
     }
 }
 
-function v2
-R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
+function V2F32
+R_StringBaseline(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
 {
-    v2 result = {0};
+    V2F32 result = {0};
     R_Font *font = global_render->selected_font;
     if (font != 0 && font->initialized)
     {
@@ -576,7 +576,7 @@ R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
                 rect.x1 = rect.x0 + g->dim.x*scale;
                 rect.y1 = rect.y0 + g->dim.y*scale;
                 
-                v2 uv;
+                V2F32 uv;
                 uv.x = g->dim.x*(1.f/32.f);
                 uv.y = g->dim.y*(1.f/64.f);
                 
@@ -584,24 +584,24 @@ R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
                 
                 R_GL_Vertex *vertices = _R_AllocVertices(6);
                 vertices[0].xy = rect.p0;
-                vertices[0].uvw = v3(0.f, 0.f, w);
+                vertices[0].uvw = v3F32(0.f, 0.f, w);
                 
-                vertices[1].xy = v2(rect.x1, rect.y0);
-                vertices[1].uvw = v3(uv.x, 0.f, w);
+                vertices[1].xy = v2F32(rect.x1, rect.y0);
+                vertices[1].uvw = v3F32(uv.x, 0.f, w);
                 
-                vertices[2].xy = v2(rect.x0, rect.y1);
-                vertices[2].uvw = v3(0.f, uv.y, w);
+                vertices[2].xy = v2F32(rect.x0, rect.y1);
+                vertices[2].uvw = v3F32(0.f, uv.y, w);
                 
                 DupVert(3); DupVertUVW(3);
                 DupVert(4); DupVertUVW(4);
                 
                 vertices[5].xy = rect.p1;
-                vertices[5].uvw = v3(uv.x, uv.y, w);
+                vertices[5].uvw = v3F32(uv.x, uv.y, w);
                 
                 R_GL_Vertex *v = vertices;
                 for (U64 i = 0; i < 6; i += 1, v += 1)
                 {
-                    v->rgba = v4(color.r, color.g, color.b, a);
+                    v->rgba = v4F32(color.r, color.g, color.b, a);
                 }
                 
                 x += F32Ceil(advances[*ptr]*scale);
@@ -613,10 +613,10 @@ R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
     return(result);
 }
 
-function v2
-R_String(v2 p, F32 scale, String8 string, v3 color, F32 a)
+function V2F32
+R_String(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
 {
-    v2 result = {0};
+    V2F32 result = {0};
     R_Font *font = global_render->selected_font;
     if (font != 0 && font->initialized)
     {

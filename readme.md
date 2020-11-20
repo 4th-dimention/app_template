@@ -28,6 +28,7 @@ Convenient integer and float type names:
 Macros that get used all over the place such as:
 - `#define function static` for functions
 - `#define ArrayCount(c) ...` for static array counts
+- `#define GB(n) ...`
 - `#define Assert(c) ...`
 - `#define Min(a,b) ...`
 - `#define Swap(T,a,b) ...`

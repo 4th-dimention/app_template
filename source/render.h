@@ -6,8 +6,8 @@
 typedef struct R_Glyph_Box R_Glyph_Box;
 struct R_Glyph_Box
 {
-    v2 offset;
-    v2 dim;
+    V2F32 offset;
+    V2F32 dim;
 };
 
 typedef struct R_Font R_Font;
@@ -91,7 +91,7 @@ struct R_Font
 
 function void R_Init(M_Arena *arena);
 
-function void R_Begin(v2 render_size, v3 color);
+function void R_Begin(V2F32 render_size, v3 color);
 function void R_End(void);
 
 function void R_SetClip(Rect rect);
@@ -101,14 +101,14 @@ function void R_InitUserFont(R_Font *font);
 function void R_ReleaseFont(R_Font *font);
 function B32  R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
                             U32 xoff, U32 yoff, F32 advance);
-function void R_FontUpdateMipmaps(R_Font *font);
-function v2   R_StringDim(F32 scale, String8 string);
-function v2   R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
+function void  R_FontUpdateMipmaps(R_Font *font);
+function V2F32 R_StringDim(F32 scale, String8 string);
+function V2F32 R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
 
 function void R_Rect(Rect rect, v3 color, F32 a);
 function void R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a);
 function void R_SelectFont(R_Font *font);
-function v2   R_String(v2 p, F32 scale, String8 string, v3 color, F32 a);
-function v2   R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a);
+function V2F32 R_String(V2F32 p, F32 scale, String8 string, v3 color, F32 a);
+function V2F32 R_StringBaseline(V2F32 p, F32 scale, String8 string, v3 color, F32 a);
 
 #endif //RENDER_H

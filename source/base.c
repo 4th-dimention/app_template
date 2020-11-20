@@ -73,10 +73,28 @@ Lerp(F32 a, F32 t, F32 b)
 #define V3Expand(v) ((v).x), ((v).y), ((v).z)
 #define V4Expand(v) ((v).x), ((v).y), ((v).z), ((v).w)
 
-function v2
-V2Add(v2 a, v2 b)
+function V2F32
+v2F32(F32 x, F32 y){
+    V2F32 r = {x,y};
+    return(r);
+}
+
+function v3
+v3F32(F32 x, F32 y, F32 z){
+    v3 r = {x,y,z};
+    return(r);
+}
+
+function v4
+v4F32(F32 x, F32 y, F32 z, F32 w){
+    v4 r = {x,y,z,w};
+    return(r);
+}
+
+function V2F32
+V2Add(V2F32 a, V2F32 b)
 {
-    v2 c = { a.x + b.x, a.y + b.y };
+    V2F32 c = { a.x + b.x, a.y + b.y };
     return c;
 }
 function v3
@@ -92,10 +110,10 @@ V4Add(v4 a, v4 b)
     return c;
 }
 
-function v2
-V2Sub(v2 a, v2 b)
+function V2F32
+V2Sub(V2F32 a, V2F32 b)
 {
-    v2 c = { a.x - b.x, a.y - b.y };
+    V2F32 c = { a.x - b.x, a.y - b.y };
     return c;
 }
 function v3
@@ -111,8 +129,8 @@ V4Sub(v4 a, v4 b)
     return c;
 }
 
-function v2
-V2Mul(v2 v, F32 f)
+function V2F32
+V2Mul(V2F32 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
@@ -137,7 +155,7 @@ V4Mul(v4 v, F32 f)
 }
 
 function F32
-V2Dot(v2 a, v2 b)
+V2Dot(V2F32 a, V2F32 b)
 {
     return a.x*b.x + a.y*b.y;
 }
@@ -152,10 +170,10 @@ V4Dot(v4 a, v4 b)
     return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
 }
 
-function v2
-V2Hadamard(v2 a, v2 b)
+function V2F32
+V2Hadamard(V2F32 a, V2F32 b)
 {
-    v2 v = {a.x*b.x, a.y*b.y};
+    V2F32 v = {a.x*b.x, a.y*b.y};
     return(v);
 }
 function v3
@@ -172,7 +190,7 @@ V4Hadamard(v4 a, v4 b)
 }
 
 function F32
-V2Length(v2 a)
+V2Length(V2F32 a)
 {
     return SquareRoot(V2Dot(a,a));
 }
@@ -187,11 +205,11 @@ V4Length(v4 a)
     return SquareRoot(V4Dot(a,a));
 }
 
-function v2
-V2Normalize(v2 v)
+function V2F32
+V2Normalize(V2F32 v)
 {
     F32 inv_length = 1.f/V2Length(v);
-    v2 result = { v.x*inv_length, v.y*inv_length, };
+    V2F32 result = { v.x*inv_length, v.y*inv_length, };
     return result;
 }
 function v3
@@ -390,7 +408,7 @@ M4Inverse(m4 m)
     
     v4 inv0 = V4Add(V4Sub(V4Hadamard(vec1, fac0), V4Hadamard(vec2, fac1)), V4Hadamard(vec3, fac2));
     v4 inv1 = V4Add(V4Sub(V4Hadamard(vec0, fac0), V4Hadamard(vec2, fac3)), V4Hadamard(vec3, fac4));
-    v4 inv2 = V4Add(V4Sub(V4Hadamard(vec0, fac1), V4Hadamard(vec1, fac3)), V4Hadamard(vec3, fac5));
+    v4 inV2F32 = V4Add(V4Sub(V4Hadamard(vec0, fac1), V4Hadamard(vec1, fac3)), V4Hadamard(vec3, fac5));
     v4 inv3 = V4Add(V4Sub(V4Hadamard(vec0, fac2), V4Hadamard(vec1, fac4)), V4Hadamard(vec2, fac5));
     
     v4 sign_a = { +1, -1, +1, -1 };
@@ -401,7 +419,7 @@ M4Inverse(m4 m)
     {
         inverse.elements[0][i] = inv0.elements[i] * sign_a.elements[i];
         inverse.elements[1][i] = inv1.elements[i] * sign_b.elements[i];
-        inverse.elements[2][i] = inv2.elements[i] * sign_a.elements[i];
+        inverse.elements[2][i] = inV2F32.elements[i] * sign_a.elements[i];
         inverse.elements[3][i] = inv3.elements[i] * sign_b.elements[i];
     }
     
@@ -420,9 +438,9 @@ M4RemoveRotation(m4 mat)
 {
     v3 scale =
     {
-        V3Length(v3(mat.elements[0][0], mat.elements[0][1], mat.elements[0][2])),
-        V3Length(v3(mat.elements[1][0], mat.elements[1][1], mat.elements[1][2])),
-        V3Length(v3(mat.elements[2][0], mat.elements[2][1], mat.elements[2][2])),
+        V3Length(v3F32(mat.elements[0][0], mat.elements[0][1], mat.elements[0][2])),
+        V3Length(v3F32(mat.elements[1][0], mat.elements[1][1], mat.elements[1][2])),
+        V3Length(v3F32(mat.elements[2][0], mat.elements[2][1], mat.elements[2][2])),
     };
     
     mat.elements[0][0] = scale.x;
@@ -607,7 +625,7 @@ MakeRect(F32 x0, F32 y0, F32 x1, F32 y1)
     return(rect);
 }
 function Rect
-MakeRectVec(v2 p0, v2 p1)
+MakeRectVec(V2F32 p0, V2F32 p1)
 {
     Rect rect = {p0.x, p0.y, p1.x, p1.y};
     return(rect);
@@ -673,7 +691,7 @@ RectGetRange(Rect rect, Dimension dim)
 }
 
 function B32
-RectContains(Rect rect, v2 p)
+RectContains(Rect rect, V2F32 p)
 {
     return(rect.x0 <= p.x && p.x < rect.x0 && rect.y0 <= p.y && p.y < rect.y0);
 }
@@ -684,18 +702,18 @@ RectOverlaps(Rect a, Rect b)
     return(a.x0 < b.x0 && b.x0 < a.x0 && a.y0 < b.y0 && b.y0 < a.y0);
 }
 
-function v2
+function V2F32
 RectGetDim(Rect rect)
 {
-    v2 p = {rect.x1 - rect.x0, rect.y1 - rect.y0};
+    V2F32 p = {rect.x1 - rect.x0, rect.y1 - rect.y0};
     return(p);
 }
 #define RectSize(r) RectGetDim(r)
 
-function v2
+function V2F32
 RectGetCenter(Rect rect)
 {
-    v2 p = {0.5f*(rect.x1 + rect.x0), 0.5f*(rect.y1 + rect.y0)};
+    V2F32 p = {0.5f*(rect.x1 + rect.x0), 0.5f*(rect.y1 + rect.y0)};
     return(p);
 }
 

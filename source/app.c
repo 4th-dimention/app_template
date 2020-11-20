@@ -51,7 +51,7 @@ APP_HOT_UNLOAD {}
 
 APP_UPDATE
 {
-    v2 window_size = v2(os->window_size.x, os->window_size.y);
+    V2F32 window_size = v2F32(os->window_size.x, os->window_size.y);
     R_Begin(window_size, cl_black);
     
     R_Rect(MakeRect(70, 70, 530, 530), cl_blue, 1.f);
@@ -61,8 +61,8 @@ APP_UPDATE
     
     R_SelectFont(&vars->test_font);
     
-    v2 p = v2(130, 130);
-    v2 dim = R_String(p, 1.f, string, cl_yellow, 1.f);
+    V2F32 p = v2F32(130, 130);
+    V2F32 dim = R_String(p, 1.f, string, cl_yellow, 1.f);
     p.y += dim.y;
     
     dim = R_String(p, 1.f, string, cl_green, 0.5f);

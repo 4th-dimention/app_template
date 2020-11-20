@@ -1,7 +1,7 @@
 // NOTE(allen): memory
 
-#define M_ARENA_MAX          Gigabytes(4)
-#define M_ARENA_COMMIT_SIZE  Kilobytes(4)
+#define M_ARENA_MAX          GB(4)
+#define M_ARENA_COMMIT_SIZE  KB(4)
 
 function M_Arena
 M_ArenaInitializeWithAlign(U64 auto_align)

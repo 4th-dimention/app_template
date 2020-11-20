@@ -47,13 +47,16 @@ typedef double   F64;
 #define local          static
 
 #define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
-#define Bytes(n)      ((U64)(n))
-#define Kilobytes(n)  (((U64)(n)) << 10)
-#define Megabytes(n)  (((U64)(n)) << 20)
-#define Gigabytes(n)  (((U64)(n)) << 30)
+
+#define KB(n)  (((U64)(n)) << 10)
+#define MB(n)  (((U64)(n)) << 20)
+#define GB(n)  (((U64)(n)) << 30)
+#define TB(n)  (((U64)(n)) << 40)
+
 #define Thousand(n)   ((n)*1000)
 #define Million(n)    ((n)*1000000)
 #define Billion(n)    ((n)*1000000000)
+
 #define PI (3.1415926535897f)
 
 #define Stmnt(S) do{ S }while(0)
@@ -92,6 +95,8 @@ typedef double   F64;
 
 ////////////////////////////////
 //~ NOTE(allen): Linked Lists
+
+#define DLLMembers(type,next,prev,sib) union{ struct{ type prev; type next; }; type sib[2]; };
 
 #define DLLPushBack_NP(f,l,n,next,prev) ( (f)==0?\
 ((f)=(l)=(n),(n)->next=(n)->prev=0):\
@@ -165,25 +170,57 @@ typedef enum
     Side_Max,
 } Side;
 
+typedef enum
+{
+    OperatingSystem_Windows,
+    OperatingSystem_Linux,
+    OperatingSystem_Mac,
+    OperatingSystem_COUNT,
+} OperatingSystem;
+
+typedef enum
+{
+    Architecture_x86,
+    Architecture_x64,
+    Architecture_arm,
+    Architecture_arm64,
+    Architecture_COUNT,
+} Architecture;
+
+typedef enum
+{
+    Month_January,
+    Month_February,
+    Month_March,
+    Month_April,
+    Month_May,
+    Month_June,
+    Month_July,
+    Month_August,
+    Month_September,
+    Month_October,
+    Month_November,
+    Month_December,
+} Month;
+
+typedef enum
+{
+    DayOfWeek_Sunday,
+    DayOfWeek_Monday,
+    DayOfWeek_Tuesday,
+    DayOfWeek_Wednesday,
+    DayOfWeek_Thursday,
+    DayOfWeek_Friday,
+    DayOfWeek_Saturday,
+} DayOfWeek;
+
 ////////////////////////////////
 //~ NOTE(allen): Vectors
 
-typedef union v2 v2;
-union v2
+typedef union V2F32 V2F32;
+union V2F32
 {
-    struct
-    {
-        F32 x;
-        F32 y;
-    };
-    
-    struct
-    {
-        F32 width;
-        F32 height;
-    };
-    
-    float elements[2];
+    struct { F32 x; F32 y; };
     float v[2];
 };
 
@@ -310,13 +347,6 @@ union iv4
     S32 v[4];
 };
 
-#define v2(...)   (v2){ __VA_ARGS__ }
-#define v3(...)   (v3){ __VA_ARGS__ }
-#define v4(...)   (v4){ __VA_ARGS__ }
-#define iv2(...) (iv2){ __VA_ARGS__ }
-#define iv3(...) (iv3){ __VA_ARGS__ }
-#define iv4(...) (iv4){ __VA_ARGS__ }
-
 ////////////////////////////////
 //~ NOTE(allen): Matrix
 
@@ -370,11 +400,11 @@ union Rect
         F32 y1;
     };
     struct{
-        v2 p0;
-        v2 p1;
+        V2F32 p0;
+        V2F32 p1;
     };
     F32 v[4];
-    v2 p[2];
+    V2F32 p[2];
 };
 
 ////////////////////////////////

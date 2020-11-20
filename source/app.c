@@ -49,6 +49,15 @@ void APP_Update(void)
         {
             OS_Quit();
         }
+        
+        if (event->kind == OS_EventKind_KeyPress){
+            if (event->key == Key_Up){
+                OS_NextFrameFullScreen(1);
+            }
+            if (event->key == Key_Down){
+                OS_NextFrameFullScreen(0);
+            }
+        }
     }
     
     V2F32 window_size = v2F32(os->window_size.x, os->window_size.y);

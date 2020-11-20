@@ -425,6 +425,12 @@ OS_NextFrameImmediate(B32 immediate){
     w32_next_frame_do_immediately = immediate;
 }
 
+global B32 w32_next_frame_full_screen = 0;
+function void
+OS_NextFrameFullScreen(B32 full_screen){
+    w32_next_frame_full_screen = full_screen;
+}
+
 int
 WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_show_cmd)
 {
@@ -491,7 +497,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     {
         os = &global_os;
         
-        global_os.fullscreen                = 0;
         global_os.window_size.x             = os_default_window_width;
         global_os.window_size.y             = os_default_window_height;
         
@@ -521,7 +526,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     ShowWindow(window_handle, n_show_cmd);
     UpdateWindow(window_handle);
     
-    for (;w32_quit;)
+    for (;!w32_quit;)
     {
         U64 frame_begin_time = OS_GetNowInMicroseconds();
         
@@ -530,13 +535,12 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             os->event_count = 0;
             
             MSG message;
-            if(!w32_next_frame_do_immediately)
-            {
+            if (!w32_next_frame_do_immediately){
                 WaitMessage();
+                frame_begin_time = OS_GetNowInMicroseconds();
             }
             
-            while(PeekMessage(&message, 0, 0, 0, PM_REMOVE))
-            {
+            for (;PeekMessage(&message, 0, 0, 0, PM_REMOVE);){
                 TranslateMessage(&message);
                 DispatchMessage(&message);
             }
@@ -581,14 +585,36 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         // NOTE(rjf): Call into the app layer to update
         {
-            B32 last_fullscreen = global_os.fullscreen;
-            
             APP_Update();
             
             // NOTE(rjf): Update fullscreen if necessary
-            if(last_fullscreen != global_os.fullscreen)
             {
-                W32_ToggleFullscreen(window_handle);
+                DWORD style = GetWindowLong(window_handle, GWL_STYLE);;
+                B32 is_full_screen = (!(style & WS_OVERLAPPEDWINDOW));
+                if (is_full_screen != w32_next_frame_full_screen){
+                    local WINDOWPLACEMENT last_window_placement = { sizeof(last_window_placement) };
+                    
+                    if (w32_next_frame_full_screen){
+                        MONITORINFO monitor_info = { sizeof(monitor_info) };
+                        HMONITOR monitor = MonitorFromWindow(window_handle, MONITOR_DEFAULTTOPRIMARY);
+                        if (GetWindowPlacement(window_handle, &last_window_placement) &&
+                            GetMonitorInfo(monitor, &monitor_info)){
+                            SetWindowLong(window_handle, GWL_STYLE, style & ~WS_OVERLAPPEDWINDOW);
+                            SetWindowPos(window_handle, HWND_TOP,
+                                         monitor_info.rcMonitor.left, monitor_info.rcMonitor.top,
+                                         monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
+                                         monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
+                                         SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+                        }
+                    }
+                    else{
+                        SetWindowLong(window_handle, GWL_STYLE, style | WS_OVERLAPPEDWINDOW);
+                        SetWindowPlacement(window_handle, &last_window_placement);
+                        SetWindowPos(window_handle, 0, 0, 0, 0, 0,
+                                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+                                     SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+                    }
+                }
             }
             
             // NOTE(rjf): Fill sound buffer with game sound

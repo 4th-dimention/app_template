@@ -146,6 +146,16 @@ OS_MouseScrollEvent(V2F32 delta, KeyModifiers modifiers)
     return event;
 }
 
+function OS_Event
+OS_WindowClose(void)
+{
+    OS_Event event = 
+    {
+        .type = OS_EventType_WindowClose,
+    };
+    return(event);
+}
+
 function B32
 OS_GetNextEvent(OS_Event **event)
 {
@@ -166,7 +176,7 @@ OS_GetNextEvent(OS_Event **event)
         }
     }
     *event = new_event;
-    result = new_event != 0;
+    result = (new_event != 0);
     return result;
 }
 

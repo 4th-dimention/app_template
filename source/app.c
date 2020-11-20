@@ -51,6 +51,15 @@ APP_HOT_UNLOAD {}
 
 APP_UPDATE
 {
+    for (OS_Event *event = 0;
+         OS_GetNextEvent(&event);)
+    {
+        if (event->type == OS_EventType_WindowClose)
+        {
+            os->Quit();
+        }
+    }
+    
     V2F32 window_size = v2F32(os->window_size.x, os->window_size.y);
     R_Begin(window_size, cl_black);
     

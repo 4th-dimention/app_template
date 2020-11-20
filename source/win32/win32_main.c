@@ -341,6 +341,23 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
         
         result = DefWindowProc(window_handle, message, w_param, l_param);
     }
+    else if(message == WM_SYSCOMMAND)
+    {
+        switch (w_param)
+        {
+            case SC_CLOSE:
+            {
+                OS_PushEvent(OS_WindowClose());
+            } break;
+            case SC_KEYMENU:
+            {}break;
+            
+            default:
+            {
+                result = DefWindowProcW(window_handle, message, w_param, l_param);
+            }break;
+        }
+    }
     else if(message == WM_CHAR)
     {
         U64 char_input = w_param;
@@ -390,6 +407,12 @@ function void
 W32_SetCursorToVerticalResize(void)
 {
     global_cursor_style = W32_CursorStyle_VerticalResize;
+}
+
+function void
+W32_Quit(void)
+{
+    global_os.quit = 1;
 }
 
 int
@@ -507,6 +530,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
         
+        global_os.Quit                           = W32_Quit;
+        
         global_os.Reserve                        = W32_Reserve;
         global_os.Release                        = W32_Release;
         global_os.Commit                         = W32_Commit;
@@ -530,6 +555,9 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.LoadOpenGLProcedure            = W32_LoadOpenGLProcedure;
         global_os.RefreshScreen                  = W32_OpenGLRefreshScreen;
         global_os.GetThreadContext               = W32_GetThreadContext;
+        
+        global_os.DialogueSavePath               = W32_DialogueSavePath;
+        global_os.DialogueLoadPath               = W32_DialogueLoadPath;
         
         global_os.permanent_arena = M_ArenaInitialize();
         global_os.frame_arena = M_ArenaInitialize();
@@ -565,6 +593,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         // NOTE(rjf): Update Windows events
         {
+            os->event_count = 0;
+            
             MSG message;
             if(global_os.wait_for_events_to_update && !global_os.pump_events)
             {

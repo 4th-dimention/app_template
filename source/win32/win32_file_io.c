@@ -8,9 +8,10 @@ W32_FrameCStringFromString(String8 string)
     return buffer;
 }
 
-function void
+function B32
 W32_SaveToFile(String8 path, void *data, U64 data_len)
 {
+    B32 result = 0;
     HANDLE file = {0};
     {
         DWORD desired_access = GENERIC_READ | GENERIC_WRITE;
@@ -40,12 +41,14 @@ W32_SaveToFile(String8 path, void *data, U64 data_len)
             WriteFile(file, data_to_write, data_to_write_size, &bytes_written, 0);
             
             CloseHandle(file);
+            result = 1;
         }
         else
         {
             W32_OutputError("File I/O Error", "Could not save to \"%s\"", path);
         }
     }
+    return(result);
 }
 
 function void
@@ -227,4 +230,69 @@ W32_DirectoryListLoad(M_Arena *arena, String8 path, S32 flags)
     OS_DirectoryList list = {0};
     
     return list;
+}
+
+
+function U8*
+_W32_InitFilter(M_Arena *arena, String8 *fixed_ext){
+    U8 *filter = 0;
+    if (fixed_ext != 0){
+        String8List list = {0};
+        StringListPush(arena, &list, fixed_ext[0]);
+        StringListPush(arena, &list, str8_lit("\0"));
+        StringListPush(arena, &list, str8_lit("*."));
+        StringListPush(arena, &list, fixed_ext[1]);
+        StringListPush(arena, &list, str8_lit("\0\0"));
+        String8 filter_str = StringListJoin(arena, &list, 0);
+        filter = filter_str.str;
+    }
+    return(filter);
+}
+
+function String8
+W32_DialogueSavePath(M_Arena *arena, String8 *fixed_ext)
+{
+    M_Arena *scratch = OS_GetScratch1(arena);
+    
+    OPENFILENAMEA openfilename = {sizeof(openfilename)};
+    openfilename.lpstrFilter = (LPSTR)_W32_InitFilter(scratch, fixed_ext);
+    openfilename.nMaxFile = KB(32);
+    openfilename.lpstrFile = (LPSTR)PushArray(arena, U8, openfilename.nMaxFile);
+    openfilename.lpstrFile[0] = 0;
+    openfilename.lpstrTitle = "Save";
+    openfilename.Flags = OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST;
+    
+    String8 result = {0};
+    if (GetSaveFileNameA(&openfilename)){
+        result.str = openfilename.lpstrFile;
+        result.size = 0;
+        for (;openfilename.lpstrFile[result.size] != 0; result.size += 1);
+    }
+    
+    OS_ReleaseScratch(scratch);
+    return(result);
+}
+
+function String8
+W32_DialogueLoadPath(M_Arena *arena, String8 *fixed_ext)
+{
+    M_Arena *scratch = OS_GetScratch1(arena);
+    
+    OPENFILENAMEA openfilename = {sizeof(openfilename)};
+    openfilename.lpstrFilter = (LPSTR)_W32_InitFilter(scratch, fixed_ext);
+    openfilename.nMaxFile = KB(32);
+    openfilename.lpstrFile = (LPSTR)PushArray(arena, U8, openfilename.nMaxFile);
+    openfilename.lpstrFile[0] = 0;
+    openfilename.lpstrTitle = "Open";
+    openfilename.Flags = OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
+    
+    String8 result = {0};
+    if (GetOpenFileNameA(&openfilename)){
+        result.str = openfilename.lpstrFile;
+        result.size = 0;
+        for (;openfilename.lpstrFile[result.size] != 0; result.size += 1);
+    }
+    
+    OS_ReleaseScratch(scratch);
+    return(result);
 }

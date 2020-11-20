@@ -75,6 +75,9 @@ typedef enum OS_EventType
 {
     OS_EventType_Null,
     
+    // NOTE(rjf): Window
+    OS_EventType_WindowClose,
+    
     // NOTE(rjf): Keyboard
     OS_EventType_KeyStart,
     OS_EventType_CharacterInput,
@@ -188,12 +191,14 @@ struct OS_State
     U32 samples_per_second;
     
     // NOTE(rjf): Functions
+    void (*Quit)(void);
+    
     void *(*Reserve)(U64 size);
     void (*Release)(void *memory);
     void (*Commit)(void *memory, U64 size);
     void (*Decommit)(void *memory, U64 size);
     void (*OutputError)(char *error_type, char *error_format, ...);
-    void (*SaveToFile)(String8 path, void *data, U64 data_len);
+    B32  (*SaveToFile)(String8 path, void *data, U64 data_len);
     void (*AppendToFile)(String8 path, void *data, U64 data_len);
     void (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, U64 *data_len);
     char *(*LoadEntireFileAndNullTerminate)(M_Arena *arena, String8 path);
@@ -212,6 +217,9 @@ struct OS_State
     void (*RefreshScreen)(void);
     void *(*LoadOpenGLProcedure)(char *name);
     OS_ThreadContext *(*GetThreadContext)(void);
+    
+    String8 (*DialogueSavePath)(M_Arena *arena, String8 *fixed_extension);
+    String8 (*DialogueLoadPath)(M_Arena *arena, String8 *fixed_extension);
 };
 
 global OS_State *os = 0;

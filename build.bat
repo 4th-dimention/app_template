@@ -5,7 +5,7 @@ set exe_name=appWin32
 set build_options= -DBUILD_WIN32=1
 set compile_flags= -nologo /Zi /FC /I ../source/
 set common_link_flags= opengl32.lib -opt:ref -incremental:no
-set platform_link_flags= gdi32.lib user32.lib winmm.lib %common_link_flags%
+set platform_link_flags= gdi32.lib user32.lib winmm.lib Comdlg32.lib %common_link_flags%
 
 if not exist build mkdir build
 pushd build

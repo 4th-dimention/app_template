@@ -515,10 +515,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     {
         os = &global_os;
         
-        global_os.executable_folder_absolute_path = String8FromCString(global_executable_directory);
-        global_os.executable_absolute_path = String8FromCString(global_executable_path);
-        global_os.working_directory_path = String8FromCString(global_working_directory);
-        
         global_os.quit                      = 0;
         global_os.vsync                     = 1;
         global_os.fullscreen                = 0;

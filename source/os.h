@@ -159,11 +159,6 @@ struct OS_ThreadContext
 typedef struct OS_State OS_State;
 struct OS_State
 {
-    // NOTE(rjf): Application Metadata
-    String8 executable_folder_absolute_path;
-    String8 executable_absolute_path;
-    String8 working_directory_path;
-    
     // NOTE(rjf): Options
     volatile B32 quit;
     B32 vsync;

@@ -164,9 +164,6 @@ struct OS_State
     String8 executable_absolute_path;
     String8 working_directory_path;
     
-    // NOTE(rjf): Memory
-    M_Arena permanent_arena;
-    
     // NOTE(rjf): Options
     volatile B32 quit;
     B32 vsync;

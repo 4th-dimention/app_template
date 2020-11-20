@@ -529,8 +529,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
-        
-        global_os.permanent_arena = M_ArenaInitialize();
     }
     
     // NOTE(allen): Thread Context

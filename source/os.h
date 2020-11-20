@@ -171,7 +171,6 @@ struct OS_State
     B32 vsync;
     B32 fullscreen;
     V2S32 window_size;
-    B32 wait_for_events_to_update;
     
     // NOTE(rjf): Event Queue and Input Data
     V2F32 mouse_position;

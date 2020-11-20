@@ -419,7 +419,7 @@ OS_Quit(void)
     w32_quit = 1;
 }
 
-global B32 w32_next_frame_do_immediately = 0;
+global B32 w32_next_frame_do_immediately = 1;
 function void
 OS_NextFrameImmediate(B32 immediate){
     w32_next_frame_do_immediately = immediate;
@@ -522,8 +522,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     ShowWindow(window_handle, n_show_cmd);
     UpdateWindow(window_handle);
     
-    w32_next_frame_do_immediately = 1;
-    
     for (;w32_quit;)
     {
         U64 frame_begin_time = OS_GetNowInMicroseconds();
@@ -533,7 +531,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             os->event_count = 0;
             
             MSG message;
-            if(global_os.wait_for_events_to_update && !w32_next_frame_do_immediately)
+            if(!w32_next_frame_do_immediately)
             {
                 WaitMessage();
             }

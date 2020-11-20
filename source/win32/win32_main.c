@@ -531,7 +531,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.samples_per_second = win32_sound_output.samples_per_second;
         
         global_os.permanent_arena = M_ArenaInitialize();
-        global_os.frame_arena = M_ArenaInitialize();
     }
     
     // NOTE(allen): Thread Context
@@ -559,7 +558,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     while(!global_os.quit)
     {
         W32_TimerBeginFrame(&global_win32_timer);
-        M_ArenaClear(&os->frame_arena);
         
         // NOTE(rjf): Update Windows events
         {

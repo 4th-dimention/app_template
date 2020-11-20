@@ -166,7 +166,6 @@ struct OS_State
     
     // NOTE(rjf): Memory
     M_Arena permanent_arena;
-    M_Arena frame_arena;
     
     // NOTE(rjf): Options
     volatile B32 quit;

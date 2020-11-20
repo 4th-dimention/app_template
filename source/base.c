@@ -1028,6 +1028,16 @@ StringChop(String8 string, U64 val)
 }
 
 function String8
+PushStringCopy(M_Arena *arena, String8 string){
+    String8 result = {0};
+    result.size = string.size;
+    result.str = PushArray(arena, U8, string.size + 1);
+    MemoryCopy(result.str, string.str, string.size);
+    result.str[result.size] = 0;
+    return(result);
+}
+
+function String8
 PushStringFV(M_Arena *arena, char *format, va_list args)
 {
     va_list args2;

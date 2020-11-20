@@ -16,6 +16,9 @@
 #define MemoryZeroStruct(s) MemoryZero(s,sizeof(*(s)))
 #define MemoryZeroArray(a)  memset(a,0,sizeof(a))
 
+#define MemoryMatch(a,b,z)     (memcmp((a),(b),(z)) == 0)
+#define MemoryMatchStruct(a,b) MemoryMatch(a,b,sizeof(*(a)))
+
 #define CalculateCStringLength      (U32)strlen
 #define CStringToI32(s)            ((S32)atoi(s))
 #define CStringToI16(s)            ((S16)atoi(s))
@@ -57,8 +60,6 @@ typedef double   F64;
 #define Million(n)    ((n)*1000000)
 #define Billion(n)    ((n)*1000000000)
 
-#define PI (3.1415926535897f)
-
 #define Stmnt(S) do{ S }while(0)
 
 #define AssertBreak() (*(int*)0 = 0xABCD)
@@ -67,7 +68,10 @@ typedef double   F64;
 #else
 #define Assert(c) Stmnt( if (!(c)){ AssertBreak(); } )
 #endif
+
 #define AssertImplies(a,b) Assert(!(a) || (b))
+#define AssertIff(a,b) Assert((a) == (b))
+
 #define InvalidPath Assert(!"Invalid Path")
 #define NotImplemented Assert(!"Not Implemented")
 
@@ -82,7 +86,8 @@ typedef double   F64;
 
 #define ClampTop(A,X) Min(A,X)
 #define ClampBot(X,B) Max(X,B)
-#define Clamp(A,X,B) ( ((X)<(A))?(A):((B)>(X))?(B):(X) )
+#define Clamp(A,X,B) (((X)<(A))?(A):\
+((X)>(B))?(B):(X))
 
 #define Swap(T,a,b) Stmnt( T t__ = a; a = b; b = t__; )
 
@@ -98,8 +103,7 @@ typedef double   F64;
 
 #define DLLMembers(type,next,prev,sib) union{ struct{ type prev; type next; }; type sib[2]; };
 
-#define DLLPushBack_NP(f,l,n,next,prev) ( (f)==0?\
-((f)=(l)=(n),(n)->next=(n)->prev=0):\
+#define DLLPushBack_NP(f,l,n,next,prev) ((f)==0?((f)=(l)=(n),(n)->next=(n)->prev=0):\
 ((l)->next=(n),(n)->prev=(l),(l)=(n),(n)->next=0) )
 
 #define DLLPushFront_NP(f,l,n,next,prev) DLLPushBack_NP(l,f,n,prev,next)
@@ -108,42 +112,33 @@ typedef double   F64;
 #define DLLPushFront(f,l,n) DLLPushFront_NP(f,l,n,next,prev)
 
 
-#define DLLInsertAfter_NP(f,l,p,n,next,prev) ( ((l)==(p))?\
-DLLPushBack_NP(f,l,n,next,prev):\
+#define DLLInsertAfter_NP(f,l,p,n,next,prev) (((l)==(p))?DLLPushBack_NP(f,l,n,next,prev):\
 ((n)->prev=(p),(n)->next=(p)->next,(p)->next->prev=(n),(p)->next=(n)) )
 #define DLLInsertBefore_NP(f,l,p,n,next,prev) DLLInsertAfter_NP(l,f,p,n,prev,next)
 
 #define DLLInsertAfter(f,l,p,n) DLLInsertAfter_NP(f,l,p,n,next,prev)
 #define DLLInsertBefore(f,l,p,n) DLLInsertBefore_NP(f,l,p,n,next,prev)
 
-#define DLLRemoveFirst_NP(f,l,next,prev) ( ((f)==(l))?\
-(f)=(l)=0:\
+#define DLLRemoveFirst_NP(f,l,next,prev) (((f)==(l))?(f)=(l)=0:\
 ((f)=(f)->next,(f)->prev=0) )
 #define DLLRemoveLast_NP(f,l,next,prev) DLLRemoveFirst_NP(l,f,prev,next)
-#define DLLRemove_NP(f,l,n,next,prev) ( ((f)==(n))?\
-DLLRemoveFirst_NP(f,l,next,prev):\
-((f)==(l))?\
-DLLRemoveLast_NP(f,l,next,prev):\
-((n)->next->prev=(n)->prev,(n)->prev->next=(n)->next) )
+#define DLLRemove_NP(f,l,n,next,prev) (((f)==(n))?DLLRemoveFirst_NP(f,l,next,prev):\
+((l)==(n))?DLLRemoveLast_NP(f,l,next,prev):\
+((n)->next->prev=(n)->prev,(n)->prev->next=(n)->next))
 
 #define DLLRemove(f,l,n) DLLRemove_NP(f,l,n,next,prev)
 
 
-
-#define SLLQueuePush_N(f,l,n,next) ( (f)==0?\
-((f)=(l)=(n),(n)->next=0):\
-((l)->next=(n),(n)->next=0) )
-#define SLLQueuePushFront_N(f,l,n,next) ( (f)==0?\
-((f)=(l)=(n),(n)->next=0):\
+#define SLLQueuePush_N(f,l,n,next) ((f)==0?((f)=(l)=(n),(n)->next=0):\
+((l)->next=(n),(l)=(n),(n)->next=0))
+#define SLLQueuePushFront_N(f,l,n,next) ((f)==0?((f)=(l)=(n),(n)->next=0):\
 ((n)->next=(f),(f)=(n)) )
-#define SLLQueuePop_N(f,l,next) ( (f)==(l)?\
-(f)=(l)=0:\
-((f)=(f)->next) )
+#define SLLQueuePop_N(f,l,next) ((f)==(l)?(f)=(l)=0:\
+((f)=(f)->next))
 
 #define SLLQueuePush(f,l,n) SLLQueuePush_N(f,l,n,next)
 #define SLLQueuePushFront(f,l,n) SLLQueuePushFront_N(f,l,n,next)
 #define SLLQueuePop(f,l) SLLQueuePop_N(f,l,next)
-
 
 
 #define SLLStackPush_N(f,n,next) ( (n)->next=(f), (f)=(n) )
@@ -213,6 +208,18 @@ typedef enum
     DayOfWeek_Friday,
     DayOfWeek_Saturday,
 } DayOfWeek;
+
+////////////////////////////////
+// NOTE(allen): F32 constants
+
+global F32 Pi32 = 3.1415926535897f;
+
+global U32 Sign32     = 0x80000000;
+global U32 Exponent32 = 0x7F800000;
+global U32 Mantissa32 = 0x007FFFFF;
+
+global F32   BigGolden32 = 1.61803398875f;
+global F32 SmallGolden32 = 0.61803398875f;
 
 ////////////////////////////////
 //~ NOTE(allen): Vectors

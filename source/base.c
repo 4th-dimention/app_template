@@ -330,7 +330,7 @@ function M4x4F32
 M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
 {
     M4x4F32 result = {0};
-    F32 tan_theta_over_2 = Tan(fov * (PI / 360.f));
+    F32 tan_theta_over_2 = Tan(fov * (Pi32 / 360.f));
     result.v[0][0] = 1.f / tan_theta_over_2;
     result.v[1][1] = aspect_ratio / tan_theta_over_2;
     result.v[2][3] = -1.f;

@@ -200,7 +200,7 @@ B32   OS_MakeDirectory(String8 path);
 B32   OS_DoesFileExist(String8 path);
 B32   OS_DoesDirectoryExist(String8 path);
 OS_DirectoryList OS_ListDirectory(M_Arena *arena, String8 path, S32 flags);
-F32   OS_GetTime(void);
+U64   OS_GetNowInMicroseconds(void);
 U64   OS_GetCycles(void);
 void  OS_ResetCursor(void);
 void  OS_SetCursorToHorizontalResize(void);

@@ -17,13 +17,12 @@
 
 // NOTE(rjf): Headers
 #include "program_options.h"
-#include "win32_timer.h"
+
 
 // NOTE(rjf): Globals
 global OS_State global_os;
 global HDC global_device_context;
 global HINSTANCE global_instance_handle;
-global W32_Timer global_win32_timer = {0};
 #define W32_MAX_GAMEPADS 16
 typedef struct W32_GamepadInput W32_GamepadInput;
 struct W32_GamepadInput
@@ -37,10 +36,13 @@ struct W32_GamepadInput
 };
 W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 
+// NOTE(allen): Timer
+
+global B32 w32_sleep_is_granular = 0;
+global LARGE_INTEGER w32_counts_per_second = {0};
 
 // NOTE(rjf): Implementations
 #include "win32_utilities.c"
-#include "win32_timer.c"
 #include "win32_file_io.c"
 #include "win32_xinput.c"
 #include "win32_wasapi.c"
@@ -382,13 +384,12 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     return result;
 }
 
-function F32
-OS_GetTime(void)
+function U64
+OS_GetNowInMicroseconds(void)
 {
-    W32_Timer *timer = &global_win32_timer;
     LARGE_INTEGER current_time;
     QueryPerformanceCounter(&current_time);
-    return global_os.current_time + (F32)(current_time.QuadPart - timer->begin_frame.QuadPart) / (F32)timer->counts_per_second.QuadPart;
+    return((current_time.QuadPart*Million(1))/w32_counts_per_second.QuadPart);
 }
 
 function U64
@@ -427,7 +428,11 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
 {
     global_instance_handle = instance;
     
-    W32_TimerInit(&global_win32_timer);
+    w32_sleep_is_granular = (timeBeginPeriod(1) == TIMERR_NOERROR);
+    if (!QueryPerformanceFrequency(&w32_counts_per_second)){
+        w32_counts_per_second.QuadPart = 1;
+    }
+    
     W32_SoundOutput win32_sound_output = {0};
     
     WNDCLASS window_class = {0};
@@ -518,7 +523,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     
     while(!global_os.quit)
     {
-        W32_TimerBeginFrame(&global_win32_timer);
+        U64 frame_begin_time = OS_GetNowInMicroseconds();
         
         // NOTE(rjf): Update Windows events
         {
@@ -595,12 +600,30 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             }
         }
         
-        // NOTE(rjf): Post-update platform data update
-        {
-            OS_EndFrame();
-        }
+        // NOTE(rjf): End Frame
+        OS_EndFrame();
         
-        W32_TimerEndFrame(&global_win32_timer, 1000.0 * (1.0 / (F64)global_os.target_frames_per_second));
+        // NOTE(allen): Rest
+        {
+            F64 milliseconds_per_frame = 1000.0 * (1.0 / (F64)global_os.target_frames_per_second);
+            F64 desired_seconds_per_frame = (milliseconds_per_frame / 1000.0);
+            
+            U64 frame_end_time = OS_GetNowInMicroseconds();
+            U64 frame_end_time_min = frame_begin_time + (desired_seconds_per_frame*Million(1));
+            
+            for (;frame_end_time < frame_end_time_min;){
+                U64 usec_to_sleep = frame_end_time_min - frame_end_time;
+                if (w32_sleep_is_granular){
+                    if (usec_to_sleep > 1100){
+                        Sleep((DWORD)(usec_to_sleep/1000));
+                    }
+                }
+                else if (usec_to_sleep > Thousand(8)){
+                    Sleep(0);
+                }
+                frame_end_time = OS_GetNowInMicroseconds();
+            }
+        }
     }
     
     ShowWindow(window_handle, SW_HIDE);

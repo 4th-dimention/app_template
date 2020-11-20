@@ -271,51 +271,26 @@ struct M4x4F32
 ////////////////////////////////
 //~ NOTE(allen): Interval
 
-typedef union Range Range;
-union Range
+typedef union RangeF32 RangeF32;
+union RangeF32
 {
-    struct
-    {
-        F32 min;
-        F32 max;
-    };
+    struct { F32 min; F32 max; };
     F32 v[2];
 };
 
-typedef union Rangei Rangei;
-union Rangei
+typedef union RangeU64 RangeU64;
+union RangeU64
 {
-    struct{
-        S64 min;
-        S64 max;
-    };
-    S64 v[2];
-};
-
-typedef union Rangeu Rangeu;
-union Rangeu
-{
-    struct{
-        U64 min;
-        U64 max;
-    };
+    struct { U64 min; U64 max; };
     U64 v[2];
 };
 
-typedef union Rect Rect;
-union Rect
+typedef union RectF32 RectF32;
+union RectF32
 {
-    struct{
-        F32 x0;
-        F32 y0;
-        F32 x1;
-        F32 y1;
-    };
-    struct{
-        V2F32 p0;
-        V2F32 p1;
-    };
+    struct{ F32 x0; F32 y0; F32 x1; F32 y1; };
     F32 v[4];
+    struct{ V2F32 p0; V2F32 p1; };
     V2F32 p[2];
 };
 

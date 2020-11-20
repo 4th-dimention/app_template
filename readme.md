@@ -108,9 +108,9 @@ RGB <-> HSV conversions
 ## Interval
 Types for one dimensional intervals and axis aligned rectangles
 
-`Range` floating point interval
+`RangeF32` floating point interval
 
-`Rangei` `Rangeu` signed and unsigned integer ranges
+`RangeU64` unsigned integer interval
 
 Ranges have `min` and `max` and by convention encode the partially open interval `[min,max)`
 

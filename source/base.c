@@ -539,68 +539,48 @@ HSVToRGB(V3F32 hsv)
 ////////////////////////////////
 // NOTE(allen): interval
 
-function Range
+function RangeF32
 MakeRange(F32 a, F32 b)
 {
-    Range range = {a, b};
+    RangeF32 range = {a, b};
     if (a > b)
     {
         Swap(F32, range.min, range.max);
     }
     return(range);
 }
-function Rangei
-MakeRangei(S64 a, S64 b)
-{
-    Rangei range = {a, b};
-    if (a > b)
-    {
-        Swap(S64, range.min, range.max);
-    }
-    return(range);
-}
-function Rangeu
-MakeRangeu(U64 a, U64 b)
-{
-    Rangeu range = {a, b};
-    if (a > b)
-    {
-        Swap(U64, range.min, range.max);
-    }
-    return(range);
-}
 
 #define RangeSize(range) ((range).max - (range.min))
 
-function Range
-RangeUnion(Range a, Range b)
+function RangeF32
+RangeUnion(RangeF32 a, RangeF32 b)
 {
-    Range result;
+    RangeF32 result;
     result.min = Min(a.min, b.min);
     result.max = Max(a.max, b.max);
     return(result);
 }
 
-function Range
-RangeIntersection(Range a, Range b)
+function RangeF32
+RangeIntersection(RangeF32 a, RangeF32 b)
 {
-    Range result;
+    RangeF32 result;
     result.min = Max(a.min, b.min);
     result.max = Min(a.max, b.max);
     result.min = ClampTop(result.min, result.max);
     return(result);
 }
 
-function Range
-RangeGrow(Range range, F32 x)
+function RangeF32
+RangeGrow(RangeF32 range, F32 x)
 {
     range.min -= x;
     range.max += x;
     return(range);
 }
 
-function Range
-RangeShrink(Range range, F32 x)
+function RangeF32
+RangeShrink(RangeF32 range, F32 x)
 {
     range.min += x;
     range.max -= x;
@@ -609,62 +589,62 @@ RangeShrink(Range range, F32 x)
 }
 
 function B32
-RangeContains(Range range, F32 x)
+RangeContains(RangeF32 range, F32 x)
 {
     return(range.min <= x && x < range.max);
 }
 
 function B32
-RangeOverlaps(Range a, Range b)
+RangeOverlaps(RangeF32 a, RangeF32 b)
 {
     return(a.min < b.max && b.min < a.max);
 }
 
-function Rect
+function RectF32
 MakeRect(F32 x0, F32 y0, F32 x1, F32 y1)
 {
-    Rect rect = {x0, y0, x1, y1};
+    RectF32 rect = {x0, y0, x1, y1};
     return(rect);
 }
-function Rect
+
+function RectF32
 MakeRectVec(V2F32 p0, V2F32 p1)
 {
-    Rect rect = {p0.x, p0.y, p1.x, p1.y};
-    return(rect);
-}
-function Rect
-MakeRectRanges(Range x, Range y)
-{
-    Rect rect = {x.min, y.min, x.max, y.max};
+    RectF32 rect = {p0.x, p0.y, p1.x, p1.y};
     return(rect);
 }
 
-function Rect
-RectUnion(Rect a, Rect b)
+function RectF32
+MakeRectRanges(RangeF32 x, RangeF32 y)
 {
-    Rect result;
-    result.x0 = Min(a.x0, b.x0);
-    result.y0 = Min(a.y0, b.y0);
-    result.x1 = Max(a.x1, b.x1);
-    result.y1 = Max(a.y1, b.y1);
-    return(result);
+    RectF32 rect = {x.min, y.min, x.max, y.max};
+    return(rect);
 }
 
-function Rect
-RectIntersect(Rect a, Rect b)
+function RectF32
+RectUnion(RectF32 a, RectF32 b)
 {
-    Rect result;
-    result.x0 = Max(a.x0, b.x0);
-    result.y0 = Max(a.y0, b.y0);
-    result.x1 = Min(a.x1, b.x1);
-    result.y1 = Min(a.y1, b.y1);
-    result.x0 = ClampTop(result.x0, result.x1);
-    result.y0 = ClampTop(result.y0, result.y1);
-    return(result);
+    a.x0 = Min(a.x0, b.x0);
+    a.y0 = Min(a.y0, b.y0);
+    a.x1 = Max(a.x1, b.x1);
+    a.y1 = Max(a.y1, b.y1);
+    return(a);
 }
 
-function Rect
-RectGrow(Rect rect, F32 v)
+function RectF32
+RectIntersect(RectF32 a, RectF32 b)
+{
+    a.x0 = Max(a.x0, b.x0);
+    a.y0 = Max(a.y0, b.y0);
+    a.x1 = Min(a.x1, b.x1);
+    a.y1 = Min(a.y1, b.y1);
+    a.x0 = ClampTop(a.x0, a.x1);
+    a.y0 = ClampTop(a.y0, a.y1);
+    return(a);
+}
+
+function RectF32
+RectGrow(RectF32 rect, F32 v)
 {
     rect.x0 -= v;
     rect.y0 -= v;
@@ -673,8 +653,8 @@ RectGrow(Rect rect, F32 v)
     return(rect);
 }
 
-function Rect
-RectShrink(Rect rect, F32 v)
+function RectF32
+RectShrink(RectF32 rect, F32 v)
 {
     rect.x0 += v;
     rect.y0 += v;
@@ -685,27 +665,27 @@ RectShrink(Rect rect, F32 v)
     return(rect);
 }
 
-function Range
-RectGetRange(Rect rect, Dimension dim)
+function RangeF32
+RectGetRange(RectF32 rect, Dimension dim)
 {
-    Range range = {rect.p0.v[dim], rect.p1.v[dim]};
+    RangeF32 range = {rect.p0.v[dim], rect.p1.v[dim]};
     return(range);
 }
 
 function B32
-RectContains(Rect rect, V2F32 p)
+RectContains(RectF32 rect, V2F32 p)
 {
     return(rect.x0 <= p.x && p.x < rect.x0 && rect.y0 <= p.y && p.y < rect.y0);
 }
 
 function B32
-RectOverlaps(Rect a, Rect b)
+RectOverlaps(RectF32 a, RectF32 b)
 {
     return(a.x0 < b.x0 && b.x0 < a.x0 && a.y0 < b.y0 && b.y0 < a.y0);
 }
 
 function V2F32
-RectGetDim(Rect rect)
+RectGetDim(RectF32 rect)
 {
     V2F32 p = {rect.x1 - rect.x0, rect.y1 - rect.y0};
     return(p);
@@ -713,7 +693,7 @@ RectGetDim(Rect rect)
 #define RectSize(r) RectGetDim(r)
 
 function V2F32
-RectGetCenter(Rect rect)
+RectGetCenter(RectF32 rect)
 {
     V2F32 p = {0.5f*(rect.x1 + rect.x0), 0.5f*(rect.y1 + rect.y0)};
     return(p);
@@ -848,7 +828,7 @@ StringMatchCaseInsensitive(String8 a, String8 b)
 }
 
 function String8
-StringSubstring(String8 string, Rangeu range)
+StringSubstring(String8 string, RangeU64 range)
 {
     range.max = ClampTop(range.max, string.size);
     range.min = ClampTop(range.min, string.size);

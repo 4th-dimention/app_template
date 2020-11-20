@@ -262,7 +262,7 @@ R_End(void)
 }
 
 function void
-R_SetClip(Rect rect)
+R_SetClip(RectF32 rect)
 {
     _R_Flush();
     glScissor((GLint)rect.x0, (GLint)(global_render->render_resolution.y - rect.y1),
@@ -494,7 +494,7 @@ R_StringDim(F32 scale, String8 string)
 #define DupVertC(n) vertices[n].c = vertices[n - 2].c
 
 function void
-R_Rect(Rect rect, V3F32 color, F32 a)
+R_Rect(RectF32 rect, V3F32 color, F32 a)
 {
     R_GL_Vertex *vertices = _R_AllocVertices(6);
     vertices[0].xy = rect.p0;
@@ -513,10 +513,10 @@ R_Rect(Rect rect, V3F32 color, F32 a)
 }
 
 function void
-R_RectOutline(Rect rect, F32 thickness, V3F32 color, F32 a)
+R_RectOutline(RectF32 rect, F32 thickness, V3F32 color, F32 a)
 {
-    Rect outer = rect;
-    Rect inner = RectShrink(rect, thickness);
+    RectF32 outer = rect;
+    RectF32 inner = RectShrink(rect, thickness);
     
     R_GL_Vertex *vertices = _R_AllocVertices(24);
     vertices[0].xy = v2F32(outer.x0, outer.y0);
@@ -570,7 +570,7 @@ R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
             {
                 R_Glyph_Box *g = &glyphs[*ptr];
                 
-                Rect rect;
+                RectF32 rect;
                 rect.x0 = x + g->offset.x*scale;
                 rect.y0 = p.y + g->offset.y*scale;
                 rect.x1 = rect.x0 + g->dim.x*scale;

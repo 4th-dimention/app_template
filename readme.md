@@ -1,5 +1,6 @@
 # Overview
-Version on: July 3rd 2020 2:30pm
+Version on: November 20th 2020 1:150pm
+Version #: 2
 
 This layer is meant to be copy-pasted into a fresh project to start new applications. It comes with several pre-built systems common at the beginning of any application development.
 
@@ -175,7 +176,7 @@ A hard to categorize assemblence of various string functions - possible to ignor
 # OS
 The OS layer establishes the main types and functions for dealing with user input events, low level memory allocation, graphics, files, time, threads, etc.
 
-The list of primary functions can be found in `os.h` in the `OS_State` struct, which is available everywhere through a global `OS_State *os` pointer.  In `os.c` there are additional wrappers and helpers for these functions.
+The list of functions can be found in `os.h`.
 
 ## Events
 The event handling is done through a "waterfall" architecture. Each frame a list of events is made available by the platform layer implementation, and the application can query for and remove events by type in any order.

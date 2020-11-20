@@ -1,4 +1,9 @@
 ////////////////////////////////
+// NOTE(allen): Constants
+
+global U64 os_repaint_interval_usec = Million(1)/60;
+
+////////////////////////////////
 // NOTE(allen): Directory Listing Types
 
 #define OS_DirectoryList_IncludeDirectories (1<<0)
@@ -165,7 +170,6 @@ struct OS_State
     B32 fullscreen;
     V2S32 window_size;
     F32 current_time;
-    F32 target_frames_per_second;
     B32 wait_for_events_to_update;
     B32 pump_events;
     

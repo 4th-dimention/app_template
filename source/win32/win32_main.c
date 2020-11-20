@@ -473,6 +473,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         W32_InitWASAPI(&win32_sound_output);
     }
     
+#if 0    
     // NOTE(rjf): Find refresh rate
     F32 refresh_rate = 60.f;
     {
@@ -482,6 +483,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             refresh_rate = (float)device_mode.dmDisplayFrequency;
         }
     }
+#endif
     
     // NOTE(rjf): Initialize platform
     {
@@ -493,7 +495,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.window_size.x             = DEFAULT_WINDOW_WIDTH;
         global_os.window_size.y             = DEFAULT_WINDOW_HEIGHT;
         global_os.current_time              = 0.f;
-        global_os.target_frames_per_second  = refresh_rate;
         
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
@@ -605,11 +606,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         // NOTE(allen): Rest
         {
-            F64 milliseconds_per_frame = 1000.0 * (1.0 / (F64)global_os.target_frames_per_second);
-            F64 desired_seconds_per_frame = (milliseconds_per_frame / 1000.0);
-            
             U64 frame_end_time = OS_GetNowInMicroseconds();
-            U64 frame_end_time_min = frame_begin_time + (desired_seconds_per_frame*Million(1));
+            U64 frame_end_time_min = frame_begin_time + os_repaint_interval_usec;
             
             for (;frame_end_time < frame_end_time_min;){
                 U64 usec_to_sleep = frame_end_time_min - frame_end_time;

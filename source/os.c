@@ -197,7 +197,7 @@ OS_BeginFrame(void)
 function void
 OS_EndFrame(void)
 {
-    os->current_time += 1.f / os->target_frames_per_second;
+    //os->current_time += 1.f / os->target_frames_per_second;
 }
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.

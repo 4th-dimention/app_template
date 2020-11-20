@@ -43,8 +43,9 @@ typedef double   F64;
 //~ NOTE(rjf): Helper Macros
 
 #define global         static
-#define internal       static
-#define local_persist  static
+#define function       static
+#define local          static
+
 #define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
 #define Bytes(n)      ((U64)(n))
 #define Kilobytes(n)  (((U64)(n)) << 10)

@@ -1,4 +1,4 @@
-internal FILETIME
+function FILETIME
 W32_GetLastWriteTime(char *filename)
 {
     FILETIME last_write_time = {0};
@@ -12,47 +12,47 @@ W32_GetLastWriteTime(char *filename)
     return last_write_time;
 }
 
-internal void *
+function void *
 W32_HeapAlloc(U32 size)
 {
     return HeapAlloc(GetProcessHeap(), 0, size);
 }
 
-internal void
+function void
 W32_HeapFree(void *data)
 {
     HeapFree(GetProcessHeap(), 0, data);
 }
 
-internal void *
+function void *
 W32_Reserve(U64 size)
 {
     void *memory = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
     return memory;
 }
 
-internal void
+function void
 W32_Release(void *memory)
 {
     VirtualFree(memory, 0, MEM_RELEASE);
 }
 
-internal void
+function void
 W32_Commit(void *memory, U64 size)
 {
     VirtualAlloc(memory, size, MEM_COMMIT, PAGE_READWRITE);
 }
 
-internal void
+function void
 W32_Decommit(void *memory, U64 size)
 {
     VirtualFree(memory, size, MEM_DECOMMIT);
 }
 
-internal void
+function void
 W32_OutputError(char *title, char *format, ...)
 {
-    local_persist volatile LONG locked = 0;
+    local volatile LONG locked = 0;
     
     while(locked);
     InterlockedExchange(&locked, 1);
@@ -62,7 +62,7 @@ W32_OutputError(char *title, char *format, ...)
         U32 required_characters = vsnprintf(0, 0, format, args)+1;
         va_end(args);
         
-        local_persist char text[4096] = {0};
+        local char text[4096] = {0};
         
         if(required_characters > 4096)
         {
@@ -80,10 +80,10 @@ W32_OutputError(char *title, char *format, ...)
     InterlockedExchange(&locked, 0);
 }
 
-internal void
+function void
 W32_ToggleFullscreen(HWND hwnd)
 {
-    local_persist WINDOWPLACEMENT last_window_placement = {
+    local WINDOWPLACEMENT last_window_placement = {
         sizeof(last_window_placement)
     };
     

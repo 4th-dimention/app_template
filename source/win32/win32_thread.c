@@ -1,13 +1,13 @@
 
 global DWORD tls_index_thread_context = 0;
 
-internal void
+function void
 W32_ThreadSystemInit(void)
 {
     tls_index_thread_context = TlsAlloc();
 }
 
-internal void
+function void
 W32_ThreadInit(OS_ThreadContext *tctx, OS_ArenaNode *nodes, S32 node_count)
 {
     MemoryZeroStruct(tctx);
@@ -22,7 +22,7 @@ W32_ThreadInit(OS_ThreadContext *tctx, OS_ArenaNode *nodes, S32 node_count)
     Assert(success);
 }
 
-internal OS_ThreadContext*
+function OS_ThreadContext*
 W32_GetThreadContext(void)
 {
     void *ptr = TlsGetValue(tls_index_thread_context);

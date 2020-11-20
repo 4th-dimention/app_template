@@ -1,5 +1,5 @@
 
-internal char *
+function char *
 W32_FrameCStringFromString(String8 string)
 {
     char *buffer = 0;
@@ -8,7 +8,7 @@ W32_FrameCStringFromString(String8 string)
     return buffer;
 }
 
-internal void
+function void
 W32_SaveToFile(String8 path, void *data, U64 data_len)
 {
     HANDLE file = {0};
@@ -48,7 +48,7 @@ W32_SaveToFile(String8 path, void *data, U64 data_len)
     }
 }
 
-internal void
+function void
 W32_AppendToFile(String8 path, void *data, U64 data_len)
 {
     HANDLE file = {0};
@@ -89,7 +89,7 @@ W32_AppendToFile(String8 path, void *data, U64 data_len)
     }
 }
 
-internal void
+function void
 W32_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len)
 {
     *data = 0;
@@ -131,7 +131,7 @@ W32_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len)
     }
 }
 
-internal char *
+function char *
 W32_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path)
 {
     char *result = 0;
@@ -174,19 +174,19 @@ W32_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path)
     return result;
 }
 
-internal void
+function void
 W32_FreeFileMemory(void *data)
 {
     W32_HeapFree(data);
 }
 
-internal void
+function void
 W32_DeleteFile(String8 path)
 {
     DeleteFileA(W32_FrameCStringFromString(path));
 }
 
-internal B32
+function B32
 W32_MakeDirectory(String8 path)
 {
     B32 result = 1;
@@ -197,14 +197,14 @@ W32_MakeDirectory(String8 path)
     return result;
 }
 
-internal B32
+function B32
 W32_DoesFileExist(String8 path)
 {
     B32 found = GetFileAttributesA(W32_FrameCStringFromString(path)) != INVALID_FILE_ATTRIBUTES;
     return found;
 }
 
-internal B32
+function B32
 W32_DoesDirectoryExist(String8 path)
 {
     DWORD file_attributes = GetFileAttributesA(W32_FrameCStringFromString(path));
@@ -213,7 +213,7 @@ W32_DoesDirectoryExist(String8 path)
     return found;
 }
 
-internal B32
+function B32
 W32_CopyFile(String8 dest, String8 source)
 {
     B32 success = 0;
@@ -221,7 +221,7 @@ W32_CopyFile(String8 dest, String8 source)
     return success;
 }
 
-internal OS_DirectoryList
+function OS_DirectoryList
 W32_DirectoryListLoad(M_Arena *arena, String8 path, S32 flags)
 {
     OS_DirectoryList list = {0};

@@ -1,5 +1,5 @@
 
-internal String8
+function String8
 String8FromCString(char *cstring)
 {
     String8 string = {0};
@@ -8,7 +8,7 @@ String8FromCString(char *cstring)
     return string;
 }
 
-internal b32
+function b32
 StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
 {
     b32 result = 0;
@@ -46,19 +46,19 @@ StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
     return result;
 }
 
-internal b32
+function b32
 StringMatch(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, StringMatchFlag_MatchCase);
 }
 
-internal b32
+function b32
 StringMatchCaseInsensitive(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, 0);
 }
 
-internal i64
+function i64
 GetFirstIntegerFromString(String8 string)
 {
     i32 result = 0;
@@ -102,7 +102,7 @@ GetFirstIntegerFromString(String8 string)
     return result;
 }
 
-internal f32
+function f32
 GetFirstF32FromCString(char *str)
 {
     f32 result = 0;
@@ -146,7 +146,7 @@ GetFirstF32FromCString(char *str)
     return result;
 }
 
-internal void
+function void
 CopySubstringToStringUntilCharN(char *str1, u32 str1_max,
                                 const char *str2, char str2_term)
 {
@@ -166,7 +166,7 @@ CopySubstringToStringUntilCharN(char *str1, u32 str1_max,
     }
 }
 
-internal void
+function void
 CopyStringToFixedSizeBuffer(char *dest, u32 dest_max,
                             const char *src)
 {
@@ -190,7 +190,7 @@ CopyStringToFixedSizeBuffer(char *dest, u32 dest_max,
     }
 }
 
-internal u32
+function u32
 CStringIndexAfterSubstring(char *str, char *substr)
 {
     u32 result = 0;
@@ -207,7 +207,7 @@ CStringIndexAfterSubstring(char *str, char *substr)
     return result;
 }
 
-internal u32
+function u32
 CStringFirstIndexAfterSubstring(char *str, char *substr)
 {
     u32 result = 0;
@@ -225,7 +225,7 @@ CStringFirstIndexAfterSubstring(char *str, char *substr)
     return result;
 }
 
-internal void
+function void
 CopyCStringToFixedSizeBuffer(char *destination, u32 destination_max, char *source)
 {
     for(u32 i = 0; i < destination_max; ++i)
@@ -239,7 +239,7 @@ CopyCStringToFixedSizeBuffer(char *destination, u32 destination_max, char *sourc
     destination[destination_max-1] = 0;
 }
 
-internal void
+function void
 CopyCStringToFixedSizeBufferN(char *destination, u32 destination_max, char *source, u32 source_max)
 {
     for(u32 i = 0; i < destination_max && i < source_max; ++i)
@@ -253,7 +253,7 @@ CopyCStringToFixedSizeBufferN(char *destination, u32 destination_max, char *sour
     destination[destination_max-1] = 0;
 }
 
-internal char *
+function char *
 ConvertCStringToLowercase(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -263,7 +263,7 @@ ConvertCStringToLowercase(char *str)
     return str;
 }
 
-internal char *
+function char *
 ConvertCStringToUppercase(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -273,7 +273,7 @@ ConvertCStringToUppercase(char *str)
     return str;
 }
 
-internal char *
+function char *
 ConvertCStringToLowercaseWithUnderscores(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -290,7 +290,7 @@ ConvertCStringToLowercaseWithUnderscores(char *str)
     return str;
 }
 
-internal String8
+function String8
 PushStringFV(M_Arena *arena, char *format, va_list args)
 {
     va_list args2;
@@ -303,7 +303,7 @@ PushStringFV(M_Arena *arena, char *format, va_list args)
     return(result);
 }
 
-internal String8
+function String8
 PushStringF(M_Arena *arena, char *fmt, ...)
 {
     va_list args;
@@ -381,7 +381,7 @@ static unsigned int global_crc32_table[] =
     0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4,
 };
 
-internal u32
+function u32
 CStringCRC32N(char *name, u32 n)
 {
     u32 crc = 0;
@@ -392,13 +392,13 @@ CStringCRC32N(char *name, u32 n)
     return crc;
 }
 
-internal u32
+function u32
 CStringCRC32(char *name)
 {
     return CStringCRC32N(name, (u32)(u32)(-1));
 }
 
-internal void
+function void
 AppendToFixedSizeCString(char *destination, u32 destination_max, char *str)
 {
     u32 i = 0;

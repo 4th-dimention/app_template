@@ -26,7 +26,7 @@ Convenient integer and float type names:
 
 ## Helper Macros
 Macros that get used all over the place such as:
-- `#define internal static` for functions
+- `#define function static` for functions
 - `#define ArrayCount(c) ...` for static array counts
 - `#define Assert(c) ...`
 - `#define Min(a,b) ...`

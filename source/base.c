@@ -8,7 +8,7 @@
 #define Cos cosf
 #define Tan tanf
 
-internal S32
+function S32
 S32Ceil(F32 x)
 {
     if (x > 0)
@@ -21,7 +21,7 @@ S32Ceil(F32 x)
     }
 }
 
-internal S32
+function S32
 S32Floor(F32 x)
 {
     if (x > 0)
@@ -34,7 +34,7 @@ S32Floor(F32 x)
     }
 }
 
-internal F32
+function F32
 F32Ceil(F32 x)
 {
     if (x > 0)
@@ -47,7 +47,7 @@ F32Ceil(F32 x)
     }
 }
 
-internal F32
+function F32
 F32Floor(F32 x)
 {
     if (x > 0)
@@ -60,7 +60,7 @@ F32Floor(F32 x)
     }
 }
 
-internal F32
+function F32
 Lerp(F32 a, F32 t, F32 b)
 {
     return(a + (b - a)*t);
@@ -73,52 +73,52 @@ Lerp(F32 a, F32 t, F32 b)
 #define V3Expand(v) ((v).x), ((v).y), ((v).z)
 #define V4Expand(v) ((v).x), ((v).y), ((v).z), ((v).w)
 
-internal v2
+function v2
 V2Add(v2 a, v2 b)
 {
     v2 c = { a.x + b.x, a.y + b.y };
     return c;
 }
-internal v3
+function v3
 V3Add(v3 a, v3 b)
 {
     v3 c = { a.x + b.x, a.y + b.y, a.z + b.z };
     return c;
 }
-internal v4
+function v4
 V4Add(v4 a, v4 b)
 {
     v4 c = { a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
     return c;
 }
 
-internal v2
+function v2
 V2Sub(v2 a, v2 b)
 {
     v2 c = { a.x - b.x, a.y - b.y };
     return c;
 }
-internal v3
+function v3
 V3Sub(v3 a, v3 b)
 {
     v3 c = { a.x - b.x, a.y - b.y, a.z - b.z };
     return c;
 }
-internal v4
+function v4
 V4Sub(v4 a, v4 b)
 {
     v4 c = { a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
     return c;
 }
 
-internal v2
+function v2
 V2Mul(v2 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
     return v;
 }
-internal v3
+function v3
 V3Mul(v3 v, F32 f)
 {
     v.x *= f;
@@ -126,7 +126,7 @@ V3Mul(v3 v, F32 f)
     v.z *= f;
     return v;
 }
-internal v4
+function v4
 V4Mul(v4 v, F32 f)
 {
     v.x *= f;
@@ -136,72 +136,72 @@ V4Mul(v4 v, F32 f)
     return v;
 }
 
-internal F32
+function F32
 V2Dot(v2 a, v2 b)
 {
     return a.x*b.x + a.y*b.y;
 }
-internal F32
+function F32
 V3Dot(v3 a, v3 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
-internal F32
+function F32
 V4Dot(v4 a, v4 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
 }
 
-internal v2
+function v2
 V2Hadamard(v2 a, v2 b)
 {
     v2 v = {a.x*b.x, a.y*b.y};
     return(v);
 }
-internal v3
+function v3
 V3Hadamard(v3 a, v3 b)
 {
     v3 v = {a.x*b.x, a.y*b.y, a.z*b.z};
     return(v);
 }
-internal v4
+function v4
 V4Hadamard(v4 a, v4 b)
 {
     v4 v = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w};
     return(v);
 }
 
-internal F32
+function F32
 V2Length(v2 a)
 {
     return SquareRoot(V2Dot(a,a));
 }
-internal F32
+function F32
 V3Length(v3 a)
 {
     return SquareRoot(V3Dot(a,a));
 }
-internal F32
+function F32
 V4Length(v4 a)
 {
     return SquareRoot(V4Dot(a,a));
 }
 
-internal v2
+function v2
 V2Normalize(v2 v)
 {
     F32 inv_length = 1.f/V2Length(v);
     v2 result = { v.x*inv_length, v.y*inv_length, };
     return result;
 }
-internal v3
+function v3
 V3Normalize(v3 v)
 {
     F32 inv_length = 1.f/V3Length(v);
     v3 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
     return result;
 }
-internal v4
+function v4
 V4Normalize(v4 v)
 {
     F32 inv_length = 1.f/V4Length(v);
@@ -209,7 +209,7 @@ V4Normalize(v4 v)
     return result;
 }
 
-internal v3
+function v3
 V3Cross(v3 a, v3 b)
 {
     v3 result =
@@ -224,7 +224,7 @@ V3Cross(v3 a, v3 b)
 ////////////////////////////////
 // NOTE(allen): matrix
 
-internal m4
+function m4
 M4InitD(F32 diagonal)
 {
     m4 m =
@@ -239,7 +239,7 @@ M4InitD(F32 diagonal)
     return m;
 }
 
-internal m4
+function m4
 M4MultiplyM4(m4 a, m4 b)
 {
     m4 c = {0};
@@ -258,7 +258,7 @@ M4MultiplyM4(m4 a, m4 b)
     return c;
 }
 
-internal m4
+function m4
 M4MultiplyF32(m4 a, F32 b)
 {
     for(int j = 0; j < 4; ++j)
@@ -272,7 +272,7 @@ M4MultiplyF32(m4 a, F32 b)
     return a;
 }
 
-internal v4
+function v4
 V4MultiplyM4(v4 v, m4 m)
 {
     v4 result = {0};
@@ -288,7 +288,7 @@ V4MultiplyM4(v4 v, m4 m)
     return result;
 }
 
-internal m4
+function m4
 M4TranslateV3(v3 translation)
 {
     m4 result = M4InitD(1.f);
@@ -298,7 +298,7 @@ M4TranslateV3(v3 translation)
     return result;
 }
 
-internal m4
+function m4
 M4ScaleV3(v3 scale)
 {
     m4 result = M4InitD(1.f);
@@ -308,7 +308,7 @@ M4ScaleV3(v3 scale)
     return result;
 }
 
-internal m4
+function m4
 M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
 {
     m4 result = {0};
@@ -322,7 +322,7 @@ M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
     return result;
 }
 
-internal m4
+function m4
 M4LookAt(v3 eye, v3 center, v3 up)
 {
     m4 result;
@@ -354,7 +354,7 @@ M4LookAt(v3 eye, v3 center, v3 up)
     return result;
 }
 
-internal m4
+function m4
 M4Inverse(m4 m)
 {
     F32 coef00 = m.elements[2][2] * m.elements[3][3] - m.elements[3][2] * m.elements[2][3];
@@ -415,7 +415,7 @@ M4Inverse(m4 m)
     return M4MultiplyF32(inverse, one_over_det);
 }
 
-internal m4
+function m4
 M4RemoveRotation(m4 mat)
 {
     v3 scale =
@@ -443,7 +443,7 @@ M4RemoveRotation(m4 mat)
 ////////////////////////////////
 // NOTE(allen): color
 
-internal v3
+function v3
 RGBToHSV(v3 rgb)
 {
     F32 c_max = MaximumInV3(rgb);
@@ -459,7 +459,7 @@ RGBToHSV(v3 rgb)
     return hsv;
 }
 
-internal v3
+function v3
 HSVToRGB(v3 hsv)
 {
     F32 h = FMod(hsv.x * 360.f, 360.f);
@@ -519,7 +519,7 @@ HSVToRGB(v3 hsv)
 ////////////////////////////////
 // NOTE(allen): interval
 
-internal Range
+function Range
 MakeRange(F32 a, F32 b)
 {
     Range range = {a, b};
@@ -529,7 +529,7 @@ MakeRange(F32 a, F32 b)
     }
     return(range);
 }
-internal Rangei
+function Rangei
 MakeRangei(S64 a, S64 b)
 {
     Rangei range = {a, b};
@@ -539,7 +539,7 @@ MakeRangei(S64 a, S64 b)
     }
     return(range);
 }
-internal Rangeu
+function Rangeu
 MakeRangeu(U64 a, U64 b)
 {
     Rangeu range = {a, b};
@@ -552,7 +552,7 @@ MakeRangeu(U64 a, U64 b)
 
 #define RangeSize(range) ((range).max - (range.min))
 
-internal Range
+function Range
 RangeUnion(Range a, Range b)
 {
     Range result;
@@ -561,7 +561,7 @@ RangeUnion(Range a, Range b)
     return(result);
 }
 
-internal Range
+function Range
 RangeIntersection(Range a, Range b)
 {
     Range result;
@@ -571,7 +571,7 @@ RangeIntersection(Range a, Range b)
     return(result);
 }
 
-internal Range
+function Range
 RangeGrow(Range range, F32 x)
 {
     range.min -= x;
@@ -579,7 +579,7 @@ RangeGrow(Range range, F32 x)
     return(range);
 }
 
-internal Range
+function Range
 RangeShrink(Range range, F32 x)
 {
     range.min += x;
@@ -588,38 +588,38 @@ RangeShrink(Range range, F32 x)
     return(range);
 }
 
-internal B32
+function B32
 RangeContains(Range range, F32 x)
 {
     return(range.min <= x && x < range.max);
 }
 
-internal B32
+function B32
 RangeOverlaps(Range a, Range b)
 {
     return(a.min < b.max && b.min < a.max);
 }
 
-internal Rect
+function Rect
 MakeRect(F32 x0, F32 y0, F32 x1, F32 y1)
 {
     Rect rect = {x0, y0, x1, y1};
     return(rect);
 }
-internal Rect
+function Rect
 MakeRectVec(v2 p0, v2 p1)
 {
     Rect rect = {p0.x, p0.y, p1.x, p1.y};
     return(rect);
 }
-internal Rect
+function Rect
 MakeRectRanges(Range x, Range y)
 {
     Rect rect = {x.min, y.min, x.max, y.max};
     return(rect);
 }
 
-internal Rect
+function Rect
 RectUnion(Rect a, Rect b)
 {
     Rect result;
@@ -630,7 +630,7 @@ RectUnion(Rect a, Rect b)
     return(result);
 }
 
-internal Rect
+function Rect
 RectIntersect(Rect a, Rect b)
 {
     Rect result;
@@ -643,7 +643,7 @@ RectIntersect(Rect a, Rect b)
     return(result);
 }
 
-internal Rect
+function Rect
 RectGrow(Rect rect, F32 v)
 {
     rect.x0 -= v;
@@ -653,7 +653,7 @@ RectGrow(Rect rect, F32 v)
     return(rect);
 }
 
-internal Rect
+function Rect
 RectShrink(Rect rect, F32 v)
 {
     rect.x0 += v;
@@ -665,26 +665,26 @@ RectShrink(Rect rect, F32 v)
     return(rect);
 }
 
-internal Range
+function Range
 RectGetRange(Rect rect, Dimension dim)
 {
     Range range = {rect.p0.v[dim], rect.p1.v[dim]};
     return(range);
 }
 
-internal B32
+function B32
 RectContains(Rect rect, v2 p)
 {
     return(rect.x0 <= p.x && p.x < rect.x0 && rect.y0 <= p.y && p.y < rect.y0);
 }
 
-internal B32
+function B32
 RectOverlaps(Rect a, Rect b)
 {
     return(a.x0 < b.x0 && b.x0 < a.x0 && a.y0 < b.y0 && b.y0 < a.y0);
 }
 
-internal v2
+function v2
 RectGetDim(Rect rect)
 {
     v2 p = {rect.x1 - rect.x0, rect.y1 - rect.y0};
@@ -692,7 +692,7 @@ RectGetDim(Rect rect)
 }
 #define RectSize(r) RectGetDim(r)
 
-internal v2
+function v2
 RectGetCenter(Rect rect)
 {
     v2 p = {0.5f*(rect.x1 + rect.x0), 0.5f*(rect.y1 + rect.y0)};
@@ -702,26 +702,26 @@ RectGetCenter(Rect rect)
 ////////////////////////////////
 //~ NOTE(allen): String
 
-internal B32
+function B32
 CharIsSpace(char c)
 {
     return((c) <= 32);
 }
 
-internal B32
+function B32
 CharIsAlpha(char c)
 {
     return ((c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z'));
 }
 
-internal B32
+function B32
 CharIsDigit(char c)
 {
     return (c >= '0' && c <= '9');
 }
 
-internal B32
+function B32
 CharIsSymbol(char c)
 {
     return (c == '~' ||
@@ -749,7 +749,7 @@ CharIsSymbol(char c)
             c == ',');
 }
 
-internal char
+function char
 CharToLower(char c)
 {
     if(c >= 'A' && c <= 'Z')
@@ -759,7 +759,7 @@ CharToLower(char c)
     return c;
 }
 
-internal char
+function char
 CharToUpper(char c)
 {
     if(c >= 'a' && c <= 'z')
@@ -769,14 +769,14 @@ CharToUpper(char c)
     return c;
 }
 
-internal String8
+function String8
 str8(U8 *str, U64 size)
 {
     String8 result = {str, size};
     return(result);
 }
 
-internal String8
+function String8
 String8FromCString(char *cstring)
 {
     String8 string = {0};
@@ -785,7 +785,7 @@ String8FromCString(char *cstring)
     return string;
 }
 
-internal B32
+function B32
 StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
 {
     B32 result = 0;
@@ -815,19 +815,19 @@ StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
     return result;
 }
 
-internal B32
+function B32
 StringMatch(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, StringMatchFlag_MatchCase);
 }
 
-internal B32
+function B32
 StringMatchCaseInsensitive(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, 0);
 }
 
-internal String8
+function String8
 StringSubstring(String8 string, Rangeu range)
 {
     range.max = ClampTop(range.max, string.size);
@@ -837,14 +837,14 @@ StringSubstring(String8 string, Rangeu range)
     return(string);
 }
 
-internal String8
+function String8
 StringPrefix(String8 string, U64 size)
 {
     string.size = ClampTop(size, string.size);
     return(string);
 }
 
-internal String8
+function String8
 StringPostfix(String8 string, U64 size)
 {
     size = ClampTop(size, string.size);
@@ -853,7 +853,7 @@ StringPostfix(String8 string, U64 size)
     return(string);
 }
 
-internal String8
+function String8
 PushStringFV(M_Arena *arena, char *format, va_list args)
 {
     va_list args2;
@@ -866,7 +866,7 @@ PushStringFV(M_Arena *arena, char *format, va_list args)
     return(result);
 }
 
-internal String8
+function String8
 PushStringF(M_Arena *arena, char *fmt, ...)
 {
     va_list args;
@@ -879,7 +879,7 @@ PushStringF(M_Arena *arena, char *fmt, ...)
 ////////////////////////////////
 //~ NOTE(allen): String List
 
-internal String8_Node*
+function String8_Node*
 StringListPush(M_Arena *arena, String8_List *list, String8 string)
 {
     String8_Node *node = PushArray(arena, String8_Node, 1);
@@ -890,7 +890,7 @@ StringListPush(M_Arena *arena, String8_List *list, String8 string)
     return(node);
 }
 
-internal String8_Node*
+function String8_Node*
 StringListPushFront(M_Arena *arena, String8_List *list, String8 string)
 {
     String8_Node *node = PushArray(arena, String8_Node, 1);
@@ -901,7 +901,7 @@ StringListPushFront(M_Arena *arena, String8_List *list, String8 string)
     return(node);
 }
 
-internal String8_Node*
+function String8_Node*
 StringListPushF(M_Arena *arena, String8_List *list, char *fmt, ...)
 {
     va_list args;
@@ -912,7 +912,7 @@ StringListPushF(M_Arena *arena, String8_List *list, char *fmt, ...)
     return(result);
 }
 
-internal String8_Node*
+function String8_Node*
 StringListPushFrontF(M_Arena *arena, String8_List *list, char *fmt, ...)
 {
     va_list args;
@@ -923,7 +923,7 @@ StringListPushFrontF(M_Arena *arena, String8_List *list, char *fmt, ...)
     return(result);
 }
 
-internal String8
+function String8
 StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
 {
     String_Join join = {0};
@@ -959,7 +959,7 @@ StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
 ////////////////////////////////
 //~ NOTE(allen): Additional String Stuff
 
-internal S64
+function S64
 GetFirstIntegerFromString(String8 string)
 {
     S32 result = 0;
@@ -1003,7 +1003,7 @@ GetFirstIntegerFromString(String8 string)
     return result;
 }
 
-internal F32
+function F32
 GetFirstF32FromCString(char *str)
 {
     F32 result = 0;
@@ -1047,7 +1047,7 @@ GetFirstF32FromCString(char *str)
     return result;
 }
 
-internal void
+function void
 CopySubstringToStringUntilCharN(char *str1, U32 str1_max,
                                 const char *str2, char str2_term)
 {
@@ -1067,7 +1067,7 @@ CopySubstringToStringUntilCharN(char *str1, U32 str1_max,
     }
 }
 
-internal void
+function void
 CopyStringToFixedSizeBuffer(char *dest, U32 dest_max,
                             const char *src)
 {
@@ -1091,7 +1091,7 @@ CopyStringToFixedSizeBuffer(char *dest, U32 dest_max,
     }
 }
 
-internal U32
+function U32
 CStringIndexAfterSubstring(char *str, char *substr)
 {
     U32 result = 0;
@@ -1108,7 +1108,7 @@ CStringIndexAfterSubstring(char *str, char *substr)
     return result;
 }
 
-internal U32
+function U32
 CStringFirstIndexAfterSubstring(char *str, char *substr)
 {
     U32 result = 0;
@@ -1126,7 +1126,7 @@ CStringFirstIndexAfterSubstring(char *str, char *substr)
     return result;
 }
 
-internal void
+function void
 CopyCStringToFixedSizeBuffer(char *destination, U32 destination_max, char *source)
 {
     for(U32 i = 0; i < destination_max; ++i)
@@ -1140,7 +1140,7 @@ CopyCStringToFixedSizeBuffer(char *destination, U32 destination_max, char *sourc
     destination[destination_max-1] = 0;
 }
 
-internal void
+function void
 CopyCStringToFixedSizeBufferN(char *destination, U32 destination_max, char *source, U32 source_max)
 {
     for(U32 i = 0; i < destination_max && i < source_max; ++i)
@@ -1154,7 +1154,7 @@ CopyCStringToFixedSizeBufferN(char *destination, U32 destination_max, char *sour
     destination[destination_max-1] = 0;
 }
 
-internal char *
+function char *
 ConvertCStringToLowercase(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -1164,7 +1164,7 @@ ConvertCStringToLowercase(char *str)
     return str;
 }
 
-internal char *
+function char *
 ConvertCStringToUppercase(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -1174,7 +1174,7 @@ ConvertCStringToUppercase(char *str)
     return str;
 }
 
-internal char *
+function char *
 ConvertCStringToLowercaseWithUnderscores(char *str)
 {
     for(int i = 0; str[i]; ++i)
@@ -1259,7 +1259,7 @@ static unsigned int global_crc32_table[] =
     0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4,
 };
 
-internal U32
+function U32
 CStringCRC32N(char *name, U32 n)
 {
     U32 crc = 0;
@@ -1270,13 +1270,13 @@ CStringCRC32N(char *name, U32 n)
     return crc;
 }
 
-internal U32
+function U32
 CStringCRC32(char *name)
 {
     return CStringCRC32N(name, (U32)(U32)(-1));
 }
 
-internal void
+function void
 AppendToFixedSizeCString(char *destination, U32 destination_max, char *str)
 {
     U32 i = 0;

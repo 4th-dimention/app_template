@@ -4,20 +4,20 @@
 #define CharIsSpace(c) ((c) <= 32)
 #define CharIsDigit CharIsNumeric
 
-internal b32
+function b32
 CharIsAlpha(char c)
 {
     return ((c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z'));
 }
 
-internal b32
+function b32
 CharIsDigit(char c)
 {
     return (c >= '0' && c <= '9');
 }
 
-internal b32
+function b32
 CharIsSymbol(char c)
 {
     return (c == '~' ||
@@ -45,7 +45,7 @@ CharIsSymbol(char c)
             c == ',');
 }
 
-internal char
+function char
 CharToLower(char c)
 {
     if(c >= 'A' && c <= 'Z')
@@ -55,7 +55,7 @@ CharToLower(char c)
     return c;
 }
 
-internal char
+function char
 CharToUpper(char c)
 {
     if(c >= 'a' && c <= 'z')

@@ -1,6 +1,6 @@
 global HGLRC global_opengl_render_context;
 
-internal void *
+function void *
 W32_LoadOpenGLProcedure(char *name)
 {
     void *p = (void *)wglGetProcAddress(name);
@@ -19,7 +19,7 @@ PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
 PFNWGLMAKECONTEXTCURRENTARBPROC wglMakeContextCurrentARB;
 PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
-internal void
+function void
 W32_LoadWGLFunctions(HINSTANCE h_instance)
 {
     wglChoosePixelFormatARB    = (PFNWGLCHOOSEPIXELFORMATARBPROC)    W32_LoadOpenGLProcedure("wglChoosePixelFormatARB");
@@ -28,7 +28,7 @@ W32_LoadWGLFunctions(HINSTANCE h_instance)
     wglSwapIntervalEXT         = (PFNWGLSWAPINTERVALEXTPROC)         W32_LoadOpenGLProcedure("wglSwapIntervalEXT");
 }
 
-internal B32
+function B32
 W32_InitOpenGL(HDC *device_context, HINSTANCE h_instance)
 {
     B32 result = 0;
@@ -114,14 +114,14 @@ W32_InitOpenGL(HDC *device_context, HINSTANCE h_instance)
     return result;
 }
 
-internal void
+function void
 W32_CleanUpOpenGL(HDC *device_context)
 {
     wglMakeCurrent(*device_context, 0);
     wglDeleteContext(global_opengl_render_context);
 }
 
-internal void
+function void
 W32_OpenGLRefreshScreen(void)
 {
     wglSwapLayerBuffers(global_device_context, WGL_SWAP_MAIN_PLANE);

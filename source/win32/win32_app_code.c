@@ -10,7 +10,7 @@ struct W32_AppCode
     FILETIME last_dll_write_time;
 };
 
-internal B32
+function B32
 W32_AppCodeLoad(W32_AppCode *app_code)
 {
     B32 result = 1;
@@ -45,7 +45,7 @@ W32_AppCodeLoad(W32_AppCode *app_code)
     return result;
 }
 
-internal void
+function void
 W32_AppCodeUnload(W32_AppCode *app_code)
 {
     if(app_code->dll)
@@ -59,7 +59,7 @@ W32_AppCodeUnload(W32_AppCode *app_code)
     app_code->Update = ApplicationUpdateStub;
 }
 
-internal void
+function void
 W32_AppCodeUpdate(W32_AppCode *app_code)
 {
     FILETIME last_write_time = W32_GetLastWriteTime(global_app_dll_path);

@@ -3,7 +3,7 @@
 #define M_ARENA_MAX          Gigabytes(4)
 #define M_ARENA_COMMIT_SIZE  Kilobytes(4)
 
-internal M_Arena
+function M_Arena
 M_ArenaInitializeWithAlign(U64 auto_align)
 {
     M_Arena arena = {0};
@@ -15,13 +15,13 @@ M_ArenaInitializeWithAlign(U64 auto_align)
     return arena;
 }
 
-internal M_Arena
+function M_Arena
 M_ArenaInitialize(void)
 {
     return(M_ArenaInitializeWithAlign(8));
 }
 
-internal void *
+function void *
 M_ArenaPush(M_Arena *arena, U64 size)
 {
     void *memory = 0;
@@ -39,7 +39,7 @@ M_ArenaPush(M_Arena *arena, U64 size)
     return memory;
 }
 
-internal void *
+function void *
 M_ArenaPushZero(M_Arena *arena, U64 size)
 {
     void *memory = M_ArenaPush(arena, size);
@@ -47,7 +47,7 @@ M_ArenaPushZero(M_Arena *arena, U64 size)
     return memory;
 }
 
-internal void
+function void
 M_ArenaSetPosBack(M_Arena *arena, U64 pos)
 {
     if (pos <= arena->alloc_position)
@@ -56,7 +56,7 @@ M_ArenaSetPosBack(M_Arena *arena, U64 pos)
     }
 }
 
-internal void
+function void
 M_ArenaSetPosBackByPtr(M_Arena *arena, void *ptr)
 {
     U8 *uptr = (U8*)ptr;
@@ -67,33 +67,33 @@ M_ArenaSetPosBackByPtr(M_Arena *arena, void *ptr)
     }
 }
 
-internal void
+function void
 M_ArenaPop(M_Arena *arena, U64 size)
 {
     size = ClampTop(size, arena->alloc_position);
     arena->alloc_position -= size;
 }
 
-internal void
+function void
 M_ArenaClear(M_Arena *arena)
 {
     M_ArenaPop(arena, arena->alloc_position);
 }
 
-internal void
+function void
 M_ArenaRelease(M_Arena *arena)
 {
     os->Release(arena->base);
 }
 
-internal M_Temp
+function M_Temp
 M_BeginTemp(M_Arena *arena)
 {
     M_Temp temp = {arena, arena->alloc_position};
     return(temp);
 }
 
-internal void
+function void
 M_EndTemp(M_Temp temp)
 {
     M_ArenaSetPosBack(temp.arena, temp.pos);

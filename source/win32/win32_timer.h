@@ -7,6 +7,6 @@ typedef struct W32_Timer
 }
 W32_Timer;
 
-internal B32 W32_TimerInit(W32_Timer *timer);
-internal void W32_TimerBeginFrame(W32_Timer *timer);
-internal void W32_TimerEndFrame(W32_Timer *timer, F64 milliseconds_per_frame);
+function B32 W32_TimerInit(W32_Timer *timer);
+function void W32_TimerBeginFrame(W32_Timer *timer);
+function void W32_TimerEndFrame(W32_Timer *timer, F64 milliseconds_per_frame);

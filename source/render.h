@@ -89,26 +89,26 @@ struct R_Font
 
 ////////////////////////////////
 
-internal void R_Init(M_Arena *arena);
+function void R_Init(M_Arena *arena);
 
-internal void R_Begin(v2 render_size, v3 color);
-internal void R_End(void);
+function void R_Begin(v2 render_size, v3 color);
+function void R_End(void);
 
-internal void R_SetClip(Rect rect);
+function void R_SetClip(Rect rect);
 
-internal void R_InitFont(R_Font *font, String8 ttf_path, S32 size);
-internal void R_InitUserFont(R_Font *font);
-internal void R_ReleaseFont(R_Font *font);
-internal B32  R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
+function void R_InitFont(R_Font *font, String8 ttf_path, S32 size);
+function void R_InitUserFont(R_Font *font);
+function void R_ReleaseFont(R_Font *font);
+function B32  R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
                             U32 xoff, U32 yoff, F32 advance);
-internal void R_FontUpdateMipmaps(R_Font *font);
-internal v2   R_StringDim(F32 scale, String8 string);
-internal v2   R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
+function void R_FontUpdateMipmaps(R_Font *font);
+function v2   R_StringDim(F32 scale, String8 string);
+function v2   R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
 
-internal void R_Rect(Rect rect, v3 color, F32 a);
-internal void R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a);
-internal void R_SelectFont(R_Font *font);
-internal v2   R_String(v2 p, F32 scale, String8 string, v3 color, F32 a);
-internal v2   R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a);
+function void R_Rect(Rect rect, v3 color, F32 a);
+function void R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a);
+function void R_SelectFont(R_Font *font);
+function v2   R_String(v2 p, F32 scale, String8 string, v3 color, F32 a);
+function v2   R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a);
 
 #endif //RENDER_H

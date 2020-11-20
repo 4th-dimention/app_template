@@ -48,7 +48,7 @@ struct W32_SoundOutput
     U32 latency_frame_count;
 };
 
-internal void
+function void
 W32_LoadWASAPI(void)
 {
     HMODULE wasapi_lib = LoadLibraryA("ole32.dll");
@@ -64,7 +64,7 @@ W32_LoadWASAPI(void)
     }
 }
 
-internal void
+function void
 W32_InitWASAPI(W32_SoundOutput *output)
 {
     CoInitializeExProc(0, COINIT_SPEED_OVER_MEMORY);
@@ -172,7 +172,7 @@ W32_InitWASAPI(W32_SoundOutput *output)
     }
 }
 
-internal void
+function void
 W32_CleanUpWASAPI(W32_SoundOutput *output)
 {
     if(output->initialized)
@@ -186,7 +186,7 @@ W32_CleanUpWASAPI(W32_SoundOutput *output)
     }
 }
 
-internal void
+function void
 W32_FillSoundBuffer(U32 samples_to_write, F32 *samples, W32_SoundOutput *output)
 {
     if(samples_to_write)

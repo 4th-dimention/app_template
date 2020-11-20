@@ -97,7 +97,7 @@ global R_GL_Mono_Texture r_gl_mono_texture = {
 
 global R_GL_State *global_render = 0;
 
-internal GLuint
+function GLuint
 _R_CompilerShader(GLenum shader_kind, char *source)
 {
     GLuint shader = glCreateShader(shader_kind);
@@ -115,7 +115,7 @@ _R_CompilerShader(GLenum shader_kind, char *source)
     return(shader);
 }
 
-internal void
+function void
 R_Init(M_Arena *arena)
 {
     global_render = PushArrayZero(arena, R_GL_State, 1);
@@ -217,7 +217,7 @@ R_Init(M_Arena *arena)
     global_render->selected_font_texture = 0;
 }
 
-internal void
+function void
 _R_Flush(void)
 {
     if (global_render->vertex_count > 0)
@@ -228,7 +228,7 @@ _R_Flush(void)
     }
 }
 
-internal R_GL_Vertex*
+function R_GL_Vertex*
 _R_AllocVertices(U64 count)
 {
     Assert(count <= global_render->vertex_max);
@@ -242,7 +242,7 @@ _R_AllocVertices(U64 count)
     return(result);
 }
 
-internal void
+function void
 R_Begin(v2 render_size, v3 color)
 {
     global_render->render_resolution = render_size;
@@ -254,14 +254,14 @@ R_Begin(v2 render_size, v3 color)
     glUniform2f(r_gl_mono_texture.inv_half_dim.v, 2.f/render_size.x, 2.f/render_size.y);
 }
 
-internal void
+function void
 R_End(void)
 {
     _R_Flush();
     os->RefreshScreen();
 }
 
-internal void
+function void
 R_SetClip(Rect rect)
 {
     _R_Flush();
@@ -276,7 +276,7 @@ R_SetClip(Rect rect)
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "ext/stb_truetype.h"
 
-internal void
+function void
 _R_TextureArraySetDataSlice(U32 index, U8 *data, U32 width, U32 height)
 {
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
@@ -285,7 +285,7 @@ _R_TextureArraySetDataSlice(U32 index, U8 *data, U32 width, U32 height)
                     GL_RED, GL_UNSIGNED_BYTE, data);
 }
 
-internal void
+function void
 _R_BaseInitFont(R_Font *font)
 {
     // NOTE(allen): init
@@ -308,7 +308,7 @@ _R_BaseInitFont(R_Font *font)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 3);
     
     // NOTE(allen): full white at slice 0
-    local_persist U8 temp_buffer[32*64] = {0};
+    local U8 temp_buffer[32*64] = {0};
     if (temp_buffer[0] == 0)
     {
         MemorySet(temp_buffer, 0xFF, sizeof(temp_buffer));
@@ -316,14 +316,14 @@ _R_BaseInitFont(R_Font *font)
     _R_TextureArraySetDataSlice(0, temp_buffer, 32, 64);
 }
 
-internal void
+function void
 R_InitUserFont(R_Font *font)
 {
     _R_BaseInitFont(font);
     glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
 }
 
-internal void
+function void
 R_ReleaseFont(R_Font *font)
 {
     font->initialized = 0;
@@ -336,7 +336,7 @@ R_ReleaseFont(R_Font *font)
     }
 }
 
-internal void
+function void
 R_InitFont(R_Font *font, String8 ttf_path, S32 size)
 {
     font->initialized = 0;
@@ -407,7 +407,7 @@ R_InitFont(R_Font *font, String8 ttf_path, S32 size)
     OS_ReleaseScratch(scratch);
 }
 
-internal B32
+function B32
 R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
               U32 xoff, U32 yoff, F32 advance)
 {
@@ -434,7 +434,7 @@ R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
     return(result);
 }
 
-internal void
+function void
 R_FontUpdateMipmaps(R_Font *font)
 {
     if (font != global_render->selected_font)
@@ -449,7 +449,7 @@ R_FontUpdateMipmaps(R_Font *font)
     }
 }
 
-internal void
+function void
 R_SelectFont(R_Font *font)
 {
     if (global_render->selected_font != font)
@@ -461,7 +461,7 @@ R_SelectFont(R_Font *font)
     }
 }
 
-internal v2
+function v2
 R_StringDimWithFont(R_Font *font, F32 scale, String8 string)
 {
     v2 result = {0};
@@ -479,7 +479,7 @@ R_StringDimWithFont(R_Font *font, F32 scale, String8 string)
     return(result);
 }
 
-internal v2  
+function v2  
 R_StringDim(F32 scale, String8 string)
 {
     return(R_StringDimWithFont(global_render->selected_font, scale, string));
@@ -493,7 +493,7 @@ R_StringDim(F32 scale, String8 string)
 #define DupVertUVW(n) vertices[n].uvw = vertices[n - 2].uvw
 #define DupVertC(n) vertices[n].c = vertices[n - 2].c
 
-internal void
+function void
 R_Rect(Rect rect, v3 color, F32 a)
 {
     R_GL_Vertex *vertices = _R_AllocVertices(6);
@@ -512,7 +512,7 @@ R_Rect(Rect rect, v3 color, F32 a)
     }
 }
 
-internal void
+function void
 R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
 {
     Rect outer = rect;
@@ -552,7 +552,7 @@ R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
     }
 }
 
-internal v2
+function v2
 R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
 {
     v2 result = {0};
@@ -613,7 +613,7 @@ R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
     return(result);
 }
 
-internal v2
+function v2
 R_String(v2 p, F32 scale, String8 string, v3 color, F32 a)
 {
     v2 result = {0};

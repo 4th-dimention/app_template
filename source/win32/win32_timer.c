@@ -1,5 +1,5 @@
 
-internal B32
+function B32
 W32_TimerInit(W32_Timer *timer)
 {
     B32 result = 0;
@@ -14,13 +14,13 @@ W32_TimerInit(W32_Timer *timer)
     return result;
 }
 
-internal void
+function void
 W32_TimerBeginFrame(W32_Timer *timer)
 {
     QueryPerformanceCounter(&timer->begin_frame);
 }
 
-internal void
+function void
 W32_TimerEndFrame(W32_Timer *timer, F64 milliseconds_per_frame)
 {
     LARGE_INTEGER end_frame;

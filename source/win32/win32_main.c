@@ -73,7 +73,7 @@ W32_CursorStyle;
 
 global W32_CursorStyle global_cursor_style = 0;
 
-internal v2
+function v2
 W32_GetMousePosition(HWND window)
 {
     v2 result = {0};
@@ -85,12 +85,12 @@ W32_GetMousePosition(HWND window)
     return result;
 }
 
-internal LRESULT
+function LRESULT
 W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
 {
     LRESULT result = 0;
     
-    local_persist B32 mouse_hover_active_because_windows_makes_me_cry = 0;
+    local B32 mouse_hover_active_because_windows_makes_me_cry = 0;
     
     KeyModifiers modifiers = 0;
     if(GetKeyState(VK_CONTROL) & 0x8000)
@@ -358,7 +358,7 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     return result;
 }
 
-internal F32
+function F32
 W32_GetTime(void)
 {
     W32_Timer *timer = &global_win32_timer;
@@ -367,26 +367,26 @@ W32_GetTime(void)
     return global_os.current_time + (F32)(current_time.QuadPart - timer->begin_frame.QuadPart) / (F32)timer->counts_per_second.QuadPart;
 }
 
-internal U64
+function U64
 W32_GetCycles(void)
 {
     U64 result = __rdtsc();
     return result;
 }
 
-internal void
+function void
 W32_ResetCursor(void)
 {
     global_cursor_style = W32_CursorStyle_Normal;
 }
 
-internal void
+function void
 W32_SetCursorToHorizontalResize(void)
 {
     global_cursor_style = W32_CursorStyle_HorizontalResize;
 }
 
-internal void
+function void
 W32_SetCursorToVerticalResize(void)
 {
     global_cursor_style = W32_CursorStyle_VerticalResize;

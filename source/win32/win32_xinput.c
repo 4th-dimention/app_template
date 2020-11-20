@@ -15,7 +15,7 @@ XINPUT_SET_STATE(XInputSetStateStub)
 }
 global XInputSetStateProc *XInputSetStateProcPtr = XInputSetStateStub;
 
-internal void
+function void
 W32_LoadXInput(void)
 {
     XInputSetStateProcPtr = XInputSetStateStub;
@@ -37,7 +37,7 @@ W32_LoadXInput(void)
     }
 }
 
-internal void
+function void
 W32_UpdateXInput(void)
 {
     for(U32 i = 0; i < W32_MAX_GAMEPADS; ++i)

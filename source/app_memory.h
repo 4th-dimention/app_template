@@ -24,17 +24,17 @@ struct M_Temp
 #define PushArray(arena,T,c) ( (T*)(M_ArenaPush((arena),sizeof(T)*(c))) )
 #define PushArrayZero(arena,T,c) ( (T*)(M_ArenaPushZero((arena),sizeof(T)*(c))) )
 
-internal M_Arena M_ArenaInitializeWithAlign(U64 auto_align);
-internal M_Arena M_ArenaInitialize(void);
-internal void    M_ArenaRelease(M_Arena *arena);
+function M_Arena M_ArenaInitializeWithAlign(U64 auto_align);
+function M_Arena M_ArenaInitialize(void);
+function void    M_ArenaRelease(M_Arena *arena);
 
-internal void* M_ArenaPush(M_Arena *arena, U64 size);
-internal void* M_ArenaPushZero(M_Arena *arena, U64 size);
-internal void  M_ArenaSetPosBack(M_Arena *arena, U64 pos);
-internal void  M_ArenaSetPosBackByPtr(M_Arena *arena, void *ptr);
-internal void  M_ArenaPop(M_Arena *arena, U64 size);
-internal void  M_ArenaClear(M_Arena *arena);
+function void* M_ArenaPush(M_Arena *arena, U64 size);
+function void* M_ArenaPushZero(M_Arena *arena, U64 size);
+function void  M_ArenaSetPosBack(M_Arena *arena, U64 pos);
+function void  M_ArenaSetPosBackByPtr(M_Arena *arena, void *ptr);
+function void  M_ArenaPop(M_Arena *arena, U64 size);
+function void  M_ArenaClear(M_Arena *arena);
 
-internal M_Temp M_BeginTemp(M_Arena *arena);
-internal void   M_EndTemp(M_Temp temp);
+function M_Temp M_BeginTemp(M_Arena *arena);
+function void   M_EndTemp(M_Temp temp);
 

@@ -1,10 +1,10 @@
 ////////////////////////////////
 // NOTE(allen): Events
 
-internal String8
+function String8
 KeyName(Key index)
 {
-    local_persist char *strings[Key_Max] =
+    local char *strings[Key_Max] =
     {
 #define Key(name, str) str,
 #include "os_key_list.inc"
@@ -21,10 +21,10 @@ KeyName(Key index)
     return result;
 }
 
-internal String8
+function String8
 GamepadButtonName(GamepadButton index)
 {
-    local_persist char *strings[GamepadButton_Max] =
+    local char *strings[GamepadButton_Max] =
     {
 #define GamepadButton(name, str) str,
 #include "os_gamepad_button_list.inc"
@@ -41,13 +41,13 @@ GamepadButtonName(GamepadButton index)
     return result;
 }
 
-internal B32
+function B32
 OS_EventIsMouse(OS_Event *event)
 {
     return event->type > OS_EventType_MouseStart && event->type < OS_EventType_MouseEnd;
 }
 
-internal B32
+function B32
 OS_CompareEvents(OS_Event a, OS_Event b)
 {
     B32 result = 0;
@@ -63,7 +63,7 @@ OS_CompareEvents(OS_Event a, OS_Event b)
     return result;
 }
 
-internal OS_Event
+function OS_Event
 OS_KeyPressEvent(Key key, KeyModifiers modifiers)
 {
     OS_Event event =
@@ -75,7 +75,7 @@ OS_KeyPressEvent(Key key, KeyModifiers modifiers)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_KeyReleaseEvent(Key key, KeyModifiers modifiers)
 {
     OS_Event event =
@@ -87,7 +87,7 @@ OS_KeyReleaseEvent(Key key, KeyModifiers modifiers)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_CharacterInputEvent(U64 character)
 {
     OS_Event event =
@@ -98,7 +98,7 @@ OS_CharacterInputEvent(U64 character)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_MouseMoveEvent(v2 position, v2 delta)
 {
     OS_Event event =
@@ -110,7 +110,7 @@ OS_MouseMoveEvent(v2 position, v2 delta)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_MousePressEvent(MouseButton button, v2 position)
 {
     OS_Event event =
@@ -122,7 +122,7 @@ OS_MousePressEvent(MouseButton button, v2 position)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_MouseReleaseEvent(MouseButton mouse_button, v2 position)
 {
     OS_Event event =
@@ -134,7 +134,7 @@ OS_MouseReleaseEvent(MouseButton mouse_button, v2 position)
     return event;
 }
 
-internal OS_Event
+function OS_Event
 OS_MouseScrollEvent(v2 delta, KeyModifiers modifiers)
 {
     OS_Event event =
@@ -146,7 +146,7 @@ OS_MouseScrollEvent(v2 delta, KeyModifiers modifiers)
     return event;
 }
 
-internal B32
+function B32
 OS_GetNextEvent(OS_Event **event)
 {
     B32 result = 0;
@@ -170,28 +170,28 @@ OS_GetNextEvent(OS_Event **event)
     return result;
 }
 
-internal void
+function void
 OS_EatEvent(OS_Event *event)
 {
     event->type = OS_EventType_Null;
 }
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.
-internal void
+function void
 OS_BeginFrame(void)
 {
     os->pump_events = 0;
 }
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.
-internal void
+function void
 OS_EndFrame(void)
 {
     os->current_time += 1.f / os->target_frames_per_second;
 }
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.
-internal void
+function void
 OS_PushEvent(OS_Event event)
 {
     Assert(os != 0);
@@ -204,7 +204,7 @@ OS_PushEvent(OS_Event event)
 ////////////////////////////////
 // NOTE(allen): Thread Context
 
-internal OS_ArenaNode*
+function OS_ArenaNode*
 _OS_GetFreeScratch(OS_ThreadContext *tctx)
 {
     OS_ArenaNode *usable_node = tctx->free;
@@ -214,7 +214,7 @@ _OS_GetFreeScratch(OS_ThreadContext *tctx)
     return(usable_node);
 }
 
-internal M_Arena*
+function M_Arena*
 _OS_MarkArenaRestore(OS_ArenaNode *node)
 {
     M_Arena *result = &node->arena;
@@ -224,7 +224,7 @@ _OS_MarkArenaRestore(OS_ArenaNode *node)
     return(result);
 }
 
-internal M_Arena*
+function M_Arena*
 OS_GetScratch(void)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();
@@ -236,7 +236,7 @@ OS_GetScratch(void)
     return(_OS_MarkArenaRestore(usable_node));
 }
 
-internal M_Arena*
+function M_Arena*
 OS_GetScratch1(M_Arena *a1)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();
@@ -258,7 +258,7 @@ OS_GetScratch1(M_Arena *a1)
     return(_OS_MarkArenaRestore(usable_node));
 }
 
-internal M_Arena*
+function M_Arena*
 OS_GetScratch2(M_Arena *a1, M_Arena *a2)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();
@@ -280,7 +280,7 @@ OS_GetScratch2(M_Arena *a1, M_Arena *a2)
     return(_OS_MarkArenaRestore(usable_node));
 }
 
-internal void
+function void
 OS_ReleaseScratch(M_Arena *arena)
 {
     OS_ArenaNode *node = CastFromMember(OS_ArenaNode, arena, arena);
@@ -301,7 +301,7 @@ OS_ReleaseScratch(M_Arena *arena)
     }
 }
 
-internal void
+function void
 _OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();
@@ -311,7 +311,7 @@ _OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 
 #define OS_ThreadSaveFileLine() _OS_ThreadSaveFileLine(__FILE__, __LINE__)
 
-internal OS_File_Line
+function OS_File_Line
 OS_ThreadRememberFileLine(void)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();

@@ -54,7 +54,7 @@ APP_UPDATE
     for (OS_Event *event = 0;
          OS_GetNextEvent(&event);)
     {
-        if (event->type == OS_EventType_WindowClose)
+        if (event->kind == OS_EventKind_WindowClose)
         {
             os->Quit();
         }

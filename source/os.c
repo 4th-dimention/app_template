@@ -44,14 +44,14 @@ GamepadButtonName(GamepadButton index)
 function B32
 OS_EventIsMouse(OS_Event *event)
 {
-    return event->type > OS_EventType_MouseStart && event->type < OS_EventType_MouseEnd;
+    return event->kind > OS_EventKind_MouseStart && event->kind < OS_EventKind_MouseEnd;
 }
 
 function B32
 OS_CompareEvents(OS_Event a, OS_Event b)
 {
     B32 result = 0;
-    if(a.type == b.type &&
+    if(a.kind == b.kind &&
        a.key == b.key &&
        a.mouse_button == b.mouse_button &&
        a.gamepad_button == b.gamepad_button &&
@@ -68,7 +68,7 @@ OS_KeyPressEvent(Key key, KeyModifiers modifiers)
 {
     OS_Event event =
     {
-        .type = OS_EventType_KeyPress,
+        .kind = OS_EventKind_KeyPress,
     };
     event.key = key;
     event.modifiers = modifiers;
@@ -80,7 +80,7 @@ OS_KeyReleaseEvent(Key key, KeyModifiers modifiers)
 {
     OS_Event event =
     {
-        .type = OS_EventType_KeyRelease,
+        .kind = OS_EventKind_KeyRelease,
     };
     event.key = key;
     event.modifiers = modifiers;
@@ -92,7 +92,7 @@ OS_CharacterInputEvent(U64 character)
 {
     OS_Event event =
     {
-        .type = OS_EventType_CharacterInput,
+        .kind = OS_EventKind_CharacterInput,
     };
     event.character = character;
     return event;
@@ -103,7 +103,7 @@ OS_MouseMoveEvent(V2F32 position, V2F32 delta)
 {
     OS_Event event =
     {
-        .type = OS_EventType_MouseMove,
+        .kind = OS_EventKind_MouseMove,
     };
     event.position = position;
     event.delta = delta;
@@ -115,7 +115,7 @@ OS_MousePressEvent(MouseButton button, V2F32 position)
 {
     OS_Event event =
     {
-        .type = OS_EventType_MousePress,
+        .kind = OS_EventKind_MousePress,
     };
     event.mouse_button = button;
     event.position = position;
@@ -127,7 +127,7 @@ OS_MouseReleaseEvent(MouseButton mouse_button, V2F32 position)
 {
     OS_Event event =
     {
-        .type = OS_EventType_MouseRelease,
+        .kind = OS_EventKind_MouseRelease,
     };
     event.mouse_button = mouse_button;
     event.position = position;
@@ -139,7 +139,7 @@ OS_MouseScrollEvent(V2F32 delta, KeyModifiers modifiers)
 {
     OS_Event event =
     {
-        .type = OS_EventType_MouseScroll,
+        .kind = OS_EventKind_MouseScroll,
     };
     event.scroll = delta;
     event.modifiers = modifiers;
@@ -151,7 +151,7 @@ OS_WindowClose(void)
 {
     OS_Event event = 
     {
-        .type = OS_EventType_WindowClose,
+        .kind = OS_EventKind_WindowClose,
     };
     return(event);
 }
@@ -169,7 +169,7 @@ OS_GetNextEvent(OS_Event **event)
     }
     for(U32 i = start_index; i < os->event_count; ++i)
     {
-        if(os->events[i].type != OS_EventType_Null)
+        if(os->events[i].kind != OS_EventKind_Null)
         {
             new_event = os->events+i;
             break;
@@ -183,7 +183,7 @@ OS_GetNextEvent(OS_Event **event)
 function void
 OS_EatEvent(OS_Event *event)
 {
-    event->type = OS_EventType_Null;
+    event->kind = OS_EventKind_Null;
 }
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.

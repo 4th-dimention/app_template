@@ -1,45 +1,5 @@
-
-//~ NOTE(rjf): Keys
-
-typedef enum Key
-{
-#define Key(name, str) Key_##name,
-#include "os_key_list.inc"
-#undef Key
-    Key_Max
-}
-Key;
-
-typedef U32 KeyModifiers;
-enum
-{
-    KeyModifier_Ctrl  = (1<<0),
-    KeyModifier_Shift = (1<<1),
-    KeyModifier_Alt   = (1<<2),
-};
-
-//~ NOTE(rjf): Mouse
-
-typedef enum MouseButton
-{
-    MouseButton_Left,
-    MouseButton_Right,
-    MouseButton_Middle,
-}
-MouseButton;
-
-//~ NOTE(rjf): Gamepads
-
-typedef enum GamepadButton
-{
-#define GamepadButton(name, str) GamepadButton_##name,
-#include "os_gamepad_button_list.inc"
-#undef GamepadButton
-    GamepadButton_Max
-}
-GamepadButton;
-
-//~ NOTE(rjf): Platform Directory Listing
+////////////////////////////////
+// NOTE(allen): Directory Listing Types
 
 #define OS_DirectoryList_IncludeDirectories (1<<0)
 #define OS_DirectoryList_IncludeExtensions  (1<<1)
@@ -69,48 +29,86 @@ struct OS_DirectoryList
     OS_DirectoryItemChunk *first_chunk;
 };
 
-//~ NOTE(rjf): Events
+////////////////////////////////
+// NOTE(allen): Event Codes
 
-typedef enum OS_EventType
+typedef enum Key
 {
-    OS_EventType_Null,
+#define Key(name, str) Key_##name,
+#include "os_key_list.inc"
+#undef Key
+    Key_Max
+}
+Key;
+
+typedef U32 KeyModifiers;
+enum
+{
+    KeyModifier_Ctrl  = (1<<0),
+    KeyModifier_Shift = (1<<1),
+    KeyModifier_Alt   = (1<<2),
+};
+
+typedef enum MouseButton
+{
+    MouseButton_Left,
+    MouseButton_Right,
+    MouseButton_Middle,
+}
+MouseButton;
+
+typedef enum GamepadButton
+{
+#define GamepadButton(name, str) GamepadButton_##name,
+#include "os_gamepad_button_list.inc"
+#undef GamepadButton
+    GamepadButton_Max
+}
+GamepadButton;
+
+////////////////////////////////
+// NOTE(allen): Events
+
+typedef enum OS_EventKind
+{
+    OS_EventKind_Null,
     
     // NOTE(rjf): Window
-    OS_EventType_WindowClose,
+    OS_EventKind_WindowClose,
     
     // NOTE(rjf): Keyboard
-    OS_EventType_KeyStart,
-    OS_EventType_CharacterInput,
-    OS_EventType_KeyPress,
-    OS_EventType_KeyRelease,
-    OS_EventType_KeyEnd,
+    OS_EventKind_KeyStart,
+    OS_EventKind_CharacterInput,
+    OS_EventKind_KeyPress,
+    OS_EventKind_KeyRelease,
+    OS_EventKind_KeyEnd,
     
     // NOTE(rjf): Mouse
-    OS_EventType_MouseStart,
-    OS_EventType_MousePress,
-    OS_EventType_MouseRelease,
-    OS_EventType_MouseMove,
-    OS_EventType_MouseScroll,
-    OS_EventType_MouseEnd,
+    OS_EventKind_MouseStart,
+    OS_EventKind_MousePress,
+    OS_EventKind_MouseRelease,
+    OS_EventKind_MouseMove,
+    OS_EventKind_MouseScroll,
+    OS_EventKind_MouseEnd,
     
     // NOTE(rjf): Gamepads
-    OS_EventType_GamepadStart,
-    OS_EventType_GamepadConnect,
-    OS_EventType_GamepadDisconnect,
-    OS_EventType_GamepadButtonPress,
-    OS_EventType_GamepadButtonRelease,
-    OS_EventType_GamepadJoystickMove,
-    OS_EventType_GamepadTrigger,
-    OS_EventType_GamepadEnd,
+    OS_EventKind_GamepadStart,
+    OS_EventKind_GamepadConnect,
+    OS_EventKind_GamepadDisconnect,
+    OS_EventKind_GamepadButtonPress,
+    OS_EventKind_GamepadButtonRelease,
+    OS_EventKind_GamepadJoystickMove,
+    OS_EventKind_GamepadTrigger,
+    OS_EventKind_GamepadEnd,
     
-    OS_EventType_Max,
+    OS_EventKind_Max,
 }
-OS_EventType;
+OS_EventKind;
 
 typedef struct OS_Event OS_Event;
 struct OS_Event
 {
-    OS_EventType type;
+    OS_EventKind kind;
     Key key;
     GamepadButton gamepad_button;
     MouseButton mouse_button;
@@ -191,31 +189,31 @@ struct OS_State
     U32 samples_per_second;
     
     // NOTE(rjf): Functions
-    void (*Quit)(void);
+    void  (*Quit)(void);
     
-    void *(*Reserve)(U64 size);
-    void (*Release)(void *memory);
-    void (*Commit)(void *memory, U64 size);
-    void (*Decommit)(void *memory, U64 size);
-    void (*OutputError)(char *error_type, char *error_format, ...);
-    B32  (*SaveToFile)(String8 path, void *data, U64 data_len);
-    void (*AppendToFile)(String8 path, void *data, U64 data_len);
-    void (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, U64 *data_len);
-    char *(*LoadEntireFileAndNullTerminate)(M_Arena *arena, String8 path);
-    void (*DeleteFile)(String8 path);
-    B32 (*MakeDirectory)(String8 path);
-    B32 (*DoesFileExist)(String8 path);
-    B32 (*DoesDirectoryExist)(String8 path);
-    B32 (*CopyFile)(String8 dest, String8 source);
+    void* (*Reserve)(U64 size);
+    void  (*Release)(void *memory);
+    void  (*Commit)(void *memory, U64 size);
+    void  (*Decommit)(void *memory, U64 size);
+    void  (*OutputError)(char *error_type, char *error_format, ...);
+    B32   (*SaveToFile)(String8 path, void *data, U64 data_len);
+    void  (*AppendToFile)(String8 path, void *data, U64 data_len);
+    void  (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, U64 *data_len);
+    char* (*LoadEntireFileAndNullTerminate)(M_Arena *arena, String8 path);
+    void  (*DeleteFile)(String8 path);
+    B32   (*MakeDirectory)(String8 path);
+    B32   (*DoesFileExist)(String8 path);
+    B32   (*DoesDirectoryExist)(String8 path);
+    B32   (*CopyFile)(String8 dest, String8 source);
     OS_DirectoryList (*ListDirectory)(M_Arena *arena, String8 path, S32 flags);
-    F32 (*GetTime)(void);
-    U64 (*GetCycles)(void);
-    void (*ResetCursor)(void);
-    void (*SetCursorToHorizontalResize)(void);
-    void (*SetCursorToVerticalResize)(void);
-    void (*SetCursorToIBar)(void);
-    void (*RefreshScreen)(void);
-    void *(*LoadOpenGLProcedure)(char *name);
+    F32   (*GetTime)(void);
+    U64   (*GetCycles)(void);
+    void  (*ResetCursor)(void);
+    void  (*SetCursorToHorizontalResize)(void);
+    void  (*SetCursorToVerticalResize)(void);
+    void  (*SetCursorToIBar)(void);
+    void  (*RefreshScreen)(void);
+    void* (*LoadOpenGLProcedure)(char *name);
     OS_ThreadContext *(*GetThreadContext)(void);
     
     String8 (*DialogueSavePath)(M_Arena *arena, String8 *fixed_extension);

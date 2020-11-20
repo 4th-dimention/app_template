@@ -835,12 +835,11 @@ RectOverlaps(RectF32 a, RectF32 b)
 }
 
 function V2F32
-RectGetDim(RectF32 rect)
+RectDim(RectF32 rect)
 {
     V2F32 p = {rect.x1 - rect.x0, rect.y1 - rect.y0};
     return(p);
 }
-#define RectSize(r) RectGetDim(r)
 
 function V2F32
 RectGetCenter(RectF32 rect)

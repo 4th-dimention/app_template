@@ -32,6 +32,8 @@ struct W32_GamepadInput
 };
 W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 
+global HWND w32_window_handle;
+
 // NOTE(allen): Timer
 global B32 w32_sleep_is_granular = 0;
 global LARGE_INTEGER w32_counts_per_second = {0};
@@ -157,43 +159,6 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
         {
             S16 wheel_delta = HIWORD(w_param);
             OS_PushEvent(OS_MouseScrollEvent(v2F32((F32)wheel_delta, 0), modifiers));
-        }break;
-        
-        case WM_SETCURSOR:
-        {
-            
-            if(global_os.mouse_position.x >= 1 && global_os.mouse_position.x <= global_os.window_size.x-1 &&
-               global_os.mouse_position.y >= 1 && global_os.mouse_position.y <= global_os.window_size.y-1 && mouse_hover_active_because_windows_makes_me_cry)
-            {
-                switch(global_cursor_style)
-                {
-                    case W32_CursorStyle_HorizontalResize:
-                    {
-                        SetCursor(LoadCursorA(0, IDC_SIZEWE));
-                        break;
-                    }
-                    case W32_CursorStyle_VerticalResize:
-                    {
-                        SetCursor(LoadCursorA(0, IDC_SIZENS));
-                        break;
-                    }
-                    case W32_CursorStyle_IBar:
-                    {
-                        SetCursor(LoadCursorA(0, IDC_IBEAM));
-                        break;
-                    }
-                    case W32_CursorStyle_Normal:
-                    {
-                        SetCursor(LoadCursorA(0, IDC_ARROW));
-                        break;
-                    }
-                    default: break;
-                }
-            }
-            else
-            {
-                result = DefWindowProc(window_handle, message, w_param, l_param);
-            }
         }break;
         
         case WM_SYSKEYDOWN: case WM_SYSKEYUP:
@@ -431,6 +396,19 @@ OS_NextFrameFullScreen(B32 full_screen){
     w32_next_frame_full_screen = full_screen;
 }
 
+function RectF32
+OS_WindowGetRect(void){
+    POINT shift;
+    ClientToScreen(w32_window_handle, &shift);
+    
+    RECT rect;
+    GetClientRect(w32_window_handle, &rect);
+    OffsetRect(&rect, shift.x, shift.y);
+    
+    RectF32 result = MakeRect(rect.left, rect.top, rect.right, rect.bottom);
+    return(result);
+}
+
 int
 WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_show_cmd)
 {
@@ -472,6 +450,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         goto quit;
     }
     
+    w32_window_handle = window_handle;
+    
     // NOTE(rjf): Sound initialization
     {
         win32_sound_output.channels = 2;
@@ -496,9 +476,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     // NOTE(rjf): Initialize platform
     {
         os = &global_os;
-        
-        global_os.window_size.x             = os_default_window_width;
-        global_os.window_size.y             = os_default_window_height;
         
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
@@ -544,14 +521,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
                 TranslateMessage(&message);
                 DispatchMessage(&message);
             }
-        }
-        
-        // NOTE(rjf): Update window size
-        {
-            RECT client_rect;
-            GetClientRect(window_handle, &client_rect);
-            global_os.window_size.x = client_rect.right - client_rect.left;
-            global_os.window_size.y = client_rect.bottom - client_rect.top;
         }
         
         // NOTE(rjf): Update input data (post-event)

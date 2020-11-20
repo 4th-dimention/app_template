@@ -167,9 +167,6 @@ struct OS_ThreadContext
 typedef struct OS_State OS_State;
 struct OS_State
 {
-    // NOTE(rjf): Options
-    V2S32 window_size;
-    
     // NOTE(rjf): Event Queue and Input Data
     V2F32 mouse_position;
     U64 event_count;
@@ -189,6 +186,7 @@ global OS_State *os = 0;
 void  OS_Quit(void);
 void  OS_NextFrameImmediate(B32 immediate);
 void  OS_NextFrameFullScreen(B32 full_screen);
+RectF32 OS_WindowGetRect(void);
 
 void* OS_Reserve(U64 size);
 void  OS_Release(void *memory);

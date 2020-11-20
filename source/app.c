@@ -60,7 +60,8 @@ void APP_Update(void)
         }
     }
     
-    V2F32 window_size = v2F32(os->window_size.x, os->window_size.y);
+    RectF32 window_rect = OS_WindowGetRect();
+    V2F32 window_size = RectDim(window_rect);
     R_Begin(window_size, cl_black);
     
     R_Rect(MakeRect(70, 70, 530, 530), cl_blue, 1.f);

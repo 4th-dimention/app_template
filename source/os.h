@@ -172,7 +172,6 @@ struct OS_State
     B32 vsync;
     B32 fullscreen;
     V2S32 window_size;
-    F32 current_time;
     B32 wait_for_events_to_update;
     B32 pump_events;
     
@@ -238,7 +237,6 @@ function OS_Event OS_WindowClose(void);
 function B32 OS_GetNextEvent(OS_Event * * event);
 function void OS_EatEvent(OS_Event * event);
 function void OS_BeginFrame(void);
-function void OS_EndFrame(void);
 function void OS_PushEvent(OS_Event event);
 function M_Arena * OS_GetScratch(void);
 function M_Arena * OS_GetScratch1(M_Arena * a1);

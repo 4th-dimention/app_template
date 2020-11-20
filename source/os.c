@@ -195,13 +195,6 @@ OS_BeginFrame(void)
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.
 function void
-OS_EndFrame(void)
-{
-    //os->current_time += 1.f / os->target_frames_per_second;
-}
-
-// NOTE(rjf): Only called by platform layers. Do not call in app.
-function void
 OS_PushEvent(OS_Event event)
 {
     Assert(os != 0);

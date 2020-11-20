@@ -33,7 +33,6 @@ struct W32_GamepadInput
 W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 
 // NOTE(allen): Timer
-
 global B32 w32_sleep_is_granular = 0;
 global LARGE_INTEGER w32_counts_per_second = {0};
 
@@ -490,7 +489,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.fullscreen                = 0;
         global_os.window_size.x             = os_default_window_width;
         global_os.window_size.y             = os_default_window_height;
-        global_os.current_time              = 0.f;
         
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
@@ -596,9 +594,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
                 W32_FillSoundBuffer(global_os.sample_count_to_output, global_os.sample_out, &win32_sound_output);
             }
         }
-        
-        // NOTE(rjf): End Frame
-        OS_EndFrame();
         
         // NOTE(allen): Rest
         {

@@ -88,7 +88,7 @@ OS_KeyReleaseEvent(Key key, KeyModifiers modifiers)
 }
 
 function OS_Event
-OS_CharacterInputEvent(U64 character)
+OS_CharacterInputEvent(U32 character)
 {
     OS_Event event =
     {

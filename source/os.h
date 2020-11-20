@@ -114,7 +114,7 @@ struct OS_Event
     MouseButton mouse_button;
     KeyModifiers modifiers;
     S32 gamepad_index;
-    U64 character;
+    U32 character;
     V2F32 position;
     V2F32 delta;
     V2F32 scroll;

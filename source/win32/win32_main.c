@@ -106,270 +106,290 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
         modifiers |= KeyModifier_Alt;
     }
     
-    if(message == WM_CLOSE || message == WM_DESTROY || message == WM_QUIT)
+    switch (message)
     {
-        global_os.quit = 1;
-        result = 0;
-    }
-    else if(message == WM_LBUTTONDOWN)
-    {
-        OS_PushEvent(OS_MousePressEvent(MouseButton_Left, global_os.mouse_position));
-    }
-    else if(message == WM_LBUTTONUP)
-    {
-        OS_PushEvent(OS_MouseReleaseEvent(MouseButton_Left, global_os.mouse_position));
-    }
-    else if(message == WM_RBUTTONDOWN)
-    {
-        OS_PushEvent(OS_MousePressEvent(MouseButton_Right, global_os.mouse_position));
-    }
-    else if(message == WM_RBUTTONUP)
-    {
-        OS_PushEvent(OS_MouseReleaseEvent(MouseButton_Right, global_os.mouse_position));
-    }
-    else if(message == WM_MOUSEMOVE)
-    {
-        S16 x_position = LOWORD(l_param);
-        S16 y_position = HIWORD(l_param);
-        V2F32 last_mouse = global_os.mouse_position;
-        global_os.mouse_position = W32_GetMousePosition(window_handle);
-        OS_PushEvent(OS_MouseMoveEvent(global_os.mouse_position,
-                                       v2F32(global_os.mouse_position.x - last_mouse.x,
-                                             global_os.mouse_position.y - last_mouse.y)));
-        
-        if(mouse_hover_active_because_windows_makes_me_cry == 0)
+        case WM_CLOSE: case WM_DESTROY: case WM_QUIT:
         {
-            mouse_hover_active_because_windows_makes_me_cry = 1;
-            TRACKMOUSEEVENT track_mouse_event = {0};
-            {
-                track_mouse_event.cbSize = sizeof(track_mouse_event);
-                track_mouse_event.dwFlags = TME_LEAVE;
-                track_mouse_event.hwndTrack = window_handle;
-                track_mouse_event.dwHoverTime = HOVER_DEFAULT;
-            }
-            TrackMouseEvent(&track_mouse_event);
-        }
-    }
-    else if(message == WM_MOUSELEAVE)
-    {
-        mouse_hover_active_because_windows_makes_me_cry = 0;
-    }
-    else if(message == WM_MOUSEWHEEL)
-    {
-        S16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2F32(0, (F32)wheel_delta), modifiers));
-    }
-    else if(message == WM_MOUSEHWHEEL)
-    {
-        S16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2F32((F32)wheel_delta, 0), modifiers));
-    }
-    else if(message == WM_SETCURSOR)
-    {
+            global_os.quit = 1;
+            result = 0;
+        }break;
         
-        if(global_os.mouse_position.x >= 1 && global_os.mouse_position.x <= global_os.window_size.x-1 &&
-           global_os.mouse_position.y >= 1 && global_os.mouse_position.y <= global_os.window_size.y-1 && mouse_hover_active_because_windows_makes_me_cry)
+        case WM_LBUTTONDOWN:
         {
-            switch(global_cursor_style)
+            OS_PushEvent(OS_MousePressEvent(MouseButton_Left, global_os.mouse_position));
+        }break;
+        
+        case WM_LBUTTONUP:
+        {
+            OS_PushEvent(OS_MouseReleaseEvent(MouseButton_Left, global_os.mouse_position));
+        }break;
+        
+        case WM_RBUTTONDOWN:
+        {
+            OS_PushEvent(OS_MousePressEvent(MouseButton_Right, global_os.mouse_position));
+        }break;
+        
+        case WM_RBUTTONUP:
+        {
+            OS_PushEvent(OS_MouseReleaseEvent(MouseButton_Right, global_os.mouse_position));
+        }break;
+        
+        case WM_MOUSEMOVE:
+        {
+            S16 x_position = LOWORD(l_param);
+            S16 y_position = HIWORD(l_param);
+            V2F32 last_mouse = global_os.mouse_position;
+            global_os.mouse_position = W32_GetMousePosition(window_handle);
+            OS_PushEvent(OS_MouseMoveEvent(global_os.mouse_position,
+                                           v2F32(global_os.mouse_position.x - last_mouse.x,
+                                                 global_os.mouse_position.y - last_mouse.y)));
+            
+            if(mouse_hover_active_because_windows_makes_me_cry == 0)
             {
-                case W32_CursorStyle_HorizontalResize:
+                mouse_hover_active_because_windows_makes_me_cry = 1;
+                TRACKMOUSEEVENT track_mouse_event = {0};
                 {
-                    SetCursor(LoadCursorA(0, IDC_SIZEWE));
-                    break;
+                    track_mouse_event.cbSize = sizeof(track_mouse_event);
+                    track_mouse_event.dwFlags = TME_LEAVE;
+                    track_mouse_event.hwndTrack = window_handle;
+                    track_mouse_event.dwHoverTime = HOVER_DEFAULT;
                 }
-                case W32_CursorStyle_VerticalResize:
-                {
-                    SetCursor(LoadCursorA(0, IDC_SIZENS));
-                    break;
-                }
-                case W32_CursorStyle_IBar:
-                {
-                    SetCursor(LoadCursorA(0, IDC_IBEAM));
-                    break;
-                }
-                case W32_CursorStyle_Normal:
-                {
-                    SetCursor(LoadCursorA(0, IDC_ARROW));
-                    break;
-                }
-                default: break;
+                TrackMouseEvent(&track_mouse_event);
             }
-        }
-        else
+        }break;
+        
+        case WM_MOUSELEAVE:
+        {
+            mouse_hover_active_because_windows_makes_me_cry = 0;
+        }break;
+        
+        case WM_MOUSEWHEEL:
+        {
+            S16 wheel_delta = HIWORD(w_param);
+            OS_PushEvent(OS_MouseScrollEvent(v2F32(0, (F32)wheel_delta), modifiers));
+        }break;
+        
+        case WM_MOUSEHWHEEL:
+        {
+            S16 wheel_delta = HIWORD(w_param);
+            OS_PushEvent(OS_MouseScrollEvent(v2F32((F32)wheel_delta, 0), modifiers));
+        }break;
+        
+        case WM_SETCURSOR:
+        {
+            
+            if(global_os.mouse_position.x >= 1 && global_os.mouse_position.x <= global_os.window_size.x-1 &&
+               global_os.mouse_position.y >= 1 && global_os.mouse_position.y <= global_os.window_size.y-1 && mouse_hover_active_because_windows_makes_me_cry)
+            {
+                switch(global_cursor_style)
+                {
+                    case W32_CursorStyle_HorizontalResize:
+                    {
+                        SetCursor(LoadCursorA(0, IDC_SIZEWE));
+                        break;
+                    }
+                    case W32_CursorStyle_VerticalResize:
+                    {
+                        SetCursor(LoadCursorA(0, IDC_SIZENS));
+                        break;
+                    }
+                    case W32_CursorStyle_IBar:
+                    {
+                        SetCursor(LoadCursorA(0, IDC_IBEAM));
+                        break;
+                    }
+                    case W32_CursorStyle_Normal:
+                    {
+                        SetCursor(LoadCursorA(0, IDC_ARROW));
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            else
+            {
+                result = DefWindowProc(window_handle, message, w_param, l_param);
+            }
+        }break;
+        
+        case WM_SYSKEYDOWN: case WM_SYSKEYUP:
+        case WM_KEYDOWN: case WM_KEYUP:
+        {
+            U64 vkey_code = w_param;
+            S8 was_down = !!(l_param & (1 << 30));
+            S8 is_down =   !(l_param & (1 << 31));
+            
+            U64 key_input = 0;
+            
+            if((vkey_code >= 'A' && vkey_code <= 'Z') ||
+               (vkey_code >= '0' && vkey_code <= '9'))
+            {
+                // NOTE(rjf): Letter/number buttons
+                key_input = (vkey_code >= 'A' && vkey_code <= 'Z') ? Key_A + (vkey_code-'A') : Key_0 + (vkey_code-'0');
+            }
+            else
+            {
+                if(vkey_code == VK_ESCAPE)
+                {
+                    key_input = Key_Esc;
+                }
+                else if(vkey_code >= VK_F1 && vkey_code <= VK_F12)
+                {
+                    key_input = Key_F1 + vkey_code - VK_F1;
+                }
+                else if(vkey_code == VK_OEM_3)
+                {
+                    key_input = Key_GraveAccent;
+                }
+                else if(vkey_code == VK_OEM_MINUS)
+                {
+                    key_input = Key_Minus;
+                }
+                else if(vkey_code == VK_OEM_PLUS)
+                {
+                    key_input = Key_Equal;
+                }
+                else if(vkey_code == VK_BACK)
+                {
+                    key_input = Key_Backspace;
+                }
+                else if(vkey_code == VK_TAB)
+                {
+                    key_input = Key_Tab;
+                }
+                else if(vkey_code == VK_SPACE)
+                {
+                    key_input = Key_Space;
+                }
+                else if(vkey_code == VK_RETURN)
+                {
+                    key_input = Key_Enter;
+                }
+                else if(vkey_code == VK_CONTROL)
+                {
+                    key_input = Key_Ctrl;
+                    modifiers &= ~KeyModifier_Ctrl;
+                }
+                else if(vkey_code == VK_SHIFT)
+                {
+                    key_input = Key_Shift;
+                    modifiers &= ~KeyModifier_Shift;
+                }
+                else if(vkey_code == VK_MENU)
+                {
+                    key_input = Key_Alt;
+                    modifiers &= ~KeyModifier_Alt;
+                }
+                else if(vkey_code == VK_UP)
+                {
+                    key_input = Key_Up;
+                }
+                else if(vkey_code == VK_LEFT)
+                {
+                    key_input = Key_Left;
+                }
+                else if(vkey_code == VK_DOWN)
+                {
+                    key_input = Key_Down;
+                }
+                else if(vkey_code == VK_RIGHT)
+                {
+                    key_input = Key_Right;
+                }
+                else if(vkey_code == VK_DELETE)
+                {
+                    key_input = Key_Delete;
+                }
+                else if(vkey_code == VK_PRIOR)
+                {
+                    key_input = Key_PageUp;
+                }
+                else if(vkey_code == VK_NEXT)
+                {
+                    key_input = Key_PageDown;
+                }
+                else if(vkey_code == VK_HOME)
+                {
+                    key_input = Key_Home;
+                }
+                else if(vkey_code == VK_END)
+                {
+                    key_input = Key_End;
+                }
+                else if(vkey_code == VK_OEM_2)
+                {
+                    key_input = Key_ForwardSlash;
+                }
+                else if(vkey_code == VK_OEM_PERIOD)
+                {
+                    key_input = Key_Period;
+                }
+                else if(vkey_code == VK_OEM_COMMA)
+                {
+                    key_input = Key_Comma;
+                }
+                else if(vkey_code == VK_OEM_7)
+                {
+                    key_input = Key_Quote;
+                }
+                else if(vkey_code == VK_OEM_4)
+                {
+                    key_input = Key_LeftBracket;
+                }
+                else if(vkey_code == VK_OEM_6)
+                {
+                    key_input = Key_RightBracket;
+                }
+            }
+            
+            if(is_down)
+            {
+                OS_PushEvent(OS_KeyPressEvent(key_input, modifiers));
+            }
+            else
+            {
+                OS_PushEvent(OS_KeyReleaseEvent(key_input, modifiers));
+            }
+            
+            result = DefWindowProc(window_handle, message, w_param, l_param);
+        }break;
+        
+        case WM_SYSCOMMAND:
+        {
+            switch (w_param)
+            {
+                case SC_CLOSE:
+                {
+                    OS_PushEvent(OS_WindowClose());
+                } break;
+                case SC_KEYMENU:
+                {}break;
+                
+                default:
+                {
+                    result = DefWindowProcW(window_handle, message, w_param, l_param);
+                }break;
+            }
+        }break;
+        
+        case WM_CHAR:
+        {
+            U32 char_input = w_param;
+            if (char_input == (U32)'\r'){
+                char_input = (U32)'\n';
+            }
+            if((char_input >= (U32)' ' && char_input != 127) ||
+               char_input == '\t' ||
+               char_input == '\n')
+            {
+                OS_PushEvent(OS_CharacterInputEvent(char_input));
+            }
+        }break;
+        
+        default:
         {
             result = DefWindowProc(window_handle, message, w_param, l_param);
-        }
-    }
-    else if(message == WM_SYSKEYDOWN || message == WM_SYSKEYUP ||
-            message == WM_KEYDOWN || message == WM_KEYUP)
-    {
-        U64 vkey_code = w_param;
-        S8 was_down = !!(l_param & (1 << 30));
-        S8 is_down =   !(l_param & (1 << 31));
-        
-        U64 key_input = 0;
-        
-        if((vkey_code >= 'A' && vkey_code <= 'Z') ||
-           (vkey_code >= '0' && vkey_code <= '9'))
-        {
-            // NOTE(rjf): Letter/number buttons
-            key_input = (vkey_code >= 'A' && vkey_code <= 'Z') ? Key_A + (vkey_code-'A') : Key_0 + (vkey_code-'0');
-        }
-        else
-        {
-            if(vkey_code == VK_ESCAPE)
-            {
-                key_input = Key_Esc;
-            }
-            else if(vkey_code >= VK_F1 && vkey_code <= VK_F12)
-            {
-                key_input = Key_F1 + vkey_code - VK_F1;
-            }
-            else if(vkey_code == VK_OEM_3)
-            {
-                key_input = Key_GraveAccent;
-            }
-            else if(vkey_code == VK_OEM_MINUS)
-            {
-                key_input = Key_Minus;
-            }
-            else if(vkey_code == VK_OEM_PLUS)
-            {
-                key_input = Key_Equal;
-            }
-            else if(vkey_code == VK_BACK)
-            {
-                key_input = Key_Backspace;
-            }
-            else if(vkey_code == VK_TAB)
-            {
-                key_input = Key_Tab;
-            }
-            else if(vkey_code == VK_SPACE)
-            {
-                key_input = Key_Space;
-            }
-            else if(vkey_code == VK_RETURN)
-            {
-                key_input = Key_Enter;
-            }
-            else if(vkey_code == VK_CONTROL)
-            {
-                key_input = Key_Ctrl;
-                modifiers &= ~KeyModifier_Ctrl;
-            }
-            else if(vkey_code == VK_SHIFT)
-            {
-                key_input = Key_Shift;
-                modifiers &= ~KeyModifier_Shift;
-            }
-            else if(vkey_code == VK_MENU)
-            {
-                key_input = Key_Alt;
-                modifiers &= ~KeyModifier_Alt;
-            }
-            else if(vkey_code == VK_UP)
-            {
-                key_input = Key_Up;
-            }
-            else if(vkey_code == VK_LEFT)
-            {
-                key_input = Key_Left;
-            }
-            else if(vkey_code == VK_DOWN)
-            {
-                key_input = Key_Down;
-            }
-            else if(vkey_code == VK_RIGHT)
-            {
-                key_input = Key_Right;
-            }
-            else if(vkey_code == VK_DELETE)
-            {
-                key_input = Key_Delete;
-            }
-            else if(vkey_code == VK_PRIOR)
-            {
-                key_input = Key_PageUp;
-            }
-            else if(vkey_code == VK_NEXT)
-            {
-                key_input = Key_PageDown;
-            }
-            else if(vkey_code == VK_HOME)
-            {
-                key_input = Key_Home;
-            }
-            else if(vkey_code == VK_END)
-            {
-                key_input = Key_End;
-            }
-            else if(vkey_code == VK_OEM_2)
-            {
-                key_input = Key_ForwardSlash;
-            }
-            else if(vkey_code == VK_OEM_PERIOD)
-            {
-                key_input = Key_Period;
-            }
-            else if(vkey_code == VK_OEM_COMMA)
-            {
-                key_input = Key_Comma;
-            }
-            else if(vkey_code == VK_OEM_7)
-            {
-                key_input = Key_Quote;
-            }
-            else if(vkey_code == VK_OEM_4)
-            {
-                key_input = Key_LeftBracket;
-            }
-            else if(vkey_code == VK_OEM_6)
-            {
-                key_input = Key_RightBracket;
-            }
-        }
-        
-        if(is_down)
-        {
-            OS_PushEvent(OS_KeyPressEvent(key_input, modifiers));
-        }
-        else
-        {
-            OS_PushEvent(OS_KeyReleaseEvent(key_input, modifiers));
-        }
-        
-        result = DefWindowProc(window_handle, message, w_param, l_param);
-    }
-    else if(message == WM_SYSCOMMAND)
-    {
-        switch (w_param)
-        {
-            case SC_CLOSE:
-            {
-                OS_PushEvent(OS_WindowClose());
-            } break;
-            case SC_KEYMENU:
-            {}break;
-            
-            default:
-            {
-                result = DefWindowProcW(window_handle, message, w_param, l_param);
-            }break;
-        }
-    }
-    else if(message == WM_CHAR)
-    {
-        U64 char_input = w_param;
-        if(char_input >= 32 && char_input != VK_RETURN && char_input != VK_ESCAPE &&
-           char_input != 127)
-        {
-            OS_PushEvent(OS_CharacterInputEvent(char_input));
-        }
-    }
-    else
-    {
-        result = DefWindowProc(window_handle, message, w_param, l_param);
+        }break;
     }
     
     return result;

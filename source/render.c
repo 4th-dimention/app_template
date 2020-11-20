@@ -24,6 +24,8 @@ struct R_GL_State
     
     R_Font *selected_font;
     U32 selected_font_texture;
+    
+    RectF32 clip;
 };
 
 typedef struct R_GL_Bind R_GL_Bind;
@@ -250,7 +252,6 @@ R_Begin(V2F32 render_size, V3F32 color)
     glViewport(0, 0, render_size.x, render_size.y);
     glClearColor(color.x, color.y, color.z, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    
     glUniform2f(r_gl_mono_texture.inv_half_dim.v, 2.f/render_size.x, 2.f/render_size.y);
 }
 
@@ -261,12 +262,29 @@ R_End(void)
     os->RefreshScreen();
 }
 
-function void
+function RectF32
+R_GetClip(void)
+{
+    return(global_render->clip);
+}
+
+function RectF32
 R_SetClip(RectF32 rect)
 {
     _R_Flush();
     glScissor((GLint)rect.x0, (GLint)(global_render->render_resolution.y - rect.y1),
               (GLint)(rect.x1 - rect.x0), (GLint)(rect.y1 - rect.y0));
+    RectF32 result = global_render->clip;
+    global_render->clip = rect;
+    return(result);
+}
+
+function RectF32
+R_PushClip(RectF32 rect)
+{
+    RectF32 intersected = RectIntersect(rect, global_render->clip);
+    RectF32 result = R_SetClip(intersected);
+    return(result);
 }
 
 
@@ -553,58 +571,89 @@ R_RectOutline(RectF32 rect, F32 thickness, V3F32 color, F32 a)
 }
 
 function V2F32
-R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
+R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a)
 {
     V2F32 result = {0};
     R_Font *font = global_render->selected_font;
     if (font != 0 && font->initialized)
     {
-        F32 x = p.x;
-        U8 *ptr = string.str;
-        U8 *end = ptr + string.size;
-        R_Glyph_Box *glyphs = font->glyph;
         F32 *advances = font->advance;
-        for (;ptr < end; ptr += 1)
-        {
-            if (*ptr <= 0x7F)
+        
+        U8 tail[3] = {'.', '.', '.', };
+        F32 x_tail = F32Ceil(advances['.']*scale)*3.f;
+        B32 string_will_fit = 0;
+        
+        F32 x = p.x;
+        if (x + x_tail <= max_x){
+            U8 *ptr = string.str;
+            U8 *end = ptr + string.size;
+            R_Glyph_Box *glyphs = font->glyph;
+            for (;ptr < end; ptr += 1)
             {
-                R_Glyph_Box *g = &glyphs[*ptr];
-                
-                RectF32 rect;
-                rect.x0 = x + g->offset.x*scale;
-                rect.y0 = p.y + g->offset.y*scale;
-                rect.x1 = rect.x0 + g->dim.x*scale;
-                rect.y1 = rect.y0 + g->dim.y*scale;
-                
-                V2F32 uv;
-                uv.x = g->dim.x*(1.f/32.f);
-                uv.y = g->dim.y*(1.f/64.f);
-                
-                F32 w = (*ptr);
-                
-                R_GL_Vertex *vertices = _R_AllocVertices(6);
-                vertices[0].xy = rect.p0;
-                vertices[0].uvw = v3F32(0.f, 0.f, w);
-                
-                vertices[1].xy = v2F32(rect.x1, rect.y0);
-                vertices[1].uvw = v3F32(uv.x, 0.f, w);
-                
-                vertices[2].xy = v2F32(rect.x0, rect.y1);
-                vertices[2].uvw = v3F32(0.f, uv.y, w);
-                
-                DupVert(3); DupVertUVW(3);
-                DupVert(4); DupVertUVW(4);
-                
-                vertices[5].xy = rect.p1;
-                vertices[5].uvw = v3F32(uv.x, uv.y, w);
-                
-                R_GL_Vertex *v = vertices;
-                for (U64 i = 0; i < 6; i += 1, v += 1)
+                top:
+                if (*ptr <= 0x7F)
                 {
-                    v->rgba = v4F32(color.x, color.y, color.z, a);
+                    F32 next_x = x + F32Ceil(advances[*ptr]*scale);
+                    
+                    // NOTE(allen): If the tail isn't going to fit after this
+                    // we look ahead to see if the string fits. If not we switch
+                    // to the tail now.
+                    if (next_x + x_tail > max_x && !string_will_fit){
+                        U8 *look_ahead_ptr = ptr + 1;
+                        F32 look_ahead_x = next_x;
+                        for (;look_ahead_ptr < end; look_ahead_ptr += 1){
+                            look_ahead_x += F32Ceil(advances[*ptr]*scale);
+                            if (look_ahead_x > max_x){
+                                break;
+                            }
+                        }
+                        if (look_ahead_x > max_x){
+                            ptr = tail;
+                            end = ptr + 3;
+                            goto top;
+                        }
+                        
+                        string_will_fit = 1;
+                    }
+                    
+                    R_Glyph_Box *g = &glyphs[*ptr];
+                    
+                    RectF32 rect;
+                    rect.x0 = x + g->offset.x*scale;
+                    rect.y0 = p.y + g->offset.y*scale;
+                    rect.x1 = rect.x0 + g->dim.x*scale;
+                    rect.y1 = rect.y0 + g->dim.y*scale;
+                    
+                    V2F32 uv;
+                    uv.x = g->dim.x*(1.f/32.f);
+                    uv.y = g->dim.y*(1.f/64.f);
+                    
+                    F32 w = (*ptr);
+                    
+                    R_GL_Vertex *vertices = _R_AllocVertices(6);
+                    vertices[0].xy = rect.p0;
+                    vertices[0].uvw = v3F32(0.f, 0.f, w);
+                    
+                    vertices[1].xy = v2F32(rect.x1, rect.y0);
+                    vertices[1].uvw = v3F32(uv.x, 0.f, w);
+                    
+                    vertices[2].xy = v2F32(rect.x0, rect.y1);
+                    vertices[2].uvw = v3F32(0.f, uv.y, w);
+                    
+                    DupVert(3); DupVertUVW(3);
+                    DupVert(4); DupVertUVW(4);
+                    
+                    vertices[5].xy = rect.p1;
+                    vertices[5].uvw = v3F32(uv.x, uv.y, w);
+                    
+                    R_GL_Vertex *v = vertices;
+                    for (U64 i = 0; i < 6; i += 1, v += 1)
+                    {
+                        v->rgba = v4F32(color.x, color.y, color.z, a);
+                    }
+                    
+                    x = next_x;
                 }
-                
-                x += F32Ceil(advances[*ptr]*scale);
             }
         }
         result.x = x - p.x;
@@ -614,14 +663,27 @@ R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
 }
 
 function V2F32
-R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
+R_StringCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a)
 {
     V2F32 result = {0};
     R_Font *font = global_render->selected_font;
     if (font != 0 && font->initialized)
     {
         p.y += font->top_to_baseline*scale;
-        result = R_StringBaseline(p, scale, string, color, a);
+        result = R_StringBaselineCapped(p, max_x, scale, string, color, a);
     }
     return(result);
 }
+
+function V2F32
+R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
+{
+    return(R_StringBaselineCapped(p, Inf32(), scale, string, color, a));
+}
+
+function V2F32
+R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
+{
+    return(R_StringCapped(p, Inf32(), scale, string, color, a));
+}
+

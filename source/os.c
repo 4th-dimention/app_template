@@ -188,13 +188,6 @@ OS_EatEvent(OS_Event *event)
 
 // NOTE(rjf): Only called by platform layers. Do not call in app.
 function void
-OS_BeginFrame(void)
-{
-    os->pump_events = 0;
-}
-
-// NOTE(rjf): Only called by platform layers. Do not call in app.
-function void
 OS_PushEvent(OS_Event event)
 {
     Assert(os != 0);

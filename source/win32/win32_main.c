@@ -94,7 +94,7 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     {
         case WM_CLOSE: case WM_DESTROY: case WM_QUIT:
         {
-            global_os.quit = 1;
+            OS_Quit();
             result = 0;
         }break;
         
@@ -412,10 +412,17 @@ OS_SetCursorToVerticalResize(void)
     global_cursor_style = W32_CursorStyle_VerticalResize;
 }
 
+global B32 w32_quit = 0;
 function void
 OS_Quit(void)
 {
-    global_os.quit = 1;
+    w32_quit = 1;
+}
+
+global B32 w32_next_frame_do_immediately = 0;
+function void
+OS_NextFrameImmediate(B32 immediate){
+    w32_next_frame_do_immediately = immediate;
 }
 
 int
@@ -484,7 +491,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     {
         os = &global_os;
         
-        global_os.quit                      = 0;
         global_os.vsync                     = 1;
         global_os.fullscreen                = 0;
         global_os.window_size.x             = os_default_window_width;
@@ -516,7 +522,9 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     ShowWindow(window_handle, n_show_cmd);
     UpdateWindow(window_handle);
     
-    while(!global_os.quit)
+    w32_next_frame_do_immediately = 1;
+    
+    for (;w32_quit;)
     {
         U64 frame_begin_time = OS_GetNowInMicroseconds();
         
@@ -525,7 +533,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             os->event_count = 0;
             
             MSG message;
-            if(global_os.wait_for_events_to_update && !global_os.pump_events)
+            if(global_os.wait_for_events_to_update && !w32_next_frame_do_immediately)
             {
                 WaitMessage();
             }
@@ -546,13 +554,11 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         }
         
         // NOTE(rjf): Update input data (post-event)
-        OS_BeginFrame();
         {
             POINT mouse;
             GetCursorPos(&mouse);
             ScreenToClient(window_handle, &mouse);
             W32_UpdateXInput();
-            global_os.pump_events = 0;
         }
         
         // NOTE(rjf): Find how much sound to write and where

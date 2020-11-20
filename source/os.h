@@ -168,12 +168,10 @@ typedef struct OS_State OS_State;
 struct OS_State
 {
     // NOTE(rjf): Options
-    volatile B32 quit;
     B32 vsync;
     B32 fullscreen;
     V2S32 window_size;
     B32 wait_for_events_to_update;
-    B32 pump_events;
     
     // NOTE(rjf): Event Queue and Input Data
     V2F32 mouse_position;
@@ -192,6 +190,8 @@ global OS_State *os = 0;
 // NOTE(rjf): OS functions with specialized implementations
 
 void  OS_Quit(void);
+void  OS_NextFrameImmediate(B32 immediate);
+
 void* OS_Reserve(U64 size);
 void  OS_Release(void *memory);
 void  OS_Commit(void *memory, U64 size);
@@ -236,7 +236,6 @@ function OS_Event OS_MouseScrollEvent(V2F32 delta, KeyModifiers modifiers);
 function OS_Event OS_WindowClose(void);
 function B32 OS_GetNextEvent(OS_Event * * event);
 function void OS_EatEvent(OS_Event * event);
-function void OS_BeginFrame(void);
 function void OS_PushEvent(OS_Event event);
 function M_Arena * OS_GetScratch(void);
 function M_Arena * OS_GetScratch1(M_Arena * a1);

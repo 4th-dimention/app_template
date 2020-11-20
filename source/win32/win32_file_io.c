@@ -239,15 +239,6 @@ OS_DoesDirectoryExist(String8 path)
     return found;
 }
 
-function OS_DirectoryList
-OS_DirectoryListLoad(M_Arena *arena, String8 path, S32 flags)
-{
-    OS_DirectoryList list = {0};
-    
-    return list;
-}
-
-
 function U8*
 _W32_InitFilter(M_Arena *arena, String8 *fixed_ext){
     U8 *filter = 0;

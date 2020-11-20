@@ -7,37 +7,6 @@ global U64 os_default_window_width  = 1280;
 global U64 os_default_window_height =  720;
 
 ////////////////////////////////
-// NOTE(allen): Directory Listing Types
-
-#define OS_DirectoryList_IncludeDirectories (1<<0)
-#define OS_DirectoryList_IncludeExtensions  (1<<1)
-#define OS_DirectoryList_SearchRecursively  (1<<2)
-#define OS_DirectoryItem_IsDirectory        (1<<0)
-
-typedef struct OS_DirectoryItem OS_DirectoryItem;
-struct OS_DirectoryItem
-{
-    String8 string;
-    U64 flags;
-};
-
-typedef struct OS_DirectoryItemChunk OS_DirectoryItemChunk;
-struct OS_DirectoryItemChunk
-{
-    OS_DirectoryItem items[32];
-    OS_DirectoryItemChunk *next;
-    U64 item_count;
-};
-
-typedef struct OS_DirectoryList OS_DirectoryList;
-struct OS_DirectoryList
-{
-    U64 flags;
-    U64 item_count;
-    OS_DirectoryItemChunk *first_chunk;
-};
-
-////////////////////////////////
 // NOTE(allen): Event Codes
 
 typedef enum Key
@@ -201,7 +170,6 @@ void  OS_DeleteFile(String8 path);
 B32   OS_MakeDirectory(String8 path);
 B32   OS_DoesFileExist(String8 path);
 B32   OS_DoesDirectoryExist(String8 path);
-OS_DirectoryList OS_ListDirectory(M_Arena *arena, String8 path, S32 flags);
 U64   OS_GetNowInMicroseconds(void);
 U64   OS_GetCycles(void);
 void  OS_ResetCursor(void);

@@ -12,15 +12,15 @@
 
 ////////////////////////////////
 
-global v3 cl_black = {0.f, 0.f, 0.f};
-global v3 cl_white = {1.f, 1.f, 1.f};
+global V3F32 cl_black = {0.f, 0.f, 0.f};
+global V3F32 cl_white = {1.f, 1.f, 1.f};
 
-global v3 cl_red    = {1.f, 0.f, 0.f};
-global v3 cl_yellow = {1.f, 1.f, 0.f};
-global v3 cl_green  = {0.f, 1.f, 0.f};
-global v3 cl_cyan   = {0.f, 1.f, 1.f};
-global v3 cl_blue   = {0.f, 0.f, 1.f};
-global v3 cl_awful  = {1.f, 0.f, 1.f};
+global V3F32 cl_red    = {1.f, 0.f, 0.f};
+global V3F32 cl_yellow = {1.f, 1.f, 0.f};
+global V3F32 cl_green  = {0.f, 1.f, 0.f};
+global V3F32 cl_cyan   = {0.f, 1.f, 1.f};
+global V3F32 cl_blue   = {0.f, 0.f, 1.f};
+global V3F32 cl_awful  = {1.f, 0.f, 1.f};
 
 ////////////////////////////////
 

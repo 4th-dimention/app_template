@@ -7,8 +7,8 @@ typedef struct R_GL_Vertex R_GL_Vertex;
 struct R_GL_Vertex
 {
     V2F32 xy;
-    v3 uvw;
-    v4 rgba;
+    V3F32 uvw;
+    V4F32 rgba;
 };
 
 typedef struct R_GL_State R_GL_State;
@@ -243,12 +243,12 @@ _R_AllocVertices(U64 count)
 }
 
 function void
-R_Begin(V2F32 render_size, v3 color)
+R_Begin(V2F32 render_size, V3F32 color)
 {
     global_render->render_resolution = render_size;
     R_SetClip(MakeRect(0.f, 0.f, V2Expand(render_size)));
     glViewport(0, 0, render_size.x, render_size.y);
-    glClearColor(color.r, color.g, color.b, 1);
+    glClearColor(color.x, color.y, color.z, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     
     glUniform2f(r_gl_mono_texture.inv_half_dim.v, 2.f/render_size.x, 2.f/render_size.y);
@@ -494,7 +494,7 @@ R_StringDim(F32 scale, String8 string)
 #define DupVertC(n) vertices[n].c = vertices[n - 2].c
 
 function void
-R_Rect(Rect rect, v3 color, F32 a)
+R_Rect(Rect rect, V3F32 color, F32 a)
 {
     R_GL_Vertex *vertices = _R_AllocVertices(6);
     vertices[0].xy = rect.p0;
@@ -508,12 +508,12 @@ R_Rect(Rect rect, v3 color, F32 a)
     for (U64 i = 0; i < 6; i += 1, v += 1)
     {
         v->uvw = v3F32(0.f, 0.f, 0.f);
-        v->rgba = v4F32(color.r, color.g, color.b, a);
+        v->rgba = v4F32(color.x, color.y, color.z, a);
     }
 }
 
 function void
-R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
+R_RectOutline(Rect rect, F32 thickness, V3F32 color, F32 a)
 {
     Rect outer = rect;
     Rect inner = RectShrink(rect, thickness);
@@ -548,12 +548,12 @@ R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
     for (U64 i = 0; i < 24; i += 1, v += 1)
     {
         v->uvw = v3F32(0.f, 0.f, 0.f);
-        v->rgba = v4F32(color.r, color.g, color.b, a);
+        v->rgba = v4F32(color.x, color.y, color.z, a);
     }
 }
 
 function V2F32
-R_StringBaseline(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
+R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
 {
     V2F32 result = {0};
     R_Font *font = global_render->selected_font;
@@ -601,7 +601,7 @@ R_StringBaseline(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
                 R_GL_Vertex *v = vertices;
                 for (U64 i = 0; i < 6; i += 1, v += 1)
                 {
-                    v->rgba = v4F32(color.r, color.g, color.b, a);
+                    v->rgba = v4F32(color.x, color.y, color.z, a);
                 }
                 
                 x += F32Ceil(advances[*ptr]*scale);
@@ -614,7 +614,7 @@ R_StringBaseline(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
 }
 
 function V2F32
-R_String(V2F32 p, F32 scale, String8 string, v3 color, F32 a)
+R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a)
 {
     V2F32 result = {0};
     R_Font *font = global_render->selected_font;

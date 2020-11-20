@@ -79,15 +79,15 @@ v2F32(F32 x, F32 y){
     return(r);
 }
 
-function v3
+function V3F32
 v3F32(F32 x, F32 y, F32 z){
-    v3 r = {x,y,z};
+    V3F32 r = {x,y,z};
     return(r);
 }
 
-function v4
+function V4F32
 v4F32(F32 x, F32 y, F32 z, F32 w){
-    v4 r = {x,y,z,w};
+    V4F32 r = {x,y,z,w};
     return(r);
 }
 
@@ -97,16 +97,16 @@ V2Add(V2F32 a, V2F32 b)
     V2F32 c = { a.x + b.x, a.y + b.y };
     return c;
 }
-function v3
-V3Add(v3 a, v3 b)
+function V3F32
+V3Add(V3F32 a, V3F32 b)
 {
-    v3 c = { a.x + b.x, a.y + b.y, a.z + b.z };
+    V3F32 c = { a.x + b.x, a.y + b.y, a.z + b.z };
     return c;
 }
-function v4
-V4Add(v4 a, v4 b)
+function V4F32
+V4Add(V4F32 a, V4F32 b)
 {
-    v4 c = { a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
+    V4F32 c = { a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
     return c;
 }
 
@@ -116,16 +116,16 @@ V2Sub(V2F32 a, V2F32 b)
     V2F32 c = { a.x - b.x, a.y - b.y };
     return c;
 }
-function v3
-V3Sub(v3 a, v3 b)
+function V3F32
+V3Sub(V3F32 a, V3F32 b)
 {
-    v3 c = { a.x - b.x, a.y - b.y, a.z - b.z };
+    V3F32 c = { a.x - b.x, a.y - b.y, a.z - b.z };
     return c;
 }
-function v4
-V4Sub(v4 a, v4 b)
+function V4F32
+V4Sub(V4F32 a, V4F32 b)
 {
-    v4 c = { a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
+    V4F32 c = { a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w };
     return c;
 }
 
@@ -136,16 +136,16 @@ V2Mul(V2F32 v, F32 f)
     v.y *= f;
     return v;
 }
-function v3
-V3Mul(v3 v, F32 f)
+function V3F32
+V3Mul(V3F32 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
     v.z *= f;
     return v;
 }
-function v4
-V4Mul(v4 v, F32 f)
+function V4F32
+V4Mul(V4F32 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
@@ -160,12 +160,12 @@ V2Dot(V2F32 a, V2F32 b)
     return a.x*b.x + a.y*b.y;
 }
 function F32
-V3Dot(v3 a, v3 b)
+V3Dot(V3F32 a, V3F32 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 function F32
-V4Dot(v4 a, v4 b)
+V4Dot(V4F32 a, V4F32 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
 }
@@ -176,16 +176,16 @@ V2Hadamard(V2F32 a, V2F32 b)
     V2F32 v = {a.x*b.x, a.y*b.y};
     return(v);
 }
-function v3
-V3Hadamard(v3 a, v3 b)
+function V3F32
+V3Hadamard(V3F32 a, V3F32 b)
 {
-    v3 v = {a.x*b.x, a.y*b.y, a.z*b.z};
+    V3F32 v = {a.x*b.x, a.y*b.y, a.z*b.z};
     return(v);
 }
-function v4
-V4Hadamard(v4 a, v4 b)
+function V4F32
+V4Hadamard(V4F32 a, V4F32 b)
 {
-    v4 v = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w};
+    V4F32 v = {a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w};
     return(v);
 }
 
@@ -195,12 +195,12 @@ V2Length(V2F32 a)
     return SquareRoot(V2Dot(a,a));
 }
 function F32
-V3Length(v3 a)
+V3Length(V3F32 a)
 {
     return SquareRoot(V3Dot(a,a));
 }
 function F32
-V4Length(v4 a)
+V4Length(V4F32 a)
 {
     return SquareRoot(V4Dot(a,a));
 }
@@ -212,25 +212,25 @@ V2Normalize(V2F32 v)
     V2F32 result = { v.x*inv_length, v.y*inv_length, };
     return result;
 }
-function v3
-V3Normalize(v3 v)
+function V3F32
+V3Normalize(V3F32 v)
 {
     F32 inv_length = 1.f/V3Length(v);
-    v3 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
+    V3F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
     return result;
 }
-function v4
-V4Normalize(v4 v)
+function V4F32
+V4Normalize(V4F32 v)
 {
     F32 inv_length = 1.f/V4Length(v);
-    v4 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
+    V4F32 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
     return result;
 }
 
-function v3
-V3Cross(v3 a, v3 b)
+function V3F32
+V3Cross(V3F32 a, V3F32 b)
 {
-    v3 result =
+    V3F32 result =
     {
         a.y*b.z - a.z*b.y,
         a.z*b.x - a.x*b.z,
@@ -266,10 +266,10 @@ M4MultiplyM4(m4 a, m4 b)
     {
         for(int i = 0; i < 4; ++i)
         {
-            c.elements[i][j] = (a.elements[0][j]*b.elements[i][0] +
-                                a.elements[1][j]*b.elements[i][1] +
-                                a.elements[2][j]*b.elements[i][2] +
-                                a.elements[3][j]*b.elements[i][3]);
+            c.v[i][j] = (a.v[0][j]*b.v[i][0] +
+                         a.v[1][j]*b.v[i][1] +
+                         a.v[2][j]*b.v[i][2] +
+                         a.v[3][j]*b.v[i][3]);
         }
     }
     
@@ -283,46 +283,46 @@ M4MultiplyF32(m4 a, F32 b)
     {
         for(int i = 0; i < 4; ++i)
         {
-            a.elements[i][j] *= b;
+            a.v[i][j] *= b;
         }
     }
     
     return a;
 }
 
-function v4
-V4MultiplyM4(v4 v, m4 m)
+function V4F32
+V4MultiplyM4(V4F32 v, m4 m)
 {
-    v4 result = {0};
+    V4F32 result = {0};
     
     for(int i = 0; i < 4; ++i)
     {
-        result.elements[i] = (v.elements[0]*m.elements[0][i] +
-                              v.elements[1]*m.elements[1][i] +
-                              v.elements[2]*m.elements[2][i] +
-                              v.elements[3]*m.elements[3][i]);
+        result.v[i] = (v.v[0]*m.v[0][i] +
+                       v.v[1]*m.v[1][i] +
+                       v.v[2]*m.v[2][i] +
+                       v.v[3]*m.v[3][i]);
     }
     
     return result;
 }
 
 function m4
-M4TranslateV3(v3 translation)
+M4TranslateV3(V3F32 translation)
 {
     m4 result = M4InitD(1.f);
-    result.elements[3][0] = translation.x;
-    result.elements[3][1] = translation.y;
-    result.elements[3][2] = translation.z;
+    result.v[3][0] = translation.x;
+    result.v[3][1] = translation.y;
+    result.v[3][2] = translation.z;
     return result;
 }
 
 function m4
-M4ScaleV3(v3 scale)
+M4ScaleV3(V3F32 scale)
 {
     m4 result = M4InitD(1.f);
-    result.elements[0][0] = scale.x;
-    result.elements[1][1] = scale.y;
-    result.elements[2][2] = scale.z;
+    result.v[0][0] = scale.x;
+    result.v[1][1] = scale.y;
+    result.v[2][2] = scale.z;
     return result;
 }
 
@@ -331,43 +331,43 @@ M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
 {
     m4 result = {0};
     F32 tan_theta_over_2 = Tan(fov * (PI / 360.f));
-    result.elements[0][0] = 1.f / tan_theta_over_2;
-    result.elements[1][1] = aspect_ratio / tan_theta_over_2;
-    result.elements[2][3] = -1.f;
-    result.elements[2][2] = (near_z + far_z) / (near_z - far_z);
-    result.elements[3][2] = (2.f * near_z * far_z) / (near_z - far_z);
-    result.elements[3][3] = 0.f;
+    result.v[0][0] = 1.f / tan_theta_over_2;
+    result.v[1][1] = aspect_ratio / tan_theta_over_2;
+    result.v[2][3] = -1.f;
+    result.v[2][2] = (near_z + far_z) / (near_z - far_z);
+    result.v[3][2] = (2.f * near_z * far_z) / (near_z - far_z);
+    result.v[3][3] = 0.f;
     return result;
 }
 
 function m4
-M4LookAt(v3 eye, v3 center, v3 up)
+M4LookAt(V3F32 eye, V3F32 center, V3F32 up)
 {
     m4 result;
     
-    v3 f = V3Normalize(V3Sub(center, eye));
-    v3 s = V3Normalize(V3Cross(f, up));
-    v3 u = V3Cross(s, f);
+    V3F32 f = V3Normalize(V3Sub(center, eye));
+    V3F32 s = V3Normalize(V3Cross(f, up));
+    V3F32 u = V3Cross(s, f);
     
-    result.elements[0][0] = s.x;
-    result.elements[0][1] = u.x;
-    result.elements[0][2] = -f.x;
-    result.elements[0][3] = 0.0f;
+    result.v[0][0] = s.x;
+    result.v[0][1] = u.x;
+    result.v[0][2] = -f.x;
+    result.v[0][3] = 0.0f;
     
-    result.elements[1][0] = s.y;
-    result.elements[1][1] = u.y;
-    result.elements[1][2] = -f.y;
-    result.elements[1][3] = 0.0f;
+    result.v[1][0] = s.y;
+    result.v[1][1] = u.y;
+    result.v[1][2] = -f.y;
+    result.v[1][3] = 0.0f;
     
-    result.elements[2][0] = s.z;
-    result.elements[2][1] = u.z;
-    result.elements[2][2] = -f.z;
-    result.elements[2][3] = 0.0f;
+    result.v[2][0] = s.z;
+    result.v[2][1] = u.z;
+    result.v[2][2] = -f.z;
+    result.v[2][3] = 0.0f;
     
-    result.elements[3][0] = -V3Dot(s, eye);
-    result.elements[3][1] = -V3Dot(u, eye);
-    result.elements[3][2] = V3Dot(f, eye);
-    result.elements[3][3] = 1.0f;
+    result.v[3][0] = -V3Dot(s, eye);
+    result.v[3][1] = -V3Dot(u, eye);
+    result.v[3][2] = V3Dot(f, eye);
+    result.v[3][3] = 1.0f;
     
     return result;
 }
@@ -375,57 +375,57 @@ M4LookAt(v3 eye, v3 center, v3 up)
 function m4
 M4Inverse(m4 m)
 {
-    F32 coef00 = m.elements[2][2] * m.elements[3][3] - m.elements[3][2] * m.elements[2][3];
-    F32 coef02 = m.elements[1][2] * m.elements[3][3] - m.elements[3][2] * m.elements[1][3];
-    F32 coef03 = m.elements[1][2] * m.elements[2][3] - m.elements[2][2] * m.elements[1][3];
-    F32 coef04 = m.elements[2][1] * m.elements[3][3] - m.elements[3][1] * m.elements[2][3];
-    F32 coef06 = m.elements[1][1] * m.elements[3][3] - m.elements[3][1] * m.elements[1][3];
-    F32 coef07 = m.elements[1][1] * m.elements[2][3] - m.elements[2][1] * m.elements[1][3];
-    F32 coef08 = m.elements[2][1] * m.elements[3][2] - m.elements[3][1] * m.elements[2][2];
-    F32 coef10 = m.elements[1][1] * m.elements[3][2] - m.elements[3][1] * m.elements[1][2];
-    F32 coef11 = m.elements[1][1] * m.elements[2][2] - m.elements[2][1] * m.elements[1][2];
-    F32 coef12 = m.elements[2][0] * m.elements[3][3] - m.elements[3][0] * m.elements[2][3];
-    F32 coef14 = m.elements[1][0] * m.elements[3][3] - m.elements[3][0] * m.elements[1][3];
-    F32 coef15 = m.elements[1][0] * m.elements[2][3] - m.elements[2][0] * m.elements[1][3];
-    F32 coef16 = m.elements[2][0] * m.elements[3][2] - m.elements[3][0] * m.elements[2][2];
-    F32 coef18 = m.elements[1][0] * m.elements[3][2] - m.elements[3][0] * m.elements[1][2];
-    F32 coef19 = m.elements[1][0] * m.elements[2][2] - m.elements[2][0] * m.elements[1][2];
-    F32 coef20 = m.elements[2][0] * m.elements[3][1] - m.elements[3][0] * m.elements[2][1];
-    F32 coef22 = m.elements[1][0] * m.elements[3][1] - m.elements[3][0] * m.elements[1][1];
-    F32 coef23 = m.elements[1][0] * m.elements[2][1] - m.elements[2][0] * m.elements[1][1];
+    F32 coef00 = m.v[2][2] * m.v[3][3] - m.v[3][2] * m.v[2][3];
+    F32 coef02 = m.v[1][2] * m.v[3][3] - m.v[3][2] * m.v[1][3];
+    F32 coef03 = m.v[1][2] * m.v[2][3] - m.v[2][2] * m.v[1][3];
+    F32 coef04 = m.v[2][1] * m.v[3][3] - m.v[3][1] * m.v[2][3];
+    F32 coef06 = m.v[1][1] * m.v[3][3] - m.v[3][1] * m.v[1][3];
+    F32 coef07 = m.v[1][1] * m.v[2][3] - m.v[2][1] * m.v[1][3];
+    F32 coef08 = m.v[2][1] * m.v[3][2] - m.v[3][1] * m.v[2][2];
+    F32 coef10 = m.v[1][1] * m.v[3][2] - m.v[3][1] * m.v[1][2];
+    F32 coef11 = m.v[1][1] * m.v[2][2] - m.v[2][1] * m.v[1][2];
+    F32 coef12 = m.v[2][0] * m.v[3][3] - m.v[3][0] * m.v[2][3];
+    F32 coef14 = m.v[1][0] * m.v[3][3] - m.v[3][0] * m.v[1][3];
+    F32 coef15 = m.v[1][0] * m.v[2][3] - m.v[2][0] * m.v[1][3];
+    F32 coef16 = m.v[2][0] * m.v[3][2] - m.v[3][0] * m.v[2][2];
+    F32 coef18 = m.v[1][0] * m.v[3][2] - m.v[3][0] * m.v[1][2];
+    F32 coef19 = m.v[1][0] * m.v[2][2] - m.v[2][0] * m.v[1][2];
+    F32 coef20 = m.v[2][0] * m.v[3][1] - m.v[3][0] * m.v[2][1];
+    F32 coef22 = m.v[1][0] * m.v[3][1] - m.v[3][0] * m.v[1][1];
+    F32 coef23 = m.v[1][0] * m.v[2][1] - m.v[2][0] * m.v[1][1];
     
-    v4 fac0 = { coef00, coef00, coef02, coef03 };
-    v4 fac1 = { coef04, coef04, coef06, coef07 };
-    v4 fac2 = { coef08, coef08, coef10, coef11 };
-    v4 fac3 = { coef12, coef12, coef14, coef15 };
-    v4 fac4 = { coef16, coef16, coef18, coef19 };
-    v4 fac5 = { coef20, coef20, coef22, coef23 };
+    V4F32 fac0 = { coef00, coef00, coef02, coef03 };
+    V4F32 fac1 = { coef04, coef04, coef06, coef07 };
+    V4F32 fac2 = { coef08, coef08, coef10, coef11 };
+    V4F32 fac3 = { coef12, coef12, coef14, coef15 };
+    V4F32 fac4 = { coef16, coef16, coef18, coef19 };
+    V4F32 fac5 = { coef20, coef20, coef22, coef23 };
     
-    v4 vec0 = { m.elements[1][0], m.elements[0][0], m.elements[0][0], m.elements[0][0] };
-    v4 vec1 = { m.elements[1][1], m.elements[0][1], m.elements[0][1], m.elements[0][1] };
-    v4 vec2 = { m.elements[1][2], m.elements[0][2], m.elements[0][2], m.elements[0][2] };
-    v4 vec3 = { m.elements[1][3], m.elements[0][3], m.elements[0][3], m.elements[0][3] };
+    V4F32 vec0 = { m.v[1][0], m.v[0][0], m.v[0][0], m.v[0][0] };
+    V4F32 vec1 = { m.v[1][1], m.v[0][1], m.v[0][1], m.v[0][1] };
+    V4F32 vec2 = { m.v[1][2], m.v[0][2], m.v[0][2], m.v[0][2] };
+    V4F32 vec3 = { m.v[1][3], m.v[0][3], m.v[0][3], m.v[0][3] };
     
-    v4 inv0 = V4Add(V4Sub(V4Hadamard(vec1, fac0), V4Hadamard(vec2, fac1)), V4Hadamard(vec3, fac2));
-    v4 inv1 = V4Add(V4Sub(V4Hadamard(vec0, fac0), V4Hadamard(vec2, fac3)), V4Hadamard(vec3, fac4));
-    v4 inV2F32 = V4Add(V4Sub(V4Hadamard(vec0, fac1), V4Hadamard(vec1, fac3)), V4Hadamard(vec3, fac5));
-    v4 inv3 = V4Add(V4Sub(V4Hadamard(vec0, fac2), V4Hadamard(vec1, fac4)), V4Hadamard(vec2, fac5));
+    V4F32 inv0 = V4Add(V4Sub(V4Hadamard(vec1, fac0), V4Hadamard(vec2, fac1)), V4Hadamard(vec3, fac2));
+    V4F32 inv1 = V4Add(V4Sub(V4Hadamard(vec0, fac0), V4Hadamard(vec2, fac3)), V4Hadamard(vec3, fac4));
+    V4F32 inV2F32 = V4Add(V4Sub(V4Hadamard(vec0, fac1), V4Hadamard(vec1, fac3)), V4Hadamard(vec3, fac5));
+    V4F32 inV3F32 = V4Add(V4Sub(V4Hadamard(vec0, fac2), V4Hadamard(vec1, fac4)), V4Hadamard(vec2, fac5));
     
-    v4 sign_a = { +1, -1, +1, -1 };
-    v4 sign_b = { -1, +1, -1, +1 };
+    V4F32 sign_a = { +1, -1, +1, -1 };
+    V4F32 sign_b = { -1, +1, -1, +1 };
     
     m4 inverse;
     for(U32 i = 0; i < 4; ++i)
     {
-        inverse.elements[0][i] = inv0.elements[i] * sign_a.elements[i];
-        inverse.elements[1][i] = inv1.elements[i] * sign_b.elements[i];
-        inverse.elements[2][i] = inV2F32.elements[i] * sign_a.elements[i];
-        inverse.elements[3][i] = inv3.elements[i] * sign_b.elements[i];
+        inverse.v[0][i] = inv0.v[i] * sign_a.v[i];
+        inverse.v[1][i] = inv1.v[i] * sign_b.v[i];
+        inverse.v[2][i] = inV2F32.v[i] * sign_a.v[i];
+        inverse.v[3][i] = inV3F32.v[i] * sign_b.v[i];
     }
     
-    v4 row0 = { inverse.elements[0][0], inverse.elements[1][0], inverse.elements[2][0], inverse.elements[3][0] };
-    v4 m0 = { m.elements[0][0], m.elements[0][1], m.elements[0][2], m.elements[0][3] };
-    v4 dot0 = V4Hadamard(m0, row0);
+    V4F32 row0 = { inverse.v[0][0], inverse.v[1][0], inverse.v[2][0], inverse.v[3][0] };
+    V4F32 m0 = { m.v[0][0], m.v[0][1], m.v[0][2], m.v[0][3] };
+    V4F32 dot0 = V4Hadamard(m0, row0);
     F32 dot1 = (dot0.x + dot0.y) + (dot0.z + dot0.w);
     
     F32 one_over_det = 1 / dot1;
@@ -436,24 +436,24 @@ M4Inverse(m4 m)
 function m4
 M4RemoveRotation(m4 mat)
 {
-    v3 scale =
+    V3F32 scale =
     {
-        V3Length(v3F32(mat.elements[0][0], mat.elements[0][1], mat.elements[0][2])),
-        V3Length(v3F32(mat.elements[1][0], mat.elements[1][1], mat.elements[1][2])),
-        V3Length(v3F32(mat.elements[2][0], mat.elements[2][1], mat.elements[2][2])),
+        V3Length(v3F32(mat.v[0][0], mat.v[0][1], mat.v[0][2])),
+        V3Length(v3F32(mat.v[1][0], mat.v[1][1], mat.v[1][2])),
+        V3Length(v3F32(mat.v[2][0], mat.v[2][1], mat.v[2][2])),
     };
     
-    mat.elements[0][0] = scale.x;
-    mat.elements[1][0] = 0.f;
-    mat.elements[2][0] = 0.f;
+    mat.v[0][0] = scale.x;
+    mat.v[1][0] = 0.f;
+    mat.v[2][0] = 0.f;
     
-    mat.elements[0][1] = 0.f;
-    mat.elements[1][1] = scale.y;
-    mat.elements[2][1] = 0.f;
+    mat.v[0][1] = 0.f;
+    mat.v[1][1] = scale.y;
+    mat.v[2][1] = 0.f;
     
-    mat.elements[0][2] = 0.f;
-    mat.elements[1][2] = 0.f;
-    mat.elements[2][2] = scale.z;
+    mat.v[0][2] = 0.f;
+    mat.v[1][2] = 0.f;
+    mat.v[2][2] = scale.z;
     
     return mat;
 }
@@ -461,24 +461,26 @@ M4RemoveRotation(m4 mat)
 ////////////////////////////////
 // NOTE(allen): color
 
-function v3
-RGBToHSV(v3 rgb)
+function V3F32
+RGBToHSV(V3F32 rgb)
 {
     F32 c_max = MaximumInV3(rgb);
     F32 c_min = MinimumInV3(rgb);
     F32 delta = c_max - c_min;
-    B32 c_max_is_r = rgb.r > rgb.g && rgb.r > rgb.b;
-    B32 c_max_is_g = rgb.g > rgb.r && rgb.g > rgb.b;
-    B32 c_max_is_b = rgb.b > rgb.r && rgb.b > rgb.g;
-    F32 h = (c_max_is_r ? (rgb.g - rgb.b) / delta + 0 : c_max_is_g ? (rgb.b - rgb.r) / delta + 2 : c_max_is_b ? (rgb.r - rgb.g) / delta + 4 : 0);
+    B32 c_max_is_r = (rgb.x > rgb.y && rgb.x > rgb.z);
+    B32 c_max_is_g = (rgb.y > rgb.x && rgb.y > rgb.z);
+    B32 c_max_is_b = (rgb.z > rgb.x && rgb.z > rgb.y);
+    F32 h = (c_max_is_r ? (rgb.y - rgb.z) / delta + 0 :
+             c_max_is_g ? (rgb.z - rgb.x) / delta + 2 :
+             c_max_is_b ? (rgb.x - rgb.y) / delta + 4 : 0);
     F32 s = c_max == 0 ? 0 : (delta / c_max);
     F32 v = c_max;
-    v3 hsv = {h / 6.f, s, v};
+    V3F32 hsv = {h / 6.f, s, v};
     return hsv;
 }
 
-function v3
-HSVToRGB(v3 hsv)
+function V3F32
+HSVToRGB(V3F32 hsv)
 {
     F32 h = FMod(hsv.x * 360.f, 360.f);
     F32 s = hsv.y;
@@ -530,7 +532,7 @@ HSVToRGB(v3 hsv)
         b = x;
     }
     
-    v3 rgb = {r + m, g + m, b + m};
+    V3F32 rgb = {r + m, g + m, b + m};
     return rgb;
 }
 

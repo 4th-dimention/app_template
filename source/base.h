@@ -224,63 +224,17 @@ union V2F32
     float v[2];
 };
 
-typedef union v3 v3;
-union v3
+typedef union V3F32 V3F32;
+union V3F32
 {
-    struct
-    {
-        F32 x;
-        F32 y;
-        F32 z;
-    };
-    
-    struct
-    {
-        F32 r;
-        F32 g;
-        F32 b;
-    };
-    
-    F32 elements[3];
+    struct { F32 x; F32 y; F32 z; };
     F32 v[3];
 };
 
-typedef union v4 v4;
-union v4
+typedef union V4F32 V4F32;
+union V4F32
 {
-    struct
-    {
-        F32 x;
-        F32 y;
-        union
-        {
-            struct
-            {
-                F32 z;
-                
-                union
-                {
-                    F32 w;
-                    F32 radius;
-                };
-            };
-            struct
-            {
-                F32 width;
-                F32 height;
-            };
-        };
-    };
-    
-    struct
-    {
-        F32 r;
-        F32 g;
-        F32 b;
-        F32 a;
-    };
-    
-    F32 elements[4];
+    struct { F32 x; F32 y; F32 z; F32 w; };
     F32 v[4];
 };
 
@@ -353,7 +307,7 @@ union iv4
 typedef struct m4 m4;
 struct m4
 {
-    F32 elements[4][4];
+    F32 v[4][4];
 };
 
 ////////////////////////////////

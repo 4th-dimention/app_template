@@ -16,13 +16,13 @@ See `app.c` and `app.h` for the main "hello world" example program.
 The rest of this doc will try to briefly outline the concept of each section with a few samples of the sort of API's in that section to give you an idea of the sort of features you will find there. The only exhaustive list of features is in the code itself.
 
 
-# Languge Layer
-The language layer establishes common types, macros, and functions for the template.
-These are in the files `language_layer.h` and `language_layer.c`
+# Base
+The base establishes common types, macros, and functions for the template.
+These are in the files `base.h` and `base.c`
 
 ## Base Types
 Convenient integer and float type names:
-`i8, ... i64, u8, ... u64, b8, ... b64, f32, f64`
+`S8, ... S64, U8, ... U64, B8, ... B64, F32, F64`
 
 ## Helper Macros
 Macros that get used all over the place such as:
@@ -65,8 +65,8 @@ A handful of scalar math functions, many simply wrapping `<math.h>`
 - `AbsoluteValue`
 - `SquareRoot`
 - `Sin`
-- `i32Ceil` floating point ceiling, evaluates to `i32`
-- `f32Ceil` floating point ceiling, evaluates to `f32`
+- `S32Ceil` floating point ceiling, evaluates to `S32`
+- `F32Ceil` floating point ceiling, evaluates to `F32`
 - `Lerp(a,t,b)`
 
 ## Vector
@@ -139,8 +139,8 @@ The lengthed string type, and helper types and functions.
 ```C
 struct String8
 {
-    u8 *str;
-    u64 size;
+    U8 *str;
+    U64 size;
 };
 ```
 
@@ -150,8 +150,8 @@ There are helpers on single characters:
 - `CharToLower`
 
 Constructors for `String8`:
-- `S8(str,size)`
-- `S8Lit("")`
+- `str8(str,size)`
+- `str8_lit("")`
 - `String8FromCString(str)`
 - `StringSubstring(string,range)`
 

@@ -13,7 +13,7 @@ W32_GetLastWriteTime(char *filename)
 }
 
 internal void *
-W32_HeapAlloc(u32 size)
+W32_HeapAlloc(U32 size)
 {
     return HeapAlloc(GetProcessHeap(), 0, size);
 }
@@ -25,7 +25,7 @@ W32_HeapFree(void *data)
 }
 
 internal void *
-W32_Reserve(u64 size)
+W32_Reserve(U64 size)
 {
     void *memory = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
     return memory;
@@ -38,13 +38,13 @@ W32_Release(void *memory)
 }
 
 internal void
-W32_Commit(void *memory, u64 size)
+W32_Commit(void *memory, U64 size)
 {
     VirtualAlloc(memory, size, MEM_COMMIT, PAGE_READWRITE);
 }
 
 internal void
-W32_Decommit(void *memory, u64 size)
+W32_Decommit(void *memory, U64 size)
 {
     VirtualFree(memory, size, MEM_DECOMMIT);
 }
@@ -59,7 +59,7 @@ W32_OutputError(char *title, char *format, ...)
     {
         va_list args;
         va_start(args, format);
-        u32 required_characters = vsnprintf(0, 0, format, args)+1;
+        U32 required_characters = vsnprintf(0, 0, format, args)+1;
         va_end(args);
         
         local_persist char text[4096] = {0};

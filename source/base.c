@@ -8,60 +8,60 @@
 #define Cos cosf
 #define Tan tanf
 
-internal i32
-i32Ceil(f32 x)
+internal S32
+S32Ceil(F32 x)
 {
     if (x > 0)
     {
-        return(((i32) x) + 1);
+        return(((S32) x) + 1);
     }
     else
     {
-        return(((i32) x));
+        return(((S32) x));
     }
 }
 
-internal i32
-i32Floor(f32 x)
+internal S32
+S32Floor(F32 x)
 {
     if (x > 0)
     {
-        return(((i32) x));
+        return(((S32) x));
     }
     else
     {
-        return(((i32) x) - 1);
+        return(((S32) x) - 1);
     }
 }
 
-internal f32
-f32Ceil(f32 x)
+internal F32
+F32Ceil(F32 x)
 {
     if (x > 0)
     {
-        return((f32) ((i32) x) + 1);
+        return((F32) ((S32) x) + 1);
     }
     else
     {
-        return((f32) ((i32) x));
+        return((F32) ((S32) x));
     }
 }
 
-internal f32
-f32Floor(f32 x)
+internal F32
+F32Floor(F32 x)
 {
     if (x > 0)
     {
-        return((f32) ((i32) x));
+        return((F32) ((S32) x));
     }
     else
     {
-        return((f32) ((i32) x) - 1);
+        return((F32) ((S32) x) - 1);
     }
 }
 
-internal f32
-Lerp(f32 a, f32 t, f32 b)
+internal F32
+Lerp(F32 a, F32 t, F32 b)
 {
     return(a + (b - a)*t);
 }
@@ -112,14 +112,14 @@ V4Sub(v4 a, v4 b)
 }
 
 internal v2
-V2Mul(v2 v, f32 f)
+V2Mul(v2 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
     return v;
 }
 internal v3
-V3Mul(v3 v, f32 f)
+V3Mul(v3 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
@@ -127,7 +127,7 @@ V3Mul(v3 v, f32 f)
     return v;
 }
 internal v4
-V4Mul(v4 v, f32 f)
+V4Mul(v4 v, F32 f)
 {
     v.x *= f;
     v.y *= f;
@@ -136,17 +136,17 @@ V4Mul(v4 v, f32 f)
     return v;
 }
 
-internal f32
+internal F32
 V2Dot(v2 a, v2 b)
 {
     return a.x*b.x + a.y*b.y;
 }
-internal f32
+internal F32
 V3Dot(v3 a, v3 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z;
 }
-internal f32
+internal F32
 V4Dot(v4 a, v4 b)
 {
     return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w;
@@ -171,17 +171,17 @@ V4Hadamard(v4 a, v4 b)
     return(v);
 }
 
-internal f32
+internal F32
 V2Length(v2 a)
 {
     return SquareRoot(V2Dot(a,a));
 }
-internal f32
+internal F32
 V3Length(v3 a)
 {
     return SquareRoot(V3Dot(a,a));
 }
-internal f32
+internal F32
 V4Length(v4 a)
 {
     return SquareRoot(V4Dot(a,a));
@@ -190,21 +190,21 @@ V4Length(v4 a)
 internal v2
 V2Normalize(v2 v)
 {
-    f32 inv_length = 1.f/V2Length(v);
+    F32 inv_length = 1.f/V2Length(v);
     v2 result = { v.x*inv_length, v.y*inv_length, };
     return result;
 }
 internal v3
 V3Normalize(v3 v)
 {
-    f32 inv_length = 1.f/V3Length(v);
+    F32 inv_length = 1.f/V3Length(v);
     v3 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, };
     return result;
 }
 internal v4
 V4Normalize(v4 v)
 {
-    f32 inv_length = 1.f/V4Length(v);
+    F32 inv_length = 1.f/V4Length(v);
     v4 result = { v.x*inv_length, v.y*inv_length, v.z*inv_length, v.w*inv_length, };
     return result;
 }
@@ -225,7 +225,7 @@ V3Cross(v3 a, v3 b)
 // NOTE(allen): matrix
 
 internal m4
-M4InitD(f32 diagonal)
+M4InitD(F32 diagonal)
 {
     m4 m =
     {
@@ -259,7 +259,7 @@ M4MultiplyM4(m4 a, m4 b)
 }
 
 internal m4
-M4MultiplyF32(m4 a, f32 b)
+M4MultiplyF32(m4 a, F32 b)
 {
     for(int j = 0; j < 4; ++j)
     {
@@ -309,10 +309,10 @@ M4ScaleV3(v3 scale)
 }
 
 internal m4
-M4Perspective(f32 fov, f32 aspect_ratio, f32 near_z, f32 far_z)
+M4Perspective(F32 fov, F32 aspect_ratio, F32 near_z, F32 far_z)
 {
     m4 result = {0};
-    f32 tan_theta_over_2 = Tan(fov * (PI / 360.f));
+    F32 tan_theta_over_2 = Tan(fov * (PI / 360.f));
     result.elements[0][0] = 1.f / tan_theta_over_2;
     result.elements[1][1] = aspect_ratio / tan_theta_over_2;
     result.elements[2][3] = -1.f;
@@ -357,24 +357,24 @@ M4LookAt(v3 eye, v3 center, v3 up)
 internal m4
 M4Inverse(m4 m)
 {
-    f32 coef00 = m.elements[2][2] * m.elements[3][3] - m.elements[3][2] * m.elements[2][3];
-    f32 coef02 = m.elements[1][2] * m.elements[3][3] - m.elements[3][2] * m.elements[1][3];
-    f32 coef03 = m.elements[1][2] * m.elements[2][3] - m.elements[2][2] * m.elements[1][3];
-    f32 coef04 = m.elements[2][1] * m.elements[3][3] - m.elements[3][1] * m.elements[2][3];
-    f32 coef06 = m.elements[1][1] * m.elements[3][3] - m.elements[3][1] * m.elements[1][3];
-    f32 coef07 = m.elements[1][1] * m.elements[2][3] - m.elements[2][1] * m.elements[1][3];
-    f32 coef08 = m.elements[2][1] * m.elements[3][2] - m.elements[3][1] * m.elements[2][2];
-    f32 coef10 = m.elements[1][1] * m.elements[3][2] - m.elements[3][1] * m.elements[1][2];
-    f32 coef11 = m.elements[1][1] * m.elements[2][2] - m.elements[2][1] * m.elements[1][2];
-    f32 coef12 = m.elements[2][0] * m.elements[3][3] - m.elements[3][0] * m.elements[2][3];
-    f32 coef14 = m.elements[1][0] * m.elements[3][3] - m.elements[3][0] * m.elements[1][3];
-    f32 coef15 = m.elements[1][0] * m.elements[2][3] - m.elements[2][0] * m.elements[1][3];
-    f32 coef16 = m.elements[2][0] * m.elements[3][2] - m.elements[3][0] * m.elements[2][2];
-    f32 coef18 = m.elements[1][0] * m.elements[3][2] - m.elements[3][0] * m.elements[1][2];
-    f32 coef19 = m.elements[1][0] * m.elements[2][2] - m.elements[2][0] * m.elements[1][2];
-    f32 coef20 = m.elements[2][0] * m.elements[3][1] - m.elements[3][0] * m.elements[2][1];
-    f32 coef22 = m.elements[1][0] * m.elements[3][1] - m.elements[3][0] * m.elements[1][1];
-    f32 coef23 = m.elements[1][0] * m.elements[2][1] - m.elements[2][0] * m.elements[1][1];
+    F32 coef00 = m.elements[2][2] * m.elements[3][3] - m.elements[3][2] * m.elements[2][3];
+    F32 coef02 = m.elements[1][2] * m.elements[3][3] - m.elements[3][2] * m.elements[1][3];
+    F32 coef03 = m.elements[1][2] * m.elements[2][3] - m.elements[2][2] * m.elements[1][3];
+    F32 coef04 = m.elements[2][1] * m.elements[3][3] - m.elements[3][1] * m.elements[2][3];
+    F32 coef06 = m.elements[1][1] * m.elements[3][3] - m.elements[3][1] * m.elements[1][3];
+    F32 coef07 = m.elements[1][1] * m.elements[2][3] - m.elements[2][1] * m.elements[1][3];
+    F32 coef08 = m.elements[2][1] * m.elements[3][2] - m.elements[3][1] * m.elements[2][2];
+    F32 coef10 = m.elements[1][1] * m.elements[3][2] - m.elements[3][1] * m.elements[1][2];
+    F32 coef11 = m.elements[1][1] * m.elements[2][2] - m.elements[2][1] * m.elements[1][2];
+    F32 coef12 = m.elements[2][0] * m.elements[3][3] - m.elements[3][0] * m.elements[2][3];
+    F32 coef14 = m.elements[1][0] * m.elements[3][3] - m.elements[3][0] * m.elements[1][3];
+    F32 coef15 = m.elements[1][0] * m.elements[2][3] - m.elements[2][0] * m.elements[1][3];
+    F32 coef16 = m.elements[2][0] * m.elements[3][2] - m.elements[3][0] * m.elements[2][2];
+    F32 coef18 = m.elements[1][0] * m.elements[3][2] - m.elements[3][0] * m.elements[1][2];
+    F32 coef19 = m.elements[1][0] * m.elements[2][2] - m.elements[2][0] * m.elements[1][2];
+    F32 coef20 = m.elements[2][0] * m.elements[3][1] - m.elements[3][0] * m.elements[2][1];
+    F32 coef22 = m.elements[1][0] * m.elements[3][1] - m.elements[3][0] * m.elements[1][1];
+    F32 coef23 = m.elements[1][0] * m.elements[2][1] - m.elements[2][0] * m.elements[1][1];
     
     v4 fac0 = { coef00, coef00, coef02, coef03 };
     v4 fac1 = { coef04, coef04, coef06, coef07 };
@@ -397,7 +397,7 @@ M4Inverse(m4 m)
     v4 sign_b = { -1, +1, -1, +1 };
     
     m4 inverse;
-    for(u32 i = 0; i < 4; ++i)
+    for(U32 i = 0; i < 4; ++i)
     {
         inverse.elements[0][i] = inv0.elements[i] * sign_a.elements[i];
         inverse.elements[1][i] = inv1.elements[i] * sign_b.elements[i];
@@ -408,9 +408,9 @@ M4Inverse(m4 m)
     v4 row0 = { inverse.elements[0][0], inverse.elements[1][0], inverse.elements[2][0], inverse.elements[3][0] };
     v4 m0 = { m.elements[0][0], m.elements[0][1], m.elements[0][2], m.elements[0][3] };
     v4 dot0 = V4Hadamard(m0, row0);
-    f32 dot1 = (dot0.x + dot0.y) + (dot0.z + dot0.w);
+    F32 dot1 = (dot0.x + dot0.y) + (dot0.z + dot0.w);
     
-    f32 one_over_det = 1 / dot1;
+    F32 one_over_det = 1 / dot1;
     
     return M4MultiplyF32(inverse, one_over_det);
 }
@@ -446,15 +446,15 @@ M4RemoveRotation(m4 mat)
 internal v3
 RGBToHSV(v3 rgb)
 {
-    f32 c_max = MaximumInV3(rgb);
-    f32 c_min = MinimumInV3(rgb);
-    f32 delta = c_max - c_min;
-    b32 c_max_is_r = rgb.r > rgb.g && rgb.r > rgb.b;
-    b32 c_max_is_g = rgb.g > rgb.r && rgb.g > rgb.b;
-    b32 c_max_is_b = rgb.b > rgb.r && rgb.b > rgb.g;
-    f32 h = (c_max_is_r ? (rgb.g - rgb.b) / delta + 0 : c_max_is_g ? (rgb.b - rgb.r) / delta + 2 : c_max_is_b ? (rgb.r - rgb.g) / delta + 4 : 0);
-    f32 s = c_max == 0 ? 0 : (delta / c_max);
-    f32 v = c_max;
+    F32 c_max = MaximumInV3(rgb);
+    F32 c_min = MinimumInV3(rgb);
+    F32 delta = c_max - c_min;
+    B32 c_max_is_r = rgb.r > rgb.g && rgb.r > rgb.b;
+    B32 c_max_is_g = rgb.g > rgb.r && rgb.g > rgb.b;
+    B32 c_max_is_b = rgb.b > rgb.r && rgb.b > rgb.g;
+    F32 h = (c_max_is_r ? (rgb.g - rgb.b) / delta + 0 : c_max_is_g ? (rgb.b - rgb.r) / delta + 2 : c_max_is_b ? (rgb.r - rgb.g) / delta + 4 : 0);
+    F32 s = c_max == 0 ? 0 : (delta / c_max);
+    F32 v = c_max;
     v3 hsv = {h / 6.f, s, v};
     return hsv;
 }
@@ -462,17 +462,17 @@ RGBToHSV(v3 rgb)
 internal v3
 HSVToRGB(v3 hsv)
 {
-    f32 h = FMod(hsv.x * 360.f, 360.f);
-    f32 s = hsv.y;
-    f32 v = hsv.z;
+    F32 h = FMod(hsv.x * 360.f, 360.f);
+    F32 s = hsv.y;
+    F32 v = hsv.z;
     
-    f32 c = v * s;
-    f32 x = c * (1 - AbsoluteValueF(FMod((h / 60.f), 2) - 1));
-    f32 m = v - c;
+    F32 c = v * s;
+    F32 x = c * (1 - AbsoluteValueF(FMod((h / 60.f), 2) - 1));
+    F32 m = v - c;
     
-    f32 r;
-    f32 g;
-    f32 b;
+    F32 r;
+    F32 g;
+    F32 b;
     
     if((h >= 0.f && h < 60.f) || (h >= 360.f && h < 420.f))
     {
@@ -520,32 +520,32 @@ HSVToRGB(v3 hsv)
 // NOTE(allen): interval
 
 internal Range
-MakeRange(f32 a, f32 b)
+MakeRange(F32 a, F32 b)
 {
     Range range = {a, b};
     if (a > b)
     {
-        Swap(f32, range.min, range.max);
+        Swap(F32, range.min, range.max);
     }
     return(range);
 }
 internal Rangei
-MakeRangei(i64 a, i64 b)
+MakeRangei(S64 a, S64 b)
 {
     Rangei range = {a, b};
     if (a > b)
     {
-        Swap(i64, range.min, range.max);
+        Swap(S64, range.min, range.max);
     }
     return(range);
 }
 internal Rangeu
-MakeRangeu(u64 a, u64 b)
+MakeRangeu(U64 a, U64 b)
 {
     Rangeu range = {a, b};
     if (a > b)
     {
-        Swap(u64, range.min, range.max);
+        Swap(U64, range.min, range.max);
     }
     return(range);
 }
@@ -572,7 +572,7 @@ RangeIntersection(Range a, Range b)
 }
 
 internal Range
-RangeGrow(Range range, f32 x)
+RangeGrow(Range range, F32 x)
 {
     range.min -= x;
     range.max += x;
@@ -580,7 +580,7 @@ RangeGrow(Range range, f32 x)
 }
 
 internal Range
-RangeShrink(Range range, f32 x)
+RangeShrink(Range range, F32 x)
 {
     range.min += x;
     range.max -= x;
@@ -588,20 +588,20 @@ RangeShrink(Range range, f32 x)
     return(range);
 }
 
-internal b32
-RangeContains(Range range, f32 x)
+internal B32
+RangeContains(Range range, F32 x)
 {
     return(range.min <= x && x < range.max);
 }
 
-internal b32
+internal B32
 RangeOverlaps(Range a, Range b)
 {
     return(a.min < b.max && b.min < a.max);
 }
 
 internal Rect
-MakeRect(f32 x0, f32 y0, f32 x1, f32 y1)
+MakeRect(F32 x0, F32 y0, F32 x1, F32 y1)
 {
     Rect rect = {x0, y0, x1, y1};
     return(rect);
@@ -644,7 +644,7 @@ RectIntersect(Rect a, Rect b)
 }
 
 internal Rect
-RectGrow(Rect rect, f32 v)
+RectGrow(Rect rect, F32 v)
 {
     rect.x0 -= v;
     rect.y0 -= v;
@@ -654,7 +654,7 @@ RectGrow(Rect rect, f32 v)
 }
 
 internal Rect
-RectShrink(Rect rect, f32 v)
+RectShrink(Rect rect, F32 v)
 {
     rect.x0 += v;
     rect.y0 += v;
@@ -672,13 +672,13 @@ RectGetRange(Rect rect, Dimension dim)
     return(range);
 }
 
-internal b32
+internal B32
 RectContains(Rect rect, v2 p)
 {
     return(rect.x0 <= p.x && p.x < rect.x0 && rect.y0 <= p.y && p.y < rect.y0);
 }
 
-internal b32
+internal B32
 RectOverlaps(Rect a, Rect b)
 {
     return(a.x0 < b.x0 && b.x0 < a.x0 && a.y0 < b.y0 && b.y0 < a.y0);
@@ -702,26 +702,26 @@ RectGetCenter(Rect rect)
 ////////////////////////////////
 //~ NOTE(allen): String
 
-internal b32
+internal B32
 CharIsSpace(char c)
 {
     return((c) <= 32);
 }
 
-internal b32
+internal B32
 CharIsAlpha(char c)
 {
     return ((c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z'));
 }
 
-internal b32
+internal B32
 CharIsDigit(char c)
 {
     return (c >= '0' && c <= '9');
 }
 
-internal b32
+internal B32
 CharIsSymbol(char c)
 {
     return (c == '~' ||
@@ -770,7 +770,7 @@ CharToUpper(char c)
 }
 
 internal String8
-S8(u8 *str, u64 size)
+str8(U8 *str, U64 size)
 {
     String8 result = {str, size};
     return(result);
@@ -780,25 +780,25 @@ internal String8
 String8FromCString(char *cstring)
 {
     String8 string = {0};
-    string.str = (u8 *)cstring;
+    string.str = (U8 *)cstring;
     string.size = CalculateCStringLength(cstring);
     return string;
 }
 
-internal b32
+internal B32
 StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
 {
-    b32 result = 0;
+    B32 result = 0;
     
     if(a.size == b.size || (flags & StringMatchFlag_RightSideSloppy))
     {
-        b32 insensitive = (flags & StringMatchFlag_MatchCase);
-        u64 size = Min(a.size, b.size);
+        B32 insensitive = (flags & StringMatchFlag_MatchCase);
+        U64 size = Min(a.size, b.size);
         result = 1;
-        for(u64 i = 0; i < size; ++i)
+        for(U64 i = 0; i < size; ++i)
         {
-            u8 at = a.str[i];
-            u8 bt = b.str[i];
+            U8 at = a.str[i];
+            U8 bt = b.str[i];
             if(insensitive)
             {
                 at = CharToUpper(at);
@@ -815,13 +815,13 @@ StringMatchGeneric(String8 a, String8 b, StringMatchFlags flags)
     return result;
 }
 
-internal b32
+internal B32
 StringMatch(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, StringMatchFlag_MatchCase);
 }
 
-internal b32
+internal B32
 StringMatchCaseInsensitive(String8 a, String8 b)
 {
     return StringMatchGeneric(a, b, 0);
@@ -838,14 +838,14 @@ StringSubstring(String8 string, Rangeu range)
 }
 
 internal String8
-StringPrefix(String8 string, u64 size)
+StringPrefix(String8 string, U64 size)
 {
     string.size = ClampTop(size, string.size);
     return(string);
 }
 
 internal String8
-StringPostfix(String8 string, u64 size)
+StringPostfix(String8 string, U64 size)
 {
     size = ClampTop(size, string.size);
     string.str = (string.str + string.size) - size;
@@ -858,9 +858,9 @@ PushStringFV(M_Arena *arena, char *format, va_list args)
 {
     va_list args2;
     va_copy(args2, args);
-    u32 needed_bytes = vsnprintf(0, 0, format, args) + 1;
+    U32 needed_bytes = vsnprintf(0, 0, format, args) + 1;
     String8 result = {0};
-    result.str = PushArray(arena, u8, needed_bytes);
+    result.str = PushArray(arena, U8, needed_bytes);
     result.size = vsnprintf((char*)result.str, needed_bytes, format, args2);
     result.str[result.size] = 0;
     return(result);
@@ -934,7 +934,7 @@ StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
     
     String8 result;
     result.size = join.pre.size + join.post.size + (list->node_count - 1)*join.sep.size + list->total_size;
-    u8 *ptr = result.str = PushArray(arena, u8, result.size);
+    U8 *ptr = result.str = PushArray(arena, U8, result.size);
     
     MemoryCopy(ptr, join.pre.str, join.pre.size);
     ptr += join.pre.size;
@@ -959,14 +959,14 @@ StringListJoin(M_Arena *arena, String8_List *list, String_Join *optional_join)
 ////////////////////////////////
 //~ NOTE(allen): Additional String Stuff
 
-internal i64
+internal S64
 GetFirstIntegerFromString(String8 string)
 {
-    i32 result = 0;
-    b32 found_first_digit = 0;
-    u32 integer_write_pos = 0;
-    u8 integer[64] = {0};
-    u32 read_pos = 0;
+    S32 result = 0;
+    B32 found_first_digit = 0;
+    U32 integer_write_pos = 0;
+    U8 integer[64] = {0};
+    U32 read_pos = 0;
     for(;; ++read_pos)
     {
         if(string.str[read_pos] == 0)
@@ -1003,14 +1003,14 @@ GetFirstIntegerFromString(String8 string)
     return result;
 }
 
-internal f32
+internal F32
 GetFirstF32FromCString(char *str)
 {
-    f32 result = 0;
-    b32 found_first_digit = 0;
-    u32 float_write_pos = 0;
+    F32 result = 0;
+    B32 found_first_digit = 0;
+    U32 float_write_pos = 0;
     char float_str[64] = {0};
-    u32 read_pos = 0;
+    U32 read_pos = 0;
     for(;; ++read_pos)
     {
         if(str[read_pos] == 0)
@@ -1048,10 +1048,10 @@ GetFirstF32FromCString(char *str)
 }
 
 internal void
-CopySubstringToStringUntilCharN(char *str1, u32 str1_max,
+CopySubstringToStringUntilCharN(char *str1, U32 str1_max,
                                 const char *str2, char str2_term)
 {
-    u32 write_pos = 0;
+    U32 write_pos = 0;
     while(1)
     {
         if(str2[write_pos] == str2_term || write_pos == str1_max - 1)
@@ -1068,11 +1068,11 @@ CopySubstringToStringUntilCharN(char *str1, u32 str1_max,
 }
 
 internal void
-CopyStringToFixedSizeBuffer(char *dest, u32 dest_max,
+CopyStringToFixedSizeBuffer(char *dest, U32 dest_max,
                             const char *src)
 {
-    u32 read_pos = 0;
-    u32 write_pos = 0;
+    U32 read_pos = 0;
+    U32 write_pos = 0;
     for(;;)
     {
         if(src[read_pos] == 0 || write_pos >= dest_max)
@@ -1091,11 +1091,11 @@ CopyStringToFixedSizeBuffer(char *dest, u32 dest_max,
     }
 }
 
-internal u32
+internal U32
 CStringIndexAfterSubstring(char *str, char *substr)
 {
-    u32 result = 0;
-    for(u32 i = 0; str[i]; ++i)
+    U32 result = 0;
+    for(U32 i = 0; str[i]; ++i)
     {
         if(str[i] == substr[0])
         {
@@ -1108,11 +1108,11 @@ CStringIndexAfterSubstring(char *str, char *substr)
     return result;
 }
 
-internal u32
+internal U32
 CStringFirstIndexAfterSubstring(char *str, char *substr)
 {
-    u32 result = 0;
-    for(u32 i = 0; str[i]; ++i)
+    U32 result = 0;
+    for(U32 i = 0; str[i]; ++i)
     {
         if(str[i] == substr[0])
         {
@@ -1127,9 +1127,9 @@ CStringFirstIndexAfterSubstring(char *str, char *substr)
 }
 
 internal void
-CopyCStringToFixedSizeBuffer(char *destination, u32 destination_max, char *source)
+CopyCStringToFixedSizeBuffer(char *destination, U32 destination_max, char *source)
 {
-    for(u32 i = 0; i < destination_max; ++i)
+    for(U32 i = 0; i < destination_max; ++i)
     {
         destination[i] = source[i];
         if(source[i] == 0)
@@ -1141,9 +1141,9 @@ CopyCStringToFixedSizeBuffer(char *destination, u32 destination_max, char *sourc
 }
 
 internal void
-CopyCStringToFixedSizeBufferN(char *destination, u32 destination_max, char *source, u32 source_max)
+CopyCStringToFixedSizeBufferN(char *destination, U32 destination_max, char *source, U32 source_max)
 {
-    for(u32 i = 0; i < destination_max && i < source_max; ++i)
+    for(U32 i = 0; i < destination_max && i < source_max; ++i)
     {
         destination[i] = source[i];
         if(source[i] == 0)
@@ -1259,27 +1259,27 @@ static unsigned int global_crc32_table[] =
     0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4,
 };
 
-internal u32
-CStringCRC32N(char *name, u32 n)
+internal U32
+CStringCRC32N(char *name, U32 n)
 {
-    u32 crc = 0;
-    for(u32 i = 0; name[i] && i < n; ++i)
+    U32 crc = 0;
+    for(U32 i = 0; name[i] && i < n; ++i)
     {
         crc = (crc << 8) ^ global_crc32_table[((crc >> 24) ^ name[i]) & 255];
     }
     return crc;
 }
 
-internal u32
+internal U32
 CStringCRC32(char *name)
 {
-    return CStringCRC32N(name, (u32)(u32)(-1));
+    return CStringCRC32N(name, (U32)(U32)(-1));
 }
 
 internal void
-AppendToFixedSizeCString(char *destination, u32 destination_max, char *str)
+AppendToFixedSizeCString(char *destination, U32 destination_max, char *str)
 {
-    u32 i = 0;
+    U32 i = 0;
     for(; i < destination_max && destination[i]; ++i);
     if(destination_max > i)
     {

@@ -16,28 +16,28 @@
 #define MemoryZeroStruct(s) MemoryZero(s,sizeof(*(s)))
 #define MemoryZeroArray(a)  memset(a,0,sizeof(a))
 
-#define CalculateCStringLength (u32)strlen
-#define CStringToI32(s)            ((i32)atoi(s))
-#define CStringToI16(s)            ((i16)atoi(s))
-#define CStringToF32(s)            ((f32)atof(s))
+#define CalculateCStringLength      (U32)strlen
+#define CStringToI32(s)            ((S32)atoi(s))
+#define CStringToI16(s)            ((S16)atoi(s))
+#define CStringToF32(s)            ((F32)atof(s))
 
 ////////////////////////////////
 //~ NOTE(rjf): Base Types
 
-typedef int8_t   i8;
-typedef int16_t  i16;
-typedef int32_t  i32;
-typedef int64_t  i64;
-typedef uint8_t  u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef i8       b8;
-typedef i16      b16;
-typedef i32      b32;
-typedef i64      b64;
-typedef float    f32;
-typedef double   f64;
+typedef int8_t   S8;
+typedef int16_t  S16;
+typedef int32_t  S32;
+typedef int64_t  S64;
+typedef uint8_t  U8;
+typedef uint16_t U16;
+typedef uint32_t U32;
+typedef uint64_t U64;
+typedef S8       B8;
+typedef S16      B16;
+typedef S32      B32;
+typedef S64      B64;
+typedef float    F32;
+typedef double   F64;
 
 ////////////////////////////////
 //~ NOTE(rjf): Helper Macros
@@ -46,10 +46,10 @@ typedef double   f64;
 #define internal       static
 #define local_persist  static
 #define ArrayCount(a) (sizeof(a) / sizeof((a)[0]))
-#define Bytes(n)      ((u64)(n))
-#define Kilobytes(n)  (((u64)(n)) << 10)
-#define Megabytes(n)  (((u64)(n)) << 20)
-#define Gigabytes(n)  (((u64)(n)) << 30)
+#define Bytes(n)      ((U64)(n))
+#define Kilobytes(n)  (((U64)(n)) << 10)
+#define Megabytes(n)  (((U64)(n)) << 20)
+#define Gigabytes(n)  (((U64)(n)) << 30)
 #define Thousand(n)   ((n)*1000)
 #define Million(n)    ((n)*1000000)
 #define Billion(n)    ((n)*1000000000)
@@ -82,12 +82,12 @@ typedef double   f64;
 
 #define Swap(T,a,b) Stmnt( T t__ = a; a = b; b = t__; )
 
-#define IntFromPtr(ptr) ((u64)(ptr))
-#define PtrFromInt(i) (void*)((u8*)0 + (i))
+#define IntFromPtr(ptr) ((U64)(ptr))
+#define PtrFromInt(i) (void*)((U8*)0 + (i))
 
 #define Member(T,m) (((T*)0)->m)
 #define OffsetOf(T,m) IntFromPtr(&Member(T,m))
-#define CastFromMember(T,m,ptr) (T*)(((u8*)ptr) - OffsetOf(T,m))
+#define CastFromMember(T,m,ptr) (T*)(((U8*)ptr) - OffsetOf(T,m))
 
 ////////////////////////////////
 //~ NOTE(allen): Linked Lists
@@ -172,14 +172,14 @@ union v2
 {
     struct
     {
-        f32 x;
-        f32 y;
+        F32 x;
+        F32 y;
     };
     
     struct
     {
-        f32 width;
-        f32 height;
+        F32 width;
+        F32 height;
     };
     
     float elements[2];
@@ -191,20 +191,20 @@ union v3
 {
     struct
     {
-        f32 x;
-        f32 y;
-        f32 z;
+        F32 x;
+        F32 y;
+        F32 z;
     };
     
     struct
     {
-        f32 r;
-        f32 g;
-        f32 b;
+        F32 r;
+        F32 g;
+        F32 b;
     };
     
-    f32 elements[3];
-    f32 v[3];
+    F32 elements[3];
+    F32 v[3];
 };
 
 typedef union v4 v4;
@@ -212,38 +212,38 @@ union v4
 {
     struct
     {
-        f32 x;
-        f32 y;
+        F32 x;
+        F32 y;
         union
         {
             struct
             {
-                f32 z;
+                F32 z;
                 
                 union
                 {
-                    f32 w;
-                    f32 radius;
+                    F32 w;
+                    F32 radius;
                 };
             };
             struct
             {
-                f32 width;
-                f32 height;
+                F32 width;
+                F32 height;
             };
         };
     };
     
     struct
     {
-        f32 r;
-        f32 g;
-        f32 b;
-        f32 a;
+        F32 r;
+        F32 g;
+        F32 b;
+        F32 a;
     };
     
-    f32 elements[4];
-    f32 v[4];
+    F32 elements[4];
+    F32 v[4];
 };
 
 typedef union iv2 iv2;
@@ -251,18 +251,18 @@ union iv2
 {
     struct
     {
-        i32 x;
-        i32 y;
+        S32 x;
+        S32 y;
     };
     
     struct
     {
-        i32 width;
-        i32 height;
+        S32 width;
+        S32 height;
     };
     
-    i32 elements[2];
-    i32 v[2];
+    S32 elements[2];
+    S32 v[2];
 };
 
 typedef union iv3 iv3;
@@ -270,20 +270,20 @@ union iv3
 {
     struct
     {
-        i32 x;
-        i32 y;
-        i32 z;
+        S32 x;
+        S32 y;
+        S32 z;
     };
     
     struct
     {
-        i32 r;
-        i32 g;
-        i32 b;
+        S32 r;
+        S32 g;
+        S32 b;
     };
     
-    i32 elements[3];
-    i32 v[3];
+    S32 elements[3];
+    S32 v[3];
 };
 
 typedef union iv4 iv4;
@@ -291,22 +291,22 @@ union iv4
 {
     struct
     {
-        i32 x;
-        i32 y;
-        i32 z;
-        i32 w;
+        S32 x;
+        S32 y;
+        S32 z;
+        S32 w;
     };
     
     struct
     {
-        i32 r;
-        i32 g;
-        i32 b;
-        i32 a;
+        S32 r;
+        S32 g;
+        S32 b;
+        S32 a;
     };
     
-    i32 elements[4];
-    i32 v[4];
+    S32 elements[4];
+    S32 v[4];
 };
 
 #define v2(...)   (v2){ __VA_ARGS__ }
@@ -322,7 +322,7 @@ union iv4
 typedef struct m4 m4;
 struct m4
 {
-    f32 elements[4][4];
+    F32 elements[4][4];
 };
 
 ////////////////////////////////
@@ -333,46 +333,46 @@ union Range
 {
     struct
     {
-        f32 min;
-        f32 max;
+        F32 min;
+        F32 max;
     };
-    f32 v[2];
+    F32 v[2];
 };
 
 typedef union Rangei Rangei;
 union Rangei
 {
     struct{
-        i64 min;
-        i64 max;
+        S64 min;
+        S64 max;
     };
-    i64 v[2];
+    S64 v[2];
 };
 
 typedef union Rangeu Rangeu;
 union Rangeu
 {
     struct{
-        u64 min;
-        u64 max;
+        U64 min;
+        U64 max;
     };
-    u64 v[2];
+    U64 v[2];
 };
 
 typedef union Rect Rect;
 union Rect
 {
     struct{
-        f32 x0;
-        f32 y0;
-        f32 x1;
-        f32 y1;
+        F32 x0;
+        F32 y0;
+        F32 x1;
+        F32 y1;
     };
     struct{
         v2 p0;
         v2 p1;
     };
-    f32 v[4];
+    F32 v[4];
     v2 p[2];
 };
 
@@ -384,19 +384,19 @@ struct String8
 {
     union
     {
-        u8 *string;
-        u8 *str;
+        U8 *string;
+        U8 *str;
         void *data;
         void *ptr;
     };
-    u64 size;
+    U64 size;
 };
 
-#define S8Lit(s) S8((u8*)(s), ArrayCount(s) - 1)
-#define S8LitComp(s) {(u8*)(s), ArrayCount(s) - 1}
-#define StringExpand(s) (int)((s).size), ((s).str)
+#define str8_lit(s) str8((U8*)(s), ArrayCount(s) - 1)
+#define str8_comp(s) {(U8*)(s), ArrayCount(s) - 1}
+#define str8_expand(s) (S32)((s).size), ((s).str)
 
-typedef u32 StringMatchFlags;
+typedef U32 StringMatchFlags;
 enum
 {
     StringMatchFlag_MatchCase       = (1<<0),
@@ -415,8 +415,8 @@ struct String8_List
 {
     String8_Node *first;
     String8_Node *last;
-    u64 total_size;
-    u64 node_count;
+    U64 total_size;
+    U64 node_count;
 };
 
 typedef struct String_Join String_Join;

@@ -41,16 +41,16 @@ GamepadButtonName(GamepadButton index)
     return result;
 }
 
-internal b32
+internal B32
 OS_EventIsMouse(OS_Event *event)
 {
     return event->type > OS_EventType_MouseStart && event->type < OS_EventType_MouseEnd;
 }
 
-internal b32
+internal B32
 OS_CompareEvents(OS_Event a, OS_Event b)
 {
-    b32 result = 0;
+    B32 result = 0;
     if(a.type == b.type &&
        a.key == b.key &&
        a.mouse_button == b.mouse_button &&
@@ -88,7 +88,7 @@ OS_KeyReleaseEvent(Key key, KeyModifiers modifiers)
 }
 
 internal OS_Event
-OS_CharacterInputEvent(u64 character)
+OS_CharacterInputEvent(U64 character)
 {
     OS_Event event =
     {
@@ -146,18 +146,18 @@ OS_MouseScrollEvent(v2 delta, KeyModifiers modifiers)
     return event;
 }
 
-internal b32
+internal B32
 OS_GetNextEvent(OS_Event **event)
 {
-    b32 result = 0;
+    B32 result = 0;
     Assert(os != 0);
-    u32 start_index = 0;
+    U32 start_index = 0;
     OS_Event *new_event = 0;
     if(*event)
     {
         start_index = (*event - os->events) + 1;
     }
-    for(u32 i = start_index; i < os->event_count; ++i)
+    for(U32 i = start_index; i < os->event_count; ++i)
     {
         if(os->events[i].type != OS_EventType_Null)
         {
@@ -302,7 +302,7 @@ OS_ReleaseScratch(M_Arena *arena)
 }
 
 internal void
-_OS_ThreadSaveFileLine(char *file_name, u64 line_number)
+_OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 {
     OS_ThreadContext *tctx = os->GetThreadContext();
     tctx->file_name = file_name;

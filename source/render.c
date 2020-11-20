@@ -19,22 +19,22 @@ struct R_GL_State
     GLuint vertex_buffer;
     
     R_GL_Vertex *vertex_memory;
-    u64 vertex_count;
-    u64 vertex_max;
+    U64 vertex_count;
+    U64 vertex_max;
     
     R_Font *selected_font;
-    u32 selected_font_texture;
+    U32 selected_font_texture;
 };
 
 typedef struct R_GL_Bind R_GL_Bind;
 struct R_GL_Bind
 {
     char *name;
-    b32 is_uniform;
-    u32 size;
+    B32 is_uniform;
+    U32 size;
     GLint v;
-    u32 offset;
-    u32 total_size;
+    U32 offset;
+    U32 total_size;
 };
 
 
@@ -105,7 +105,7 @@ _R_CompilerShader(GLenum shader_kind, char *source)
     glShaderSource(shader, 2, sources, 0);
     glCompileShader(shader);
     
-    i32 log_length = 0;
+    S32 log_length = 0;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
     char error[1024] = {0};
     log_length = ClampTop(log_length, sizeof(error));
@@ -141,7 +141,7 @@ R_Init(M_Arena *arena)
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
     
-    i32 log_length = 0;
+    S32 log_length = 0;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
     char error[1024] = {0};
     log_length = ClampTop(log_length, sizeof(error));
@@ -149,22 +149,22 @@ R_Init(M_Arena *arena)
     Assert(log_length == 0);
     
     {
-        u64 bind_count = sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind);
+        U64 bind_count = sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind);
         R_GL_Bind *binds = (R_GL_Bind*)&r_gl_mono_texture;
         
-        u32 total_size = 0;
+        U32 total_size = 0;
         R_GL_Bind *bind = binds;
-        for (u64 i = 0; i < bind_count; i += 1, bind += 1)
+        for (U64 i = 0; i < bind_count; i += 1, bind += 1)
         {
             if (!bind->is_uniform)
             {
-                total_size += bind->size*sizeof(f32);
+                total_size += bind->size*sizeof(F32);
             }
         }
         
-        u64 offset = 0;
+        U64 offset = 0;
         bind = binds;
-        for (u64 i = 0; i < bind_count; i += 1, bind += 1)
+        for (U64 i = 0; i < bind_count; i += 1, bind += 1)
         {
             if (bind->is_uniform)
             {
@@ -175,7 +175,7 @@ R_Init(M_Arena *arena)
                 bind->v = glGetAttribLocation(program, bind->name);
                 bind->offset = offset;
                 bind->total_size = total_size;
-                offset += bind->size*sizeof(f32);
+                offset += bind->size*sizeof(F32);
             }
         }
     }
@@ -197,9 +197,9 @@ R_Init(M_Arena *arena)
     
     // NOTE(allen): vertex attributes
     {
-        u64 bind_count = sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind);
+        U64 bind_count = sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind);
         R_GL_Bind *bind = (R_GL_Bind*)&r_gl_mono_texture;
-        for (u64 i = 0; i < bind_count; i += 1, bind += 1)
+        for (U64 i = 0; i < bind_count; i += 1, bind += 1)
         {
             if (!bind->is_uniform)
             {
@@ -229,7 +229,7 @@ _R_Flush(void)
 }
 
 internal R_GL_Vertex*
-_R_AllocVertices(u64 count)
+_R_AllocVertices(U64 count)
 {
     Assert(count <= global_render->vertex_max);
     if (global_render->vertex_count + count > global_render->vertex_max)
@@ -277,7 +277,7 @@ R_SetClip(Rect rect)
 #include "ext/stb_truetype.h"
 
 internal void
-_R_TextureArraySetDataSlice(u32 index, u8 *data, u32 width, u32 height)
+_R_TextureArraySetDataSlice(U32 index, U8 *data, U32 width, U32 height)
 {
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
                     0, 0, index,
@@ -308,7 +308,7 @@ _R_BaseInitFont(R_Font *font)
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 3);
     
     // NOTE(allen): full white at slice 0
-    local_persist u8 temp_buffer[32*64] = {0};
+    local_persist U8 temp_buffer[32*64] = {0};
     if (temp_buffer[0] == 0)
     {
         MemorySet(temp_buffer, 0xFF, sizeof(temp_buffer));
@@ -337,14 +337,14 @@ R_ReleaseFont(R_Font *font)
 }
 
 internal void
-R_InitFont(R_Font *font, String8 ttf_path, i32 size)
+R_InitFont(R_Font *font, String8 ttf_path, S32 size)
 {
     font->initialized = 0;
     
     M_Arena *scratch = OS_GetScratch();
     
     void *data = 0;
-    u64 data_len = 0;
+    U64 data_len = 0;
     os->LoadEntireFile(scratch, ttf_path, &data, &data_len);
     
     if (data_len > 0)
@@ -356,12 +356,12 @@ R_InitFont(R_Font *font, String8 ttf_path, i32 size)
             _R_BaseInitFont(font);
             
             // NOTE(allen): font metrics
-            f32 scale = stbtt_ScaleForPixelHeight(&stb_font, size);
-            f32 em_scale = stbtt_ScaleForMappingEmToPixels(&stb_font, size);
+            F32 scale = stbtt_ScaleForPixelHeight(&stb_font, size);
+            F32 em_scale = stbtt_ScaleForMappingEmToPixels(&stb_font, size);
             
-            i32 ascent;
-            i32 descent;
-            i32 gap;
+            S32 ascent;
+            S32 descent;
+            S32 gap;
             stbtt_GetFontVMetrics(&stb_font, &ascent, &descent, &gap);
             
             font->top_to_baseline = ascent*em_scale;
@@ -371,22 +371,22 @@ R_InitFont(R_Font *font, String8 ttf_path, i32 size)
             // NOTE(allen): characters between [32,126]
             {
                 R_Glyph_Box *glyph_ptr = font->glyph + 32;
-                f32 *advance_ptr = font->advance + 32;
-                for (u32 i = 32; i <= 126; i += 1, advance_ptr += 1, glyph_ptr += 1)
+                F32 *advance_ptr = font->advance + 32;
+                for (U32 i = 32; i <= 126; i += 1, advance_ptr += 1, glyph_ptr += 1)
                 {
-                    i32 w;
-                    i32 h;
-                    i32 xoff;
-                    i32 yoff;
+                    S32 w;
+                    S32 h;
+                    S32 xoff;
+                    S32 yoff;
                     
-                    u8 *bitmap = stbtt_GetCodepointBitmap(&stb_font, 0, scale, i, &w, &h, &xoff, &yoff);
+                    U8 *bitmap = stbtt_GetCodepointBitmap(&stb_font, 0, scale, i, &w, &h, &xoff, &yoff);
                     Assert(w <= 32);
                     Assert(h <= 64);
                     _R_TextureArraySetDataSlice(i, bitmap, w, h);
                     stbtt_FreeBitmap(bitmap, 0);
                     
-                    i32 advance;
-                    i32 lsb;
+                    S32 advance;
+                    S32 lsb;
                     stbtt_GetCodepointHMetrics(&stb_font, i, &advance, &lsb);
                     
                     glyph_ptr->offset.x = xoff;
@@ -407,11 +407,11 @@ R_InitFont(R_Font *font, String8 ttf_path, i32 size)
     OS_ReleaseScratch(scratch);
 }
 
-internal b32
-R_FontSetSlot(R_Font *font, u32 indx, u8 *bitmap, u32 width, u32 height,
-              u32 xoff, u32 yoff, f32 advance)
+internal B32
+R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
+              U32 xoff, U32 yoff, F32 advance)
 {
-    b32 result = 0;
+    B32 result = 0;
     if (font->initialized)
     {
         if (0 < indx && indx <= 0x7F)
@@ -462,25 +462,25 @@ R_SelectFont(R_Font *font)
 }
 
 internal v2
-R_StringDimWithFont(R_Font *font, f32 scale, String8 string)
+R_StringDimWithFont(R_Font *font, F32 scale, String8 string)
 {
     v2 result = {0};
-    u8 *ptr = string.str;
-    u8 *end = ptr + string.size;
-    f32 *advances = font->advance;
+    U8 *ptr = string.str;
+    U8 *end = ptr + string.size;
+    F32 *advances = font->advance;
     for (;ptr < end; ptr += 1)
     {
         if (*ptr <= 0x7F)
         {
-            result.x += f32Ceil(advances[*ptr]*scale);
+            result.x += F32Ceil(advances[*ptr]*scale);
         }
     }
-    result.y = f32Ceil((font->top_to_baseline + font->baseline_to_next_top)*scale);
+    result.y = F32Ceil((font->top_to_baseline + font->baseline_to_next_top)*scale);
     return(result);
 }
 
 internal v2  
-R_StringDim(f32 scale, String8 string)
+R_StringDim(F32 scale, String8 string)
 {
     return(R_StringDimWithFont(global_render->selected_font, scale, string));
 }
@@ -494,7 +494,7 @@ R_StringDim(f32 scale, String8 string)
 #define DupVertC(n) vertices[n].c = vertices[n - 2].c
 
 internal void
-R_Rect(Rect rect, v3 color, f32 a)
+R_Rect(Rect rect, v3 color, F32 a)
 {
     R_GL_Vertex *vertices = _R_AllocVertices(6);
     vertices[0].xy = rect.p0;
@@ -505,7 +505,7 @@ R_Rect(Rect rect, v3 color, f32 a)
     vertices[5].xy = rect.p1;
     
     R_GL_Vertex *v = vertices;
-    for (u64 i = 0; i < 6; i += 1, v += 1)
+    for (U64 i = 0; i < 6; i += 1, v += 1)
     {
         v->uvw = v3(0.f, 0.f, 0.f);
         v->rgba = v4(color.r, color.g, color.b, a);
@@ -513,7 +513,7 @@ R_Rect(Rect rect, v3 color, f32 a)
 }
 
 internal void
-R_RectOutline(Rect rect, f32 thickness, v3 color, f32 a)
+R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a)
 {
     Rect outer = rect;
     Rect inner = RectShrink(rect, thickness);
@@ -545,7 +545,7 @@ R_RectOutline(Rect rect, f32 thickness, v3 color, f32 a)
     vertices[23].xy = v2(inner.x0, inner.y0);
     
     R_GL_Vertex *v = vertices;
-    for (u64 i = 0; i < 24; i += 1, v += 1)
+    for (U64 i = 0; i < 24; i += 1, v += 1)
     {
         v->uvw = v3(0.f, 0.f, 0.f);
         v->rgba = v4(color.r, color.g, color.b, a);
@@ -553,17 +553,17 @@ R_RectOutline(Rect rect, f32 thickness, v3 color, f32 a)
 }
 
 internal v2
-R_StringBaseline(v2 p, f32 scale, String8 string, v3 color, f32 a)
+R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a)
 {
     v2 result = {0};
     R_Font *font = global_render->selected_font;
     if (font != 0 && font->initialized)
     {
-        f32 x = p.x;
-        u8 *ptr = string.str;
-        u8 *end = ptr + string.size;
+        F32 x = p.x;
+        U8 *ptr = string.str;
+        U8 *end = ptr + string.size;
         R_Glyph_Box *glyphs = font->glyph;
-        f32 *advances = font->advance;
+        F32 *advances = font->advance;
         for (;ptr < end; ptr += 1)
         {
             if (*ptr <= 0x7F)
@@ -580,7 +580,7 @@ R_StringBaseline(v2 p, f32 scale, String8 string, v3 color, f32 a)
                 uv.x = g->dim.x*(1.f/32.f);
                 uv.y = g->dim.y*(1.f/64.f);
                 
-                f32 w = (*ptr);
+                F32 w = (*ptr);
                 
                 R_GL_Vertex *vertices = _R_AllocVertices(6);
                 vertices[0].xy = rect.p0;
@@ -599,22 +599,22 @@ R_StringBaseline(v2 p, f32 scale, String8 string, v3 color, f32 a)
                 vertices[5].uvw = v3(uv.x, uv.y, w);
                 
                 R_GL_Vertex *v = vertices;
-                for (u64 i = 0; i < 6; i += 1, v += 1)
+                for (U64 i = 0; i < 6; i += 1, v += 1)
                 {
                     v->rgba = v4(color.r, color.g, color.b, a);
                 }
                 
-                x += f32Ceil(advances[*ptr]*scale);
+                x += F32Ceil(advances[*ptr]*scale);
             }
         }
         result.x = x - p.x;
-        result.y = f32Ceil((font->top_to_baseline + font->baseline_to_next_top)*scale);
+        result.y = F32Ceil((font->top_to_baseline + font->baseline_to_next_top)*scale);
     }
     return(result);
 }
 
 internal v2
-R_String(v2 p, f32 scale, String8 string, v3 color, f32 a)
+R_String(v2 p, F32 scale, String8 string, v3 color, F32 a)
 {
     v2 result = {0};
     R_Font *font = global_render->selected_font;

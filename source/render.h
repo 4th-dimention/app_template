@@ -13,12 +13,12 @@ struct R_Glyph_Box
 typedef struct R_Font R_Font;
 struct R_Font
 {
-    b32 initialized;
-    u32 var[1];
-    f32 top_to_baseline;
-    f32 baseline_to_next_top;
+    B32 initialized;
+    U32 var[1];
+    F32 top_to_baseline;
+    F32 baseline_to_next_top;
     R_Glyph_Box glyph[128];
-    f32 advance[128];
+    F32 advance[128];
 };
 
 #define R_SP_0 "\x01"
@@ -96,19 +96,19 @@ internal void R_End(void);
 
 internal void R_SetClip(Rect rect);
 
-internal void R_InitFont(R_Font *font, String8 ttf_path, i32 size);
+internal void R_InitFont(R_Font *font, String8 ttf_path, S32 size);
 internal void R_InitUserFont(R_Font *font);
 internal void R_ReleaseFont(R_Font *font);
-internal b32  R_FontSetSlot(R_Font *font, u32 indx, u8 *bitmap, u32 width, u32 height,
-                            u32 xoff, u32 yoff, f32 advance);
+internal B32  R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
+                            U32 xoff, U32 yoff, F32 advance);
 internal void R_FontUpdateMipmaps(R_Font *font);
-internal v2   R_StringDim(f32 scale, String8 string);
-internal v2   R_StringDimWithFont(R_Font *font, f32 scale, String8 string);
+internal v2   R_StringDim(F32 scale, String8 string);
+internal v2   R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
 
-internal void R_Rect(Rect rect, v3 color, f32 a);
-internal void R_RectOutline(Rect rect, f32 thickness, v3 color, f32 a);
+internal void R_Rect(Rect rect, v3 color, F32 a);
+internal void R_RectOutline(Rect rect, F32 thickness, v3 color, F32 a);
 internal void R_SelectFont(R_Font *font);
-internal v2   R_String(v2 p, f32 scale, String8 string, v3 color, f32 a);
-internal v2   R_StringBaseline(v2 p, f32 scale, String8 string, v3 color, f32 a);
+internal v2   R_String(v2 p, F32 scale, String8 string, v3 color, F32 a);
+internal v2   R_StringBaseline(v2 p, F32 scale, String8 string, v3 color, F32 a);
 
 #endif //RENDER_H

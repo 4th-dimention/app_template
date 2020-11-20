@@ -8,11 +8,11 @@ W32_ThreadSystemInit(void)
 }
 
 internal void
-W32_ThreadInit(OS_ThreadContext *tctx, OS_ArenaNode *nodes, i32 node_count)
+W32_ThreadInit(OS_ThreadContext *tctx, OS_ArenaNode *nodes, S32 node_count)
 {
     MemoryZeroStruct(tctx);
     MemoryZero(nodes, sizeof(*nodes)*node_count);
-    for (i32 i = 0; i < node_count; i += 1)
+    for (S32 i = 0; i < node_count; i += 1)
     {
         OS_ArenaNode *node_ptr = nodes + i;
         SLLStackPush(tctx->free, node_ptr);

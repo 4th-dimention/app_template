@@ -38,8 +38,8 @@ APP_PERMANENT_LOAD
     M_Arena *arena = vars->arena = &vars->arena_;
     
     R_Init(arena);
-    R_InitFont(&vars->test_font, S8Lit("liberation-mono.ttf"), 48);
-    R_InitFont(&vars->test_font_small, S8Lit("liberation-mono.ttf"), 24);
+    R_InitFont(&vars->test_font, str8_lit("liberation-mono.ttf"), 48);
+    R_InitFont(&vars->test_font_small, str8_lit("liberation-mono.ttf"), 24);
 }
 
 APP_HOT_LOAD
@@ -57,7 +57,7 @@ APP_UPDATE
     R_Rect(MakeRect(70, 70, 530, 530), cl_blue, 1.f);
     R_RectOutline(MakeRect(100, 100, 560, 500), 4.f, cl_red, 1.f);
     
-    String8 string = S8Lit("(exclaim `(hello world))");
+    String8 string = str8_lit("(exclaim `(hello world))");
     
     R_SelectFont(&vars->test_font);
     

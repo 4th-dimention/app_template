@@ -10,10 +10,10 @@ struct W32_AppCode
     FILETIME last_dll_write_time;
 };
 
-internal b32
+internal B32
 W32_AppCodeLoad(W32_AppCode *app_code)
 {
-    b32 result = 1;
+    B32 result = 1;
     
     CopyFile(global_app_dll_path, global_temp_app_dll_path, FALSE);
     app_code->dll = LoadLibraryA(global_temp_app_dll_path);

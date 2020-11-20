@@ -10,7 +10,7 @@ typedef enum Key
 }
 Key;
 
-typedef u32 KeyModifiers;
+typedef U32 KeyModifiers;
 enum
 {
     KeyModifier_Ctrl  = (1<<0),
@@ -50,7 +50,7 @@ typedef struct OS_DirectoryItem OS_DirectoryItem;
 struct OS_DirectoryItem
 {
     String8 string;
-    u64 flags;
+    U64 flags;
 };
 
 typedef struct OS_DirectoryItemChunk OS_DirectoryItemChunk;
@@ -58,14 +58,14 @@ struct OS_DirectoryItemChunk
 {
     OS_DirectoryItem items[32];
     OS_DirectoryItemChunk *next;
-    u64 item_count;
+    U64 item_count;
 };
 
 typedef struct OS_DirectoryList OS_DirectoryList;
 struct OS_DirectoryList
 {
-    u64 flags;
-    u64 item_count;
+    U64 flags;
+    U64 item_count;
     OS_DirectoryItemChunk *first_chunk;
 };
 
@@ -112,8 +112,8 @@ struct OS_Event
     GamepadButton gamepad_button;
     MouseButton mouse_button;
     KeyModifiers modifiers;
-    i32 gamepad_index;
-    u64 character;
+    S32 gamepad_index;
+    U64 character;
     v2 position;
     v2 delta;
     v2 scroll;
@@ -133,14 +133,14 @@ struct OS_ArenaNode
     OS_ArenaNode *prev;
     M_Arena arena;
     OS_ArenaInlineRestore *restore;
-    u64 ref_count;
+    U64 ref_count;
 };
 
 typedef struct OS_File_Line OS_File_Line;
 struct OS_File_Line
 {
     char *file_name;
-    u64 line_number;
+    U64 line_number;
 };
 
 typedef struct OS_ThreadContext OS_ThreadContext;
@@ -150,7 +150,7 @@ struct OS_ThreadContext
     OS_ArenaNode *first_used;
     OS_ArenaNode *last_used;
     char *file_name;
-    u64 line_number;
+    U64 line_number;
 };
 
 //~ NOTE(rjf): Platform Data
@@ -168,43 +168,43 @@ struct OS_State
     M_Arena frame_arena;
     
     // NOTE(rjf): Options
-    volatile b32 quit;
-    b32 vsync;
-    b32 fullscreen;
+    volatile B32 quit;
+    B32 vsync;
+    B32 fullscreen;
     iv2 window_size;
-    f32 current_time;
-    f32 target_frames_per_second;
-    b32 wait_for_events_to_update;
-    b32 pump_events;
+    F32 current_time;
+    F32 target_frames_per_second;
+    B32 wait_for_events_to_update;
+    B32 pump_events;
     
     // NOTE(rjf): Event Queue and Input Data
     v2 mouse_position;
-    u64 event_count;
+    U64 event_count;
     OS_Event events[4096];
     
     // NOTE(rjf): Audio Output Data
-    f32 *sample_out;
-    u32 sample_count_to_output;
-    u32 samples_per_second;
+    F32 *sample_out;
+    U32 sample_count_to_output;
+    U32 samples_per_second;
     
     // NOTE(rjf): Functions
-    void *(*Reserve)(u64 size);
+    void *(*Reserve)(U64 size);
     void (*Release)(void *memory);
-    void (*Commit)(void *memory, u64 size);
-    void (*Decommit)(void *memory, u64 size);
+    void (*Commit)(void *memory, U64 size);
+    void (*Decommit)(void *memory, U64 size);
     void (*OutputError)(char *error_type, char *error_format, ...);
-    void (*SaveToFile)(String8 path, void *data, u64 data_len);
-    void (*AppendToFile)(String8 path, void *data, u64 data_len);
-    void (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, u64 *data_len);
+    void (*SaveToFile)(String8 path, void *data, U64 data_len);
+    void (*AppendToFile)(String8 path, void *data, U64 data_len);
+    void (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, U64 *data_len);
     char *(*LoadEntireFileAndNullTerminate)(M_Arena *arena, String8 path);
     void (*DeleteFile)(String8 path);
-    b32 (*MakeDirectory)(String8 path);
-    b32 (*DoesFileExist)(String8 path);
-    b32 (*DoesDirectoryExist)(String8 path);
-    b32 (*CopyFile)(String8 dest, String8 source);
-    OS_DirectoryList (*ListDirectory)(M_Arena *arena, String8 path, i32 flags);
-    f32 (*GetTime)(void);
-    u64 (*GetCycles)(void);
+    B32 (*MakeDirectory)(String8 path);
+    B32 (*DoesFileExist)(String8 path);
+    B32 (*DoesDirectoryExist)(String8 path);
+    B32 (*CopyFile)(String8 dest, String8 source);
+    OS_DirectoryList (*ListDirectory)(M_Arena *arena, String8 path, S32 flags);
+    F32 (*GetTime)(void);
+    U64 (*GetCycles)(void);
     void (*ResetCursor)(void);
     void (*SetCursorToHorizontalResize)(void);
     void (*SetCursorToVerticalResize)(void);

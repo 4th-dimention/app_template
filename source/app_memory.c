@@ -4,7 +4,7 @@
 #define M_ARENA_COMMIT_SIZE  Kilobytes(4)
 
 internal M_Arena
-M_ArenaInitializeWithAlign(u64 auto_align)
+M_ArenaInitializeWithAlign(U64 auto_align)
 {
     M_Arena arena = {0};
     arena.max = M_ARENA_MAX;
@@ -22,25 +22,25 @@ M_ArenaInitialize(void)
 }
 
 internal void *
-M_ArenaPush(M_Arena *arena, u64 size)
+M_ArenaPush(M_Arena *arena, U64 size)
 {
     void *memory = 0;
     if(arena->alloc_position + size > arena->commit_position)
     {
-        u64 commit_size = size;
+        U64 commit_size = size;
         commit_size += M_ARENA_COMMIT_SIZE-1;
         commit_size -= commit_size % M_ARENA_COMMIT_SIZE;
-        os->Commit((u8 *)arena->base + arena->commit_position, commit_size);
+        os->Commit((U8 *)arena->base + arena->commit_position, commit_size);
         arena->commit_position += commit_size;
     }
-    memory = (u8 *)arena->base + arena->alloc_position;
-    u64 p = arena->alloc_position + size;
+    memory = (U8 *)arena->base + arena->alloc_position;
+    U64 p = arena->alloc_position + size;
     arena->alloc_position = (p + arena->auto_align - 1)&(~(arena->auto_align - 1));
     return memory;
 }
 
 internal void *
-M_ArenaPushZero(M_Arena *arena, u64 size)
+M_ArenaPushZero(M_Arena *arena, U64 size)
 {
     void *memory = M_ArenaPush(arena, size);
     MemorySet(memory, 0, size);
@@ -48,7 +48,7 @@ M_ArenaPushZero(M_Arena *arena, u64 size)
 }
 
 internal void
-M_ArenaSetPosBack(M_Arena *arena, u64 pos)
+M_ArenaSetPosBack(M_Arena *arena, U64 pos)
 {
     if (pos <= arena->alloc_position)
     {
@@ -59,16 +59,16 @@ M_ArenaSetPosBack(M_Arena *arena, u64 pos)
 internal void
 M_ArenaSetPosBackByPtr(M_Arena *arena, void *ptr)
 {
-    u8 *uptr = (u8*)ptr;
-    u64 pos = (uptr - (u8*)arena->base);
-    if ((u8*)arena->base <= uptr)
+    U8 *uptr = (U8*)ptr;
+    U64 pos = (uptr - (U8*)arena->base);
+    if ((U8*)arena->base <= uptr)
     {
         M_ArenaSetPosBack(arena, pos);
     }
 }
 
 internal void
-M_ArenaPop(M_Arena *arena, u64 size)
+M_ArenaPop(M_Arena *arena, U64 size)
 {
     size = ClampTop(size, arena->alloc_position);
     arena->alloc_position -= size;

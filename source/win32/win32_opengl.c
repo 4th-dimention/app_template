@@ -28,10 +28,10 @@ W32_LoadWGLFunctions(HINSTANCE h_instance)
     wglSwapIntervalEXT         = (PFNWGLSWAPINTERVALEXTPROC)         W32_LoadOpenGLProcedure("wglSwapIntervalEXT");
 }
 
-internal b32
+internal B32
 W32_InitOpenGL(HDC *device_context, HINSTANCE h_instance)
 {
-    b32 result = 0;
+    B32 result = 0;
     
     // NOTE(rjf): Set up pixel format for dummy context
     int pixel_format = 0;

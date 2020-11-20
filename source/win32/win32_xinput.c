@@ -40,7 +40,7 @@ W32_LoadXInput(void)
 internal void
 W32_UpdateXInput(void)
 {
-    for(u32 i = 0; i < W32_MAX_GAMEPADS; ++i)
+    for(U32 i = 0; i < W32_MAX_GAMEPADS; ++i)
     {
         if(i < XUSER_MAX_COUNT)
         {
@@ -51,7 +51,7 @@ W32_UpdateXInput(void)
                 global_gamepads[i].connected = 1;
                 XINPUT_GAMEPAD *pad = &controller_state.Gamepad;
                 
-                for(u32 j = 0; j < W32_MAX_GAMEPADS; ++j)
+                for(U32 j = 0; j < W32_MAX_GAMEPADS; ++j)
                 {
                     global_gamepads[i].button_states[j] = 0;
                 }

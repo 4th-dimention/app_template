@@ -35,17 +35,17 @@ global CoInitializeEx_ *CoInitializeExProc = CoInitializeExStub;
 typedef struct W32_SoundOutput W32_SoundOutput;
 struct W32_SoundOutput
 {
-    b32 initialized;
+    B32 initialized;
     
     IMMDeviceEnumerator *device_enum;
     IMMDevice *device;
     IAudioClient *audio_client;
     IAudioRenderClient *audio_render_client;
     REFERENCE_TIME sound_buffer_duration;
-    u32 buffer_frame_count;
-    u32 channels;
-    u32 samples_per_second;
-    u32 latency_frame_count;
+    U32 buffer_frame_count;
+    U32 channels;
+    U32 samples_per_second;
+    U32 latency_frame_count;
 };
 
 internal void
@@ -100,7 +100,7 @@ W32_InitWASAPI(W32_SoundOutput *output)
                 output->audio_client->lpVtbl->GetMixFormat(output->audio_client, &wave_format);
                 
                 output->samples_per_second = 44100;//wave_format->nSamplesPerSec;
-                WORD bits_per_sample = sizeof(i16)*8;
+                WORD bits_per_sample = sizeof(S16)*8;
                 WORD block_align = (output->channels * bits_per_sample) / 8;
                 DWORD average_bytes_per_second = block_align * output->samples_per_second;
                 WORD cb_size = 0;
@@ -138,7 +138,7 @@ W32_InitWASAPI(W32_SoundOutput *output)
                         
                         output->audio_client->lpVtbl->GetBufferSize(output->audio_client, &output->buffer_frame_count);
                         
-                        output->sound_buffer_duration = (REFERENCE_TIME)((f64)REFTIMES_PER_SEC *
+                        output->sound_buffer_duration = (REFERENCE_TIME)((F64)REFTIMES_PER_SEC *
                                                                          output->buffer_frame_count / output->samples_per_second);
                         
                         output->audio_client->lpVtbl->Start(output->audio_client);
@@ -187,7 +187,7 @@ W32_CleanUpWASAPI(W32_SoundOutput *output)
 }
 
 internal void
-W32_FillSoundBuffer(u32 samples_to_write, f32 *samples, W32_SoundOutput *output)
+W32_FillSoundBuffer(U32 samples_to_write, F32 *samples, W32_SoundOutput *output)
 {
     if(samples_to_write)
     {
@@ -197,12 +197,12 @@ W32_FillSoundBuffer(u32 samples_to_write, f32 *samples, W32_SoundOutput *output)
         output->audio_render_client->lpVtbl->GetBuffer(output->audio_render_client, samples_to_write, &data);
         if(data)
         {
-            i16 *destination = (i16 *)data;
-            f32 *source = samples;
+            S16 *destination = (S16 *)data;
+            F32 *source = samples;
             for(UINT32 i = 0; i < samples_to_write; ++i)
             {
-                i16 left = (i16)(*source++ * 3000);
-                i16 right = (i16)(*source++ * 3000);
+                S16 left = (S16)(*source++ * 3000);
+                S16 right = (S16)(*source++ * 3000);
                 *destination++ = left;
                 *destination++ = right;
             }

@@ -40,12 +40,12 @@ global W32_Timer global_win32_timer = {0};
 typedef struct W32_GamepadInput W32_GamepadInput;
 struct W32_GamepadInput
 {
-    b32 connected;
+    B32 connected;
     v2 joystick_1;
     v2 joystick_2;
-    f32 trigger_left;
-    f32 trigger_right;
-    i32 button_states[GamepadButton_Max];
+    F32 trigger_left;
+    F32 trigger_right;
+    S32 button_states[GamepadButton_Max];
 };
 W32_GamepadInput global_gamepads[W32_MAX_GAMEPADS];
 
@@ -80,8 +80,8 @@ W32_GetMousePosition(HWND window)
     POINT mouse;
     GetCursorPos(&mouse);
     ScreenToClient(window, &mouse);
-    result.x = (f32)(mouse.x);
-    result.y = (f32)(mouse.y);
+    result.x = (F32)(mouse.x);
+    result.y = (F32)(mouse.y);
     return result;
 }
 
@@ -90,7 +90,7 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
 {
     LRESULT result = 0;
     
-    local_persist b32 mouse_hover_active_because_windows_makes_me_cry = 0;
+    local_persist B32 mouse_hover_active_because_windows_makes_me_cry = 0;
     
     KeyModifiers modifiers = 0;
     if(GetKeyState(VK_CONTROL) & 0x8000)
@@ -129,8 +129,8 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     }
     else if(message == WM_MOUSEMOVE)
     {
-        i16 x_position = LOWORD(l_param);
-        i16 y_position = HIWORD(l_param);
+        S16 x_position = LOWORD(l_param);
+        S16 y_position = HIWORD(l_param);
         v2 last_mouse = global_os.mouse_position;
         global_os.mouse_position = W32_GetMousePosition(window_handle);
         OS_PushEvent(OS_MouseMoveEvent(global_os.mouse_position,
@@ -156,13 +156,13 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     }
     else if(message == WM_MOUSEWHEEL)
     {
-        i16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2(0, (f32)wheel_delta), modifiers));
+        S16 wheel_delta = HIWORD(w_param);
+        OS_PushEvent(OS_MouseScrollEvent(v2(0, (F32)wheel_delta), modifiers));
     }
     else if(message == WM_MOUSEHWHEEL)
     {
-        i16 wheel_delta = HIWORD(w_param);
-        OS_PushEvent(OS_MouseScrollEvent(v2((f32)wheel_delta, 0), modifiers));
+        S16 wheel_delta = HIWORD(w_param);
+        OS_PushEvent(OS_MouseScrollEvent(v2((F32)wheel_delta, 0), modifiers));
     }
     else if(message == WM_SETCURSOR)
     {
@@ -203,11 +203,11 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     else if(message == WM_SYSKEYDOWN || message == WM_SYSKEYUP ||
             message == WM_KEYDOWN || message == WM_KEYUP)
     {
-        u64 vkey_code = w_param;
-        i8 was_down = !!(l_param & (1 << 30));
-        i8 is_down =   !(l_param & (1 << 31));
+        U64 vkey_code = w_param;
+        S8 was_down = !!(l_param & (1 << 30));
+        S8 is_down =   !(l_param & (1 << 31));
         
-        u64 key_input = 0;
+        U64 key_input = 0;
         
         if((vkey_code >= 'A' && vkey_code <= 'Z') ||
            (vkey_code >= '0' && vkey_code <= '9'))
@@ -343,7 +343,7 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     }
     else if(message == WM_CHAR)
     {
-        u64 char_input = w_param;
+        U64 char_input = w_param;
         if(char_input >= 32 && char_input != VK_RETURN && char_input != VK_ESCAPE &&
            char_input != 127)
         {
@@ -358,19 +358,19 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
     return result;
 }
 
-internal f32
+internal F32
 W32_GetTime(void)
 {
     W32_Timer *timer = &global_win32_timer;
     LARGE_INTEGER current_time;
     QueryPerformanceCounter(&current_time);
-    return global_os.current_time + (f32)(current_time.QuadPart - timer->begin_frame.QuadPart) / (f32)timer->counts_per_second.QuadPart;
+    return global_os.current_time + (F32)(current_time.QuadPart - timer->begin_frame.QuadPart) / (F32)timer->counts_per_second.QuadPart;
 }
 
-internal u64
+internal U64
 W32_GetCycles(void)
 {
-    u64 result = __rdtsc();
+    U64 result = __rdtsc();
     return result;
 }
 
@@ -410,7 +410,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         {
             MemoryCopy(global_executable_directory, global_executable_path, size_of_executable_path);
             char *one_past_last_slash = global_executable_directory;
-            for(i32 i = 0; global_executable_directory[i]; ++i)
+            for(S32 i = 0; global_executable_directory[i]; ++i)
             {
                 if(global_executable_directory[i] == '\\')
                 {
@@ -479,7 +479,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     }
     
     // NOTE(rjf): Find refresh rate
-    f32 refresh_rate = 60.f;
+    F32 refresh_rate = 60.f;
     {
         DEVMODEA device_mode = {0};
         if(EnumDisplaySettingsA(0, ENUM_CURRENT_SETTINGS, &device_mode))
@@ -504,7 +504,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.current_time              = 0.f;
         global_os.target_frames_per_second  = refresh_rate;
         
-        global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(f32) * 2);
+        global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
         
         global_os.Reserve                        = W32_Reserve;
@@ -604,14 +604,14 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
             if(SUCCEEDED(win32_sound_output.audio_client->lpVtbl->GetCurrentPadding(win32_sound_output.audio_client, &sound_padding_size)))
             {
                 global_os.samples_per_second = win32_sound_output.samples_per_second;
-                global_os.sample_count_to_output = (u32)(win32_sound_output.latency_frame_count - sound_padding_size);
+                global_os.sample_count_to_output = (U32)(win32_sound_output.latency_frame_count - sound_padding_size);
                 if(global_os.sample_count_to_output > win32_sound_output.latency_frame_count)
                 {
                     global_os.sample_count_to_output = win32_sound_output.latency_frame_count;
                 }
             }
             
-            for(u32 i = 0; i < win32_sound_output.buffer_frame_count; ++i)
+            for(U32 i = 0; i < win32_sound_output.buffer_frame_count; ++i)
             {
                 global_os.sample_out[i] = 0;
             }
@@ -619,7 +619,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         // NOTE(rjf): Call into the app layer to update
         {
-            b32 last_fullscreen = global_os.fullscreen;
+            B32 last_fullscreen = global_os.fullscreen;
             
             win32_app_code.Update();
             
@@ -643,7 +643,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         
         W32_AppCodeUpdate(&win32_app_code);
         
-        W32_TimerEndFrame(&global_win32_timer, 1000.0 * (1.0 / (f64)global_os.target_frames_per_second));
+        W32_TimerEndFrame(&global_win32_timer, 1000.0 * (1.0 / (F64)global_os.target_frames_per_second));
     }
     
     ShowWindow(window_handle, SW_HIDE);

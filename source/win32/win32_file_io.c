@@ -9,7 +9,7 @@ W32_FrameCStringFromString(String8 string)
 }
 
 function B32
-W32_SaveToFile(String8 path, void *data, U64 data_len)
+OS_SaveToFile(String8 path, void *data, U64 data_len)
 {
     B32 result = 0;
     HANDLE file = {0};
@@ -45,14 +45,14 @@ W32_SaveToFile(String8 path, void *data, U64 data_len)
         }
         else
         {
-            W32_OutputError("File I/O Error", "Could not save to \"%s\"", path);
+            OS_OutputError("File I/O Error", "Could not save to \"%s\"", path);
         }
     }
     return(result);
 }
 
 function void
-W32_AppendToFile(String8 path, void *data, U64 data_len)
+OS_AppendToFile(String8 path, void *data, U64 data_len)
 {
     HANDLE file = {0};
     {
@@ -87,13 +87,13 @@ W32_AppendToFile(String8 path, void *data, U64 data_len)
         }
         else
         {
-            W32_OutputError("File I/O Error", "Could not save to \"%s\"", path);
+            OS_OutputError("File I/O Error", "Could not save to \"%s\"", path);
         }
     }
 }
 
 function void
-W32_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len)
+OS_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len)
 {
     *data = 0;
     *data_len = 0;
@@ -135,7 +135,7 @@ W32_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len)
 }
 
 function char *
-W32_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path)
+OS_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path)
 {
     char *result = 0;
     
@@ -170,7 +170,7 @@ W32_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path)
         }
         else
         {
-            W32_OutputError("File I/O Error", "Could not read from \"%s\"", path);
+            OS_OutputError("File I/O Error", "Could not read from \"%s\"", path);
         }
     }
     
@@ -184,13 +184,13 @@ W32_FreeFileMemory(void *data)
 }
 
 function void
-W32_DeleteFile(String8 path)
+OS_DeleteFile(String8 path)
 {
     DeleteFileA(W32_FrameCStringFromString(path));
 }
 
 function B32
-W32_MakeDirectory(String8 path)
+OS_MakeDirectory(String8 path)
 {
     B32 result = 1;
     if(!CreateDirectoryA(W32_FrameCStringFromString(path), 0))
@@ -201,14 +201,14 @@ W32_MakeDirectory(String8 path)
 }
 
 function B32
-W32_DoesFileExist(String8 path)
+OS_DoesFileExist(String8 path)
 {
     B32 found = GetFileAttributesA(W32_FrameCStringFromString(path)) != INVALID_FILE_ATTRIBUTES;
     return found;
 }
 
 function B32
-W32_DoesDirectoryExist(String8 path)
+OS_DoesDirectoryExist(String8 path)
 {
     DWORD file_attributes = GetFileAttributesA(W32_FrameCStringFromString(path));
     B32 found = (file_attributes != INVALID_FILE_ATTRIBUTES &&
@@ -225,7 +225,7 @@ W32_CopyFile(String8 dest, String8 source)
 }
 
 function OS_DirectoryList
-W32_DirectoryListLoad(M_Arena *arena, String8 path, S32 flags)
+OS_DirectoryListLoad(M_Arena *arena, String8 path, S32 flags)
 {
     OS_DirectoryList list = {0};
     
@@ -250,7 +250,7 @@ _W32_InitFilter(M_Arena *arena, String8 *fixed_ext){
 }
 
 function String8
-W32_DialogueSavePath(M_Arena *arena, String8 *fixed_ext)
+OS_DialogueSavePath(M_Arena *arena, String8 *fixed_ext)
 {
     M_Arena *scratch = OS_GetScratch1(arena);
     
@@ -274,7 +274,7 @@ W32_DialogueSavePath(M_Arena *arena, String8 *fixed_ext)
 }
 
 function String8
-W32_DialogueLoadPath(M_Arena *arena, String8 *fixed_ext)
+OS_DialogueLoadPath(M_Arena *arena, String8 *fixed_ext)
 {
     M_Arena *scratch = OS_GetScratch1(arena);
     

@@ -25,32 +25,32 @@ W32_HeapFree(void *data)
 }
 
 function void *
-W32_Reserve(U64 size)
+OS_Reserve(U64 size)
 {
     void *memory = VirtualAlloc(0, size, MEM_RESERVE, PAGE_NOACCESS);
     return memory;
 }
 
 function void
-W32_Release(void *memory)
+OS_Release(void *memory)
 {
     VirtualFree(memory, 0, MEM_RELEASE);
 }
 
 function void
-W32_Commit(void *memory, U64 size)
+OS_Commit(void *memory, U64 size)
 {
     VirtualAlloc(memory, size, MEM_COMMIT, PAGE_READWRITE);
 }
 
 function void
-W32_Decommit(void *memory, U64 size)
+OS_Decommit(void *memory, U64 size)
 {
     VirtualFree(memory, size, MEM_DECOMMIT);
 }
 
 function void
-W32_OutputError(char *title, char *format, ...)
+OS_OutputError(char *title, char *format, ...)
 {
     local volatile LONG locked = 0;
     

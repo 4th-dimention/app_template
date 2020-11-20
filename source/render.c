@@ -259,7 +259,7 @@ function void
 R_End(void)
 {
     _R_Flush();
-    os->RefreshScreen();
+    OS_RefreshScreen();
 }
 
 function RectF32
@@ -363,7 +363,7 @@ R_InitFont(R_Font *font, String8 ttf_path, S32 size)
     
     void *data = 0;
     U64 data_len = 0;
-    os->LoadEntireFile(scratch, ttf_path, &data, &data_len);
+    OS_LoadEntireFile(scratch, ttf_path, &data, &data_len);
     
     if (data_len > 0)
     {

@@ -237,7 +237,7 @@ _OS_MarkArenaRestore(OS_ArenaNode *node)
 function M_Arena*
 OS_GetScratch(void)
 {
-    OS_ThreadContext *tctx = os->GetThreadContext();
+    OS_ThreadContext *tctx = OS_GetThreadContext();
     OS_ArenaNode *usable_node = tctx->first_used;
     if (usable_node == 0)
     {
@@ -249,7 +249,7 @@ OS_GetScratch(void)
 function M_Arena*
 OS_GetScratch1(M_Arena *a1)
 {
-    OS_ThreadContext *tctx = os->GetThreadContext();
+    OS_ThreadContext *tctx = OS_GetThreadContext();
     OS_ArenaNode *usable_node = 0;
     for (OS_ArenaNode *node = tctx->first_used;
          node != 0;
@@ -271,7 +271,7 @@ OS_GetScratch1(M_Arena *a1)
 function M_Arena*
 OS_GetScratch2(M_Arena *a1, M_Arena *a2)
 {
-    OS_ThreadContext *tctx = os->GetThreadContext();
+    OS_ThreadContext *tctx = OS_GetThreadContext();
     OS_ArenaNode *usable_node = 0;
     for (OS_ArenaNode *node = tctx->first_used;
          node != 0;
@@ -298,7 +298,7 @@ OS_ReleaseScratch(M_Arena *arena)
     node->ref_count -= 1;
     if (node->ref_count == 0)
     {
-        OS_ThreadContext *tctx = os->GetThreadContext();
+        OS_ThreadContext *tctx = OS_GetThreadContext();
         DLLRemove(tctx->first_used, tctx->last_used, node);
         M_ArenaClear(arena);
         SLLStackPush(tctx->free, node);
@@ -314,7 +314,7 @@ OS_ReleaseScratch(M_Arena *arena)
 function void
 _OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 {
-    OS_ThreadContext *tctx = os->GetThreadContext();
+    OS_ThreadContext *tctx = OS_GetThreadContext();
     tctx->file_name = file_name;
     tctx->line_number = line_number;
 }
@@ -324,7 +324,7 @@ _OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 function OS_File_Line
 OS_ThreadRememberFileLine(void)
 {
-    OS_ThreadContext *tctx = os->GetThreadContext();
+    OS_ThreadContext *tctx = OS_GetThreadContext();
     OS_File_Line result = {tctx->file_name, tctx->line_number};
     return(result);
 }

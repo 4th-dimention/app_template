@@ -47,7 +47,7 @@ void APP_Update(void)
     {
         if (event->kind == OS_EventKind_WindowClose)
         {
-            os->Quit();
+            OS_Quit();
         }
     }
     

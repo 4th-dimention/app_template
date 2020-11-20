@@ -147,28 +147,28 @@ W32_InitWASAPI(W32_SoundOutput *output)
                     }
                     else
                     {
-                        W32_OutputError("WASAPI Error", "Request for audio render service failed.");
+                        OS_OutputError("WASAPI Error", "Request for audio render service failed.");
                     }
                 }
                 else
                 {
-                    W32_OutputError("WASAPI Error",
-                                    "Audio client initialization failed.");
+                    OS_OutputError("WASAPI Error",
+                                   "Audio client initialization failed.");
                 }
             }
             else
             {
-                W32_OutputError("WASAPI Error", "Could not activate audio device.");
+                OS_OutputError("WASAPI Error", "Could not activate audio device.");
             }
         }
         else
         {
-            W32_OutputError("WASAPI Error", "Default audio endpoint was not found.");
+            OS_OutputError("WASAPI Error", "Default audio endpoint was not found.");
         }
     }
     else
     {
-        W32_OutputError("WASAPI Error", "Device enumerator retrieval failed.");
+        OS_OutputError("WASAPI Error", "Device enumerator retrieval failed.");
     }
 }
 

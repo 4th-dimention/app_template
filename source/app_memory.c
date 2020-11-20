@@ -8,7 +8,7 @@ M_ArenaInitializeWithAlign(U64 auto_align)
 {
     M_Arena arena = {0};
     arena.max = M_ARENA_MAX;
-    arena.base = os->Reserve(arena.max);
+    arena.base = OS_Reserve(arena.max);
     arena.alloc_position = 0;
     arena.commit_position = 0;
     arena.auto_align = auto_align;
@@ -30,7 +30,7 @@ M_ArenaPush(M_Arena *arena, U64 size)
         U64 commit_size = size;
         commit_size += M_ARENA_COMMIT_SIZE-1;
         commit_size -= commit_size % M_ARENA_COMMIT_SIZE;
-        os->Commit((U8 *)arena->base + arena->commit_position, commit_size);
+        OS_Commit((U8 *)arena->base + arena->commit_position, commit_size);
         arena->commit_position += commit_size;
     }
     memory = (U8 *)arena->base + arena->alloc_position;
@@ -83,7 +83,7 @@ M_ArenaClear(M_Arena *arena)
 function void
 M_ArenaRelease(M_Arena *arena)
 {
-    os->Release(arena->base);
+    OS_Release(arena->base);
 }
 
 function M_Temp

@@ -16,6 +16,6 @@
 function void
 LoadAllOpenGLProcedures(void)
 {
-#define GLProc(name, type) name = os->LoadOpenGLProcedure(#name);
+#define GLProc(name, type) name = OS_LoadOpenGLProcedure(#name);
 #include "opengl_procedure_list.h"
 }

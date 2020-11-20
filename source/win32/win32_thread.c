@@ -23,7 +23,7 @@ W32_ThreadInit(OS_ThreadContext *tctx, OS_ArenaNode *nodes, S32 node_count)
 }
 
 function OS_ThreadContext*
-W32_GetThreadContext(void)
+OS_GetThreadContext(void)
 {
     void *ptr = TlsGetValue(tls_index_thread_context);
     return((OS_ThreadContext*)ptr);

@@ -388,7 +388,7 @@ W32_WindowProc(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param)
 }
 
 function F32
-W32_GetTime(void)
+OS_GetTime(void)
 {
     W32_Timer *timer = &global_win32_timer;
     LARGE_INTEGER current_time;
@@ -397,32 +397,32 @@ W32_GetTime(void)
 }
 
 function U64
-W32_GetCycles(void)
+OS_GetCycles(void)
 {
     U64 result = __rdtsc();
     return result;
 }
 
 function void
-W32_ResetCursor(void)
+OS_ResetCursor(void)
 {
     global_cursor_style = W32_CursorStyle_Normal;
 }
 
 function void
-W32_SetCursorToHorizontalResize(void)
+OS_SetCursorToHorizontalResize(void)
 {
     global_cursor_style = W32_CursorStyle_HorizontalResize;
 }
 
 function void
-W32_SetCursorToVerticalResize(void)
+OS_SetCursorToVerticalResize(void)
 {
     global_cursor_style = W32_CursorStyle_VerticalResize;
 }
 
 function void
-W32_Quit(void)
+OS_Quit(void)
 {
     global_os.quit = 1;
 }
@@ -475,7 +475,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     if(!RegisterClass(&window_class))
     {
         // NOTE(rjf): ERROR: Window class registration failure
-        W32_OutputError("Fatal Error", "Window class registration failure.");
+        OS_OutputError("Fatal Error", "Window class registration failure.");
         goto quit;
     }
     
@@ -488,7 +488,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
     if(!window_handle)
     {
         // NOTE(rjf): ERROR: Window creation failure
-        W32_OutputError("Fatal Error", "Window creation failure.");
+        OS_OutputError("Fatal Error", "Window creation failure.");
         goto quit;
     }
     
@@ -530,34 +530,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);
         global_os.samples_per_second = win32_sound_output.samples_per_second;
         
-        global_os.Quit                           = W32_Quit;
-        
-        global_os.Reserve                        = W32_Reserve;
-        global_os.Release                        = W32_Release;
-        global_os.Commit                         = W32_Commit;
-        global_os.Decommit                       = W32_Decommit;
-        global_os.OutputError                    = W32_OutputError;
-        global_os.SaveToFile                     = W32_SaveToFile;
-        global_os.AppendToFile                   = W32_AppendToFile;
-        global_os.LoadEntireFile                 = W32_LoadEntireFile;
-        global_os.LoadEntireFileAndNullTerminate = W32_LoadEntireFileAndNullTerminate;
-        global_os.DeleteFile                     = W32_DeleteFile;
-        global_os.MakeDirectory                  = W32_MakeDirectory;
-        global_os.DoesFileExist                  = W32_DoesFileExist;
-        global_os.DoesDirectoryExist             = W32_DoesDirectoryExist;
-        global_os.ListDirectory                  = W32_DirectoryListLoad;
-        global_os.GetTime                        = W32_GetTime;
-        global_os.GetCycles                      = W32_GetCycles;
-        global_os.ResetCursor                    = W32_ResetCursor;
-        global_os.SetCursorToHorizontalResize    = W32_SetCursorToHorizontalResize;
-        global_os.SetCursorToVerticalResize      = W32_SetCursorToVerticalResize;
-        global_os.LoadOpenGLProcedure            = W32_LoadOpenGLProcedure;
-        global_os.RefreshScreen                  = W32_OpenGLRefreshScreen;
-        global_os.GetThreadContext               = W32_GetThreadContext;
-        
-        global_os.DialogueSavePath               = W32_DialogueSavePath;
-        global_os.DialogueLoadPath               = W32_DialogueLoadPath;
-        
         global_os.permanent_arena = M_ArenaInitialize();
         global_os.frame_arena = M_ArenaInitialize();
     }
@@ -572,7 +544,7 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_device_context = GetDC(window_handle);
         if(!W32_InitOpenGL(&global_device_context, global_instance_handle))
         {
-            W32_OutputError("Fatal Error", "OpenGL initialization failure.");
+            OS_OutputError("Fatal Error", "OpenGL initialization failure.");
             goto quit;
         }
     }

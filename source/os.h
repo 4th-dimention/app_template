@@ -187,45 +187,42 @@ struct OS_State
     F32 *sample_out;
     U32 sample_count_to_output;
     U32 samples_per_second;
-    
-    // NOTE(rjf): Functions
-    void  (*Quit)(void);
-    
-    void* (*Reserve)(U64 size);
-    void  (*Release)(void *memory);
-    void  (*Commit)(void *memory, U64 size);
-    void  (*Decommit)(void *memory, U64 size);
-    void  (*OutputError)(char *error_type, char *error_format, ...);
-    B32   (*SaveToFile)(String8 path, void *data, U64 data_len);
-    void  (*AppendToFile)(String8 path, void *data, U64 data_len);
-    void  (*LoadEntireFile)(M_Arena *arena, String8 path, void **data, U64 *data_len);
-    char* (*LoadEntireFileAndNullTerminate)(M_Arena *arena, String8 path);
-    void  (*DeleteFile)(String8 path);
-    B32   (*MakeDirectory)(String8 path);
-    B32   (*DoesFileExist)(String8 path);
-    B32   (*DoesDirectoryExist)(String8 path);
-    OS_DirectoryList (*ListDirectory)(M_Arena *arena, String8 path, S32 flags);
-    F32   (*GetTime)(void);
-    U64   (*GetCycles)(void);
-    void  (*ResetCursor)(void);
-    void  (*SetCursorToHorizontalResize)(void);
-    void  (*SetCursorToVerticalResize)(void);
-    void  (*SetCursorToIBar)(void);
-    void  (*RefreshScreen)(void);
-    void* (*LoadOpenGLProcedure)(char *name);
-    OS_ThreadContext *(*GetThreadContext)(void);
-    
-    String8 (*DialogueSavePath)(M_Arena *arena, String8 *fixed_extension);
-    String8 (*DialogueLoadPath)(M_Arena *arena, String8 *fixed_extension);
 };
 
 global OS_State *os = 0;
 
-#ifdef _MSC_VER
-#define APP_ENTRY_POINT __declspec(dllexport)
-#else
-#define APP_ENTRY_POINT
-#endif
+////////////////////////////////
+// NOTE(rjf): OS functions with specialized implementations
+
+void  OS_Quit(void);
+void* OS_Reserve(U64 size);
+void  OS_Release(void *memory);
+void  OS_Commit(void *memory, U64 size);
+void  OS_Decommit(void *memory, U64 size);
+void  OS_OutputError(char *error_type, char *error_format, ...);
+B32   OS_SaveToFile(String8 path, void *data, U64 data_len);
+void  OS_AppendToFile(String8 path, void *data, U64 data_len);
+void  OS_LoadEntireFile(M_Arena *arena, String8 path, void **data, U64 *data_len);
+char* OS_LoadEntireFileAndNullTerminate(M_Arena *arena, String8 path);
+void  OS_DeleteFile(String8 path);
+B32   OS_MakeDirectory(String8 path);
+B32   OS_DoesFileExist(String8 path);
+B32   OS_DoesDirectoryExist(String8 path);
+OS_DirectoryList OS_ListDirectory(M_Arena *arena, String8 path, S32 flags);
+F32   OS_GetTime(void);
+U64   OS_GetCycles(void);
+void  OS_ResetCursor(void);
+void  OS_SetCursorToHorizontalResize(void);
+void  OS_SetCursorToVerticalResize(void);
+void  OS_SetCursorToIBar(void);
+void  OS_RefreshScreen(void);
+void* OS_LoadOpenGLProcedure(char *name);
+OS_ThreadContext* OS_GetThreadContext(void);
+String8 OS_DialogueSavePath(M_Arena *arena, String8 *fixed_extension);
+String8 OS_DialogueLoadPath(M_Arena *arena, String8 *fixed_extension);
+
+////////////////////////////////
+// NOTE(allen): APP entry points
 
 void APP_Init(void);
 void APP_Update(void);

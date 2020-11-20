@@ -307,11 +307,11 @@ _OS_ThreadSaveFileLine(char *file_name, U64 line_number)
 
 #define OS_ThreadSaveFileLine() _OS_ThreadSaveFileLine(__FILE__, __LINE__)
 
-function OS_File_Line
+function OS_FileLine
 OS_ThreadRememberFileLine(void)
 {
     OS_ThreadContext *tctx = OS_GetThreadContext();
-    OS_File_Line result = {tctx->file_name, tctx->line_number};
+    OS_FileLine result = {tctx->file_name, tctx->line_number};
     return(result);
 }
 

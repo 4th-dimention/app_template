@@ -145,8 +145,8 @@ struct OS_ArenaNode
     U64 ref_count;
 };
 
-typedef struct OS_File_Line OS_File_Line;
-struct OS_File_Line
+typedef struct OS_FileLine OS_FileLine;
+struct OS_FileLine
 {
     char *file_name;
     U64 line_number;
@@ -237,7 +237,7 @@ function M_Arena * OS_GetScratch(void);
 function M_Arena * OS_GetScratch1(M_Arena * a1);
 function M_Arena * OS_GetScratch2(M_Arena * a1, M_Arena * a2);
 function void OS_ReleaseScratch(M_Arena * arena);
-function OS_File_Line OS_ThreadRememberFileLine(void);
+function OS_FileLine OS_ThreadRememberFileLine(void);
 
 ////////////////////////////////
 // NOTE(allen): APP entry points

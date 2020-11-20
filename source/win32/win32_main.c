@@ -23,8 +23,6 @@
 global char global_executable_path[256];
 global char global_executable_directory[256];
 global char global_working_directory[256];
-global char global_app_dll_path[256];
-global char global_temp_app_dll_path[256];
 global OS_State global_os;
 global HDC global_device_context;
 global HINSTANCE global_instance_handle;
@@ -452,12 +450,6 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
                 }
             }
             *one_past_last_slash = 0;
-        }
-        
-        // NOTE(rjf): Create DLL filenames
-        {
-            wsprintf(global_app_dll_path, "%s%s.dll", global_executable_directory, PROGRAM_FILENAME);
-            wsprintf(global_temp_app_dll_path, "%stemp_%s.dll", global_executable_directory, PROGRAM_FILENAME);
         }
         
         GetCurrentDirectory(sizeof(global_working_directory), global_working_directory);

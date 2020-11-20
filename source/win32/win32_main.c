@@ -15,10 +15,6 @@
 // NOTE(rjf): CRT
 #include <stdio.h>
 
-// NOTE(rjf): Headers
-#include "program_options.h"
-
-
 // NOTE(rjf): Globals
 global OS_State global_os;
 global HDC global_device_context;
@@ -451,10 +447,10 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         goto quit;
     }
     
-    HWND window_handle = CreateWindow("ApplicationWindowClass", WINDOW_TITLE,
+    HWND window_handle = CreateWindow("ApplicationWindowClass", (char*)os_window_title.str,
                                       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                                      DEFAULT_WINDOW_WIDTH,
-                                      DEFAULT_WINDOW_HEIGHT,
+                                      os_default_window_width,
+                                      os_default_window_height,
                                       0, 0, instance, 0);
     
     if(!window_handle)
@@ -492,8 +488,8 @@ WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR lp_cmd_line, int n_sh
         global_os.quit                      = 0;
         global_os.vsync                     = 1;
         global_os.fullscreen                = 0;
-        global_os.window_size.x             = DEFAULT_WINDOW_WIDTH;
-        global_os.window_size.y             = DEFAULT_WINDOW_HEIGHT;
+        global_os.window_size.x             = os_default_window_width;
+        global_os.window_size.y             = os_default_window_height;
         global_os.current_time              = 0.f;
         
         global_os.sample_out = W32_HeapAlloc(win32_sound_output.samples_per_second * sizeof(F32) * 2);

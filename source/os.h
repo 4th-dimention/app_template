@@ -2,6 +2,9 @@
 // NOTE(allen): Constants
 
 global U64 os_repaint_interval_usec = Million(1)/60;
+global String8 os_window_title = str8_comp("Application");
+global U64 os_default_window_width  = 1280;
+global U64 os_default_window_height =  720;
 
 ////////////////////////////////
 // NOTE(allen): Directory Listing Types

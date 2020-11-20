@@ -221,6 +221,33 @@ OS_ThreadContext* OS_GetThreadContext(void);
 String8 OS_DialogueSavePath(M_Arena *arena, String8 *fixed_extension);
 String8 OS_DialogueLoadPath(M_Arena *arena, String8 *fixed_extension);
 
+
+////////////////////////////////
+// NOTE(allen): OS functions with general implementations
+
+function String8 KeyName(Key index);
+function String8 GamepadButtonName(GamepadButton index);
+function B32 OS_EventIsMouse(OS_Event * event);
+function B32 OS_CompareEvents(OS_Event a, OS_Event b);
+function OS_Event OS_KeyPressEvent(Key key, KeyModifiers modifiers);
+function OS_Event OS_KeyReleaseEvent(Key key, KeyModifiers modifiers);
+function OS_Event OS_CharacterInputEvent(U32 character);
+function OS_Event OS_MouseMoveEvent(V2F32 position, V2F32 delta);
+function OS_Event OS_MousePressEvent(MouseButton button, V2F32 position);
+function OS_Event OS_MouseReleaseEvent(MouseButton mouse_button, V2F32 position);
+function OS_Event OS_MouseScrollEvent(V2F32 delta, KeyModifiers modifiers);
+function OS_Event OS_WindowClose(void);
+function B32 OS_GetNextEvent(OS_Event * * event);
+function void OS_EatEvent(OS_Event * event);
+function void OS_BeginFrame(void);
+function void OS_EndFrame(void);
+function void OS_PushEvent(OS_Event event);
+function M_Arena * OS_GetScratch(void);
+function M_Arena * OS_GetScratch1(M_Arena * a1);
+function M_Arena * OS_GetScratch2(M_Arena * a1, M_Arena * a2);
+function void OS_ReleaseScratch(M_Arena * arena);
+function OS_File_Line OS_ThreadRememberFileLine(void);
+
 ////////////////////////////////
 // NOTE(allen): APP entry points
 

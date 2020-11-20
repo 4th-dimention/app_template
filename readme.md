@@ -73,13 +73,13 @@ A handful of scalar math functions, many simply wrapping `<math.h>`
 ## Vector
 Small fixed-size array types with helpful accessors and math functions.
 
-`v2, v3, v4` are the floating point vectors
+`V2F32, V3F32, V4F32` are the floating point vectors
 
-`iv2, iv3, iv4` are the integer vectors
+`V2S32, V3S32, V4S32` are the integer vectors
 
-Via a C macro these can be constructed with the syntax:
+These can be constrcted via constructors:
 
-`v2 p = v2(x, y)`
+`V2F32 p = v2F32(x, y)`
 
 The floating point vectors have math functions such as:
 - `V2Add`
@@ -113,6 +113,7 @@ Types for one dimensional intervals and axis aligned rectangles
 `RangeU64` unsigned integer interval
 
 Ranges have `min` and `max` and by convention encode the partially open interval `[min,max)`
+although sometimes for floats it is also useful to use `(min,max)` or `[min,max]`.
 
 There are various functions on ranges
 - `RangeSize`
@@ -128,7 +129,7 @@ Rectangles contain `x0` `y0` `x1` `y1` plus several other union-ed accessors lik
 - `MakeRectVec(p0,p1)`
 - `MakeRectRanges(x,y)`
 
-Anything a range can do, so also a rectangle can do by applying the logic on each axis and then combining the result however necessary:
+Anything a range can do, a rectangle can also do by applying the logic on each axis lifted or folded:
 
 - `RectUnion`
 - `RectGrow`

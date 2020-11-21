@@ -3,8 +3,11 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-typedef struct R_Glyph_Box R_Glyph_Box;
-struct R_Glyph_Box
+////////////////////////////////
+// NOTE(allen): Font Types
+
+typedef struct R_GlyphBox R_GlyphBox;
+struct R_GlyphBox
 {
     V2F32 offset;
     V2F32 dim;
@@ -17,7 +20,7 @@ struct R_Font
     U32 var[1];
     F32 top_to_baseline;
     F32 baseline_to_next_top;
-    R_Glyph_Box glyph[128];
+    R_GlyphBox glyph[128];
     F32 advance[128];
 };
 
@@ -88,6 +91,19 @@ struct R_Font
 #define R_SP_INDX_31 0x7F
 
 ////////////////////////////////
+// NOTE(allen): RGBA Texture Types
+
+typedef struct R_RGBATexture R_RGBATexture;
+struct R_RGBATexture
+{
+    B32 initialized;
+    V2F32 dim;
+    U32 var[1];
+};
+
+
+////////////////////////////////
+// NOTE(allen): Functions
 
 function void R_Init(M_Arena *arena);
 
@@ -107,9 +123,13 @@ function void  R_FontUpdateMipmaps(R_Font *font);
 function V2F32 R_StringDim(F32 scale, String8 string);
 function V2F32 R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
 
+function void R_InitRGBATexture(R_RGBATexture *texture, String8 img_path);
+
+function void R_SelectFont(R_Font *font);
+function void R_SelectRGBATexture(R_RGBATexture *texture);
+
 function void R_Rect(RectF32 rect, V3F32 color, F32 a);
 function void R_RectOutline(RectF32 rect, F32 thickness, V3F32 color, F32 a);
-function void R_SelectFont(R_Font *font);
 function V2F32 R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a);

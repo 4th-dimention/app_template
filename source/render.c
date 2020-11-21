@@ -1,5 +1,3 @@
-// NOTE(allen): render.c
-
 ////////////////////////////////
 // NOTE(allen): Internal types
 
@@ -23,14 +21,20 @@ struct R_GL_State
     U64 vertex_max;
     
     R_Font *selected_font;
-    U32 selected_font_texture;
+    R_RGBATexture *selected_rgba_texture;
+    U32 selected_texture_id;
+    
+    GLuint program_mono_texture;
+    GLuint program_rgba_texture;
     
     RectF32 clip;
 };
 
+////////////////////////////////
+// NOTE(allen): Shared Shader
+
 typedef struct R_GL_Bind R_GL_Bind;
-struct R_GL_Bind
-{
+struct R_GL_Bind{
     char *name;
     B32 is_uniform;
     U32 size;
@@ -39,11 +43,13 @@ struct R_GL_Bind
     U32 total_size;
 };
 
+global char shader_header[] = "#version 330\n";
+
+#define R_GL_BindMembers(N,u,size) R_GL_Bind N;
+#define R_GL_BindValues(N,u,size) {#N,u,size},
 
 ////////////////////////////////
-// NOTE(allen): Shader
-
-global char shader_header[] = "#version 330\n";
+// NOTE(allen): Shader Mono Texture
 
 global char shader_vertex_mono_texture[] = 
 "in vec2 vert_xy;\n"
@@ -75,23 +81,69 @@ global char shader_fragment_mono_texture[] =
 "}\n"
 ;
 
-#define R_GL_Bind_Members(N,u,off) R_GL_Bind N;
-#define R_GL_Bind_Values(N,u,off) {#N,u,off},
-
-#define R_GL_Mono_Texture_Binds(X)\
+#define R_GL_MonoTextureBinds(X)\
 X(vert_xy , 0, 2)\
 X(vert_uvw, 0, 3)\
 X(vert_c  , 0, 4)\
 X(inv_half_dim, 1, 0)\
 X(tex         , 1, 0)
 
-typedef struct R_GL_Mono_Texture R_GL_Mono_Texture;
-struct R_GL_Mono_Texture
+typedef struct R_GL_MonoTexture R_GL_MonoTexture;
+struct R_GL_MonoTexture
 {
-    R_GL_Mono_Texture_Binds(R_GL_Bind_Members)
+    R_GL_MonoTextureBinds(R_GL_BindMembers)
 };
-global R_GL_Mono_Texture r_gl_mono_texture = {
-    R_GL_Mono_Texture_Binds(R_GL_Bind_Values)
+global R_GL_MonoTexture r_gl_mono_texture = {
+    R_GL_MonoTextureBinds(R_GL_BindValues)
+};
+
+////////////////////////////////
+// NOTE(allen): Shader RGBA Texture
+
+global char shader_vertex_rgba_texture[] = 
+"in vec2 vert_xy;\n"
+"in vec3 vert_uvw;\n"
+"in vec4 vert_c;\n"
+"out vec3 frag_uvw;\n"
+"out vec4 frag_c;\n"
+"uniform vec2 inv_half_dim;\n"
+"void main()\n"
+"{\n"
+" gl_Position.x = (vert_xy.x*inv_half_dim.x) - 1;\n"
+" gl_Position.y = 1 - (vert_xy.y*inv_half_dim.y);\n"
+" gl_Position.z = 0;\n"
+" gl_Position.w = 1;\n"
+" frag_uvw = vert_uvw;\n"
+" frag_c = vert_c;\n"
+"}\n"
+;
+
+global char shader_fragment_rgba_texture[] = 
+"in vec3 frag_uvw;\n"
+"in vec4 frag_c;\n"
+"out vec4 out_c;\n"
+"uniform sampler2DArray tex;\n"
+"void main()\n"
+"{\n"
+" vec4 rgba_sample = texture(tex, frag_uvw);\n"
+" out_c = rgba_sample*frag_c;\n"
+"}\n"
+;
+
+#define R_GL_RGBATextureBinds(X)\
+X(vert_xy , 0, 2)\
+X(vert_uvw, 0, 3)\
+X(vert_c  , 0, 4)\
+X(inv_half_dim, 1, 0)\
+X(tex         , 1, 0)
+
+typedef struct R_GL_RGBATexture R_GL_RGBATexture;
+struct R_GL_RGBATexture
+{
+    R_GL_RGBATextureBinds(R_GL_BindMembers)
+};
+global R_GL_RGBATexture r_gl_rgba_texture = {
+    R_GL_RGBATextureBinds(R_GL_BindValues)
 };
 
 ////////////////////////////////
@@ -100,7 +152,7 @@ global R_GL_Mono_Texture r_gl_mono_texture = {
 global R_GL_State *global_render = 0;
 
 function GLuint
-_R_CompilerShader(GLenum shader_kind, char *source)
+_R_CompileShader(GLenum shader_kind, char *source)
 {
     GLuint shader = glCreateShader(shader_kind);
     GLchar *sources[] = {shader_header, source};
@@ -115,6 +167,48 @@ _R_CompilerShader(GLenum shader_kind, char *source)
     Assert(log_length == 0);
     
     return(shader);
+}
+
+function GLuint
+_R_LinkProgram(GLuint vertex_shader, GLuint fragment_shader,
+               R_GL_Bind *binds, U64 bind_count){
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    
+    S32 log_length = 0;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
+    char error[1024] = {0};
+    log_length = ClampTop(log_length, sizeof(error));
+    glGetProgramInfoLog(program, log_length, 0, error);
+    Assert(log_length == 0);
+    
+    U32 total_size = 0;
+    R_GL_Bind *bind = binds;
+    for (U64 i = 0; i < bind_count; i += 1, bind += 1){
+        if (!bind->is_uniform){
+            total_size += bind->size*sizeof(F32);
+        }
+    }
+    
+    U64 offset = 0;
+    bind = binds;
+    for (U64 i = 0; i < bind_count; i += 1, bind += 1){
+        if (bind->is_uniform){
+            bind->v = glGetUniformLocation(program, bind->name);
+        }
+        else{
+            bind->v = glGetAttribLocation(program, bind->name);
+            bind->offset = offset;
+            bind->total_size = total_size;
+            offset += bind->size*sizeof(F32);
+        }
+    }
+    
+    return(program);
 }
 
 function void
@@ -133,56 +227,25 @@ R_Init(M_Arena *arena)
     glBindVertexArray(vao);
     
     // NOTE(allen): shader
-    GLuint vertex_shader   = _R_CompilerShader(GL_VERTEX_SHADER  , shader_vertex_mono_texture  );
-    GLuint fragment_shader = _R_CompilerShader(GL_FRAGMENT_SHADER, shader_fragment_mono_texture);
-    
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-    
-    S32 log_length = 0;
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
-    char error[1024] = {0};
-    log_length = ClampTop(log_length, sizeof(error));
-    glGetProgramInfoLog(program, log_length, 0, error);
-    Assert(log_length == 0);
-    
     {
-        U64 bind_count = sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind);
-        R_GL_Bind *binds = (R_GL_Bind*)&r_gl_mono_texture;
-        
-        U32 total_size = 0;
-        R_GL_Bind *bind = binds;
-        for (U64 i = 0; i < bind_count; i += 1, bind += 1)
-        {
-            if (!bind->is_uniform)
-            {
-                total_size += bind->size*sizeof(F32);
-            }
-        }
-        
-        U64 offset = 0;
-        bind = binds;
-        for (U64 i = 0; i < bind_count; i += 1, bind += 1)
-        {
-            if (bind->is_uniform)
-            {
-                bind->v = glGetUniformLocation(program, bind->name);
-            }
-            else
-            {
-                bind->v = glGetAttribLocation(program, bind->name);
-                bind->offset = offset;
-                bind->total_size = total_size;
-                offset += bind->size*sizeof(F32);
-            }
-        }
+        GLuint vertex_shader   = _R_CompileShader(GL_VERTEX_SHADER  , shader_vertex_mono_texture  );
+        GLuint fragment_shader = _R_CompileShader(GL_FRAGMENT_SHADER, shader_fragment_mono_texture);
+        GLuint program = _R_LinkProgram(vertex_shader, fragment_shader,
+                                        (R_GL_Bind*)&r_gl_mono_texture,
+                                        sizeof(r_gl_mono_texture)/sizeof(R_GL_Bind));
+        global_render->program_mono_texture = program;
     }
     
-    glUseProgram(program);
+    {
+        GLuint vertex_shader   = _R_CompileShader(GL_VERTEX_SHADER  , shader_vertex_rgba_texture  );
+        GLuint fragment_shader = _R_CompileShader(GL_FRAGMENT_SHADER, shader_fragment_rgba_texture);
+        GLuint program = _R_LinkProgram(vertex_shader, fragment_shader,
+                                        (R_GL_Bind*)&r_gl_rgba_texture,
+                                        sizeof(r_gl_rgba_texture)/sizeof(R_GL_Bind));
+        global_render->program_rgba_texture = program;
+    }
+    
+    glUseProgram(global_render->program_mono_texture);
     glUniform1i(r_gl_mono_texture.tex.v, 0);
     
     
@@ -216,7 +279,8 @@ R_Init(M_Arena *arena)
     
     // NOTE(allen): select null font
     global_render->selected_font = 0;
-    global_render->selected_font_texture = 0;
+    global_render->selected_rgba_texture = 0;
+    global_render->selected_texture_id = 0;
 }
 
 function void
@@ -234,8 +298,7 @@ function R_GL_Vertex*
 _R_AllocVertices(U64 count)
 {
     Assert(count <= global_render->vertex_max);
-    if (global_render->vertex_count + count > global_render->vertex_max)
-    {
+    if (global_render->vertex_count + count > global_render->vertex_max){
         _R_Flush();
     }
     
@@ -289,6 +352,15 @@ R_PushClip(RectF32 rect)
 
 
 ////////////////////////////////
+// NOTE(allen): OpenGL Texture State
+
+function void
+_R_RestoreSelectedTexture(void){
+    glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_texture_id);
+}
+
+
+////////////////////////////////
 // NOTE(allen): Font
 
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -338,7 +410,7 @@ function void
 R_InitUserFont(R_Font *font)
 {
     _R_BaseInitFont(font);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
+    _R_RestoreSelectedTexture();
 }
 
 function void
@@ -349,7 +421,7 @@ R_ReleaseFont(R_Font *font)
     if (global_render->selected_font == font)
     {
         global_render->selected_font = 0;
-        global_render->selected_font_texture = 0;
+        global_render->selected_texture_id = 0;
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 }
@@ -388,7 +460,7 @@ R_InitFont(R_Font *font, String8 ttf_path, S32 size)
             
             // NOTE(allen): characters between [32,126]
             {
-                R_Glyph_Box *glyph_ptr = font->glyph + 32;
+                R_GlyphBox *glyph_ptr = font->glyph + 32;
                 F32 *advance_ptr = font->advance + 32;
                 for (U32 i = 32; i <= 126; i += 1, advance_ptr += 1, glyph_ptr += 1)
                 {
@@ -418,7 +490,7 @@ R_InitFont(R_Font *font, String8 ttf_path, S32 size)
             // NOTE(allen): update mipmaps
             glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
             
-            glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
+            _R_RestoreSelectedTexture();
         }
     }
     
@@ -445,7 +517,7 @@ R_FontSetSlot(R_Font *font, U32 indx, U8 *bitmap, U32 width, U32 height,
                 font->glyph[indx].dim.y = height;
                 font->advance[indx] = advance;
                 
-                glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
+                _R_RestoreSelectedTexture();
             }
         }
     }
@@ -459,23 +531,11 @@ R_FontUpdateMipmaps(R_Font *font)
     {
         glBindTexture(GL_TEXTURE_2D_ARRAY, font->var[0]);
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
+        _R_RestoreSelectedTexture();
     }
     else
     {
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-    }
-}
-
-function void
-R_SelectFont(R_Font *font)
-{
-    if (global_render->selected_font != font)
-    {
-        _R_Flush();
-        global_render->selected_font = font;
-        global_render->selected_font_texture = font->var[0];
-        glBindTexture(GL_TEXTURE_2D_ARRAY, global_render->selected_font_texture);
     }
 }
 
@@ -505,7 +565,91 @@ R_StringDim(F32 scale, String8 string)
 
 
 ////////////////////////////////
+// NOTE(allen): RGBA Texture
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "ext/stb_image.h"
+
+function void
+R_InitRGBATexture(R_RGBATexture *texture, String8 img_path){
+    texture->initialized = 0;
+    
+    M_Arena *scratch = OS_GetScratch();
+    
+    void *data = 0;
+    U64 data_len = 0;
+    OS_LoadEntireFile(scratch, img_path, &data, &data_len);
+    
+    if (data_len > 0){
+        S32 w;
+        S32 h;
+        S32 channels;
+        stbi_uc *img_data = stbi_load_from_memory((stbi_uc*)data, data_len, &w, &h, &channels, 4);
+        if (img_data != 0){
+            if (w > 0 && h > 0){
+                // NOTE(allen): init
+                texture->initialized = 1;
+                texture->dim = v2F32(w, h);
+                
+                // NOTE(allen): setup texture
+                glGenTextures(1, &texture->var[0]);
+                glBindTexture(GL_TEXTURE_2D_ARRAY, texture->var[0]);
+                glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, w, h, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                
+                // NOTE(allen): rgba slice
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
+                                0, 0, 1,
+                                w, h, 1,
+                                GL_RED, GL_UNSIGNED_BYTE, img_data);
+                
+                // NOTE(allen): white slice
+                stbi_uc *opl = img_data + w*h*4;
+                for (stbi_uc *ptr = img_data; ptr < opl; ptr += 1){
+                    *ptr = 0xFF;
+                }
+                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
+                                0, 0, 0,
+                                w, h, 1,
+                                GL_RED, GL_UNSIGNED_BYTE, img_data);
+                
+                _R_RestoreSelectedTexture();
+            }
+            
+            stbi_image_free(img_data);
+        }
+    }
+    
+    OS_ReleaseScratch(scratch);
+}
+
+////////////////////////////////
 // NOTE(allen): Draw
+
+function void
+R_SelectFont(R_Font *font){
+    if (global_render->selected_font != font){
+        _R_Flush();
+        global_render->selected_font = font;
+        global_render->selected_rgba_texture = 0;
+        global_render->selected_texture_id = font->var[0];
+        _R_RestoreSelectedTexture();
+    }
+}
+
+function void
+R_SelectRGBATexture(R_RGBATexture *texture){
+    if (global_render->selected_rgba_texture != texture){
+        _R_Flush();
+        global_render->selected_font = 0;
+        global_render->selected_rgba_texture = texture;
+        global_render->selected_texture_id = texture->var[0];
+        _R_RestoreSelectedTexture();
+    }
+}
 
 #define DupVert(n) vertices[n].xy = vertices[n - 2].xy
 #define DupVertUVW(n) vertices[n].uvw = vertices[n - 2].uvw
@@ -563,8 +707,7 @@ R_RectOutline(RectF32 rect, F32 thickness, V3F32 color, F32 a)
     vertices[23].xy = v2F32(inner.x0, inner.y0);
     
     R_GL_Vertex *v = vertices;
-    for (U64 i = 0; i < 24; i += 1, v += 1)
-    {
+    for (U64 i = 0; i < 24; i += 1, v += 1){
         v->uvw = v3F32(0.f, 0.f, 0.f);
         v->rgba = v4F32(color.x, color.y, color.z, a);
     }
@@ -575,8 +718,7 @@ R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 colo
 {
     V2F32 result = {0};
     R_Font *font = global_render->selected_font;
-    if (font != 0 && font->initialized)
-    {
+    if (font != 0 && font->initialized){
         F32 *advances = font->advance;
         
         U8 tail[3] = {'.', '.', '.', };
@@ -587,9 +729,8 @@ R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 colo
         if (x + x_tail <= max_x){
             U8 *ptr = string.str;
             U8 *end = ptr + string.size;
-            R_Glyph_Box *glyphs = font->glyph;
-            for (;ptr < end; ptr += 1)
-            {
+            R_GlyphBox *glyphs = font->glyph;
+            for (;ptr < end; ptr += 1){
                 top:
                 if (*ptr <= 0x7F)
                 {
@@ -616,7 +757,7 @@ R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 colo
                         string_will_fit = 1;
                     }
                     
-                    R_Glyph_Box *g = &glyphs[*ptr];
+                    R_GlyphBox *g = &glyphs[*ptr];
                     
                     RectF32 rect;
                     rect.x0 = x + g->offset.x*scale;

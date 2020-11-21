@@ -38,6 +38,8 @@ void APP_Init(void)
     R_Init(arena);
     R_InitFont(&vars->test_font, str8_lit("liberation-mono.ttf"), 48);
     R_InitFont(&vars->test_font_small, str8_lit("liberation-mono.ttf"), 24);
+    
+    R_InitRGBATexture(&vars->test_texture, str8_lit("test-image.png"));
 }
 
 void APP_Update(void)

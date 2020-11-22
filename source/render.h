@@ -98,6 +98,7 @@ struct R_RGBATexture
 {
     B32 initialized;
     V2F32 dim;
+    V2F32 uv;
     U32 var[1];
 };
 
@@ -134,5 +135,6 @@ function V2F32 R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a);
+function void R_RGBARect(RectF32 rect, V3F32 color, F32 a);
 
 #endif //RENDER_H

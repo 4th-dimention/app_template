@@ -66,17 +66,31 @@ F32Round(F32 x)
 }
 
 function F32
-Lerp(F32 a, F32 t, F32 b)
-{
-    return(a + (b - a)*t);
-}
-
-function F32
 AbsoluteValueF(F32 f){
     union { U32 u; F32 f; } x;
     x.f = f;
     x.u &= ~Sign32;
     return(x.f);
+}
+
+function U32
+U32RoundUp(U32 x, U32 b){
+    U32 z = x + b - 1;
+    U32 r = z - z%b;
+    return(r);
+}
+
+function U32
+U32RoundUpFast(U32 x, U32 b){
+    U32 m = b - 1;
+    U32 r = (x + m)&~m;
+    return(r);
+}
+
+function F32
+Lerp(F32 a, F32 t, F32 b)
+{
+    return(a + (b - a)*t);
 }
 
 function F32

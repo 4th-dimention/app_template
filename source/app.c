@@ -42,8 +42,8 @@ void APP_Init(void)
     R_InitRGBATexture(&vars->test_texture, str8_lit("test-image.png"));
 }
 
-void APP_Update(void)
-{
+void APP_Update(void){
+    
     for (OS_Event *event = 0;
          OS_GetNextEvent(&event);)
     {
@@ -51,7 +51,6 @@ void APP_Update(void)
         {
             OS_Quit();
         }
-        
         if (event->kind == OS_EventKind_KeyPress){
             if (event->key == Key_Up){
                 OS_NextFrameFullScreen(1);
@@ -66,7 +65,7 @@ void APP_Update(void)
     V2F32 window_size = RectDim(window_rect);
     R_Begin(window_size, cl_black);
     
-    R_Rect(MakeRect(70, 70, 530, 530), cl_blue, 1.f);
+    R_Rect(MakeRect(70, 70, 530, 530), v3F32(0.4f, 0.4f, 0.4f), 1.f);
     R_RectOutline(MakeRect(100, 100, 560, 500), 4.f, cl_red, 1.f);
     
     String8 string = str8_lit("(exclaim `(hello world))");
@@ -94,6 +93,26 @@ void APP_Update(void)
     p.y += dim.y;
     dim = R_String(p, 0.8f, string, cl_white, 1.f);
     p.y += dim.y;
+    
+    {
+        R_SelectRGBATexture(&vars->test_texture);
+        V2F32 img_p0 = v2F32(800.f, 300.f);
+        V2F32 img_p1 = V2Add(img_p0, vars->test_texture.dim);
+        RectF32 img_rect = MakeRectVec(img_p0, img_p1);
+        RectF32 back_rect = RectGrow(img_rect, 6.f);
+        
+        local U64 back_counter = 199;
+        V3F32 back_color = cl_white;
+        if (back_counter >= 100){
+            back_color = cl_black;
+        }
+        else if (back_counter == 0){
+            back_counter = 199;
+        }
+        back_counter -= 1;
+        R_Rect(back_rect, back_color, 1.f);
+        R_RGBARect(img_rect, cl_white, 1.f);
+    }
     
     R_End();
 }

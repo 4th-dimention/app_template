@@ -7,15 +7,13 @@
 // NOTE(allen): Font Types
 
 typedef struct R_GlyphBox R_GlyphBox;
-struct R_GlyphBox
-{
+struct R_GlyphBox{
     V2F32 offset;
     V2F32 dim;
 };
 
 typedef struct R_Font R_Font;
-struct R_Font
-{
+struct R_Font{
     B32 initialized;
     U32 var[1];
     F32 top_to_baseline;
@@ -93,13 +91,21 @@ struct R_Font
 ////////////////////////////////
 // NOTE(allen): RGBA Texture Types
 
-typedef struct R_RGBATexture R_RGBATexture;
-struct R_RGBATexture
-{
+typedef struct R_RGBATextureSystem R_RGBATextureSystem;
+struct R_RGBATextureSystem{
     B32 initialized;
+    V2S32 dim_int;
     V2F32 dim;
-    V2F32 uv;
     U32 var[1];
+    U32 slot_count;
+    V2F32 *slots;
+};
+
+typedef struct R_RGBATexture R_RGBATexture;
+struct R_RGBATexture{
+    R_RGBATextureSystem *system;
+    U32 slot;
+    V2F32 dim;
 };
 
 
@@ -124,10 +130,11 @@ function void  R_FontUpdateMipmaps(R_Font *font);
 function V2F32 R_StringDim(F32 scale, String8 string);
 function V2F32 R_StringDimWithFont(R_Font *font, F32 scale, String8 string);
 
-function void R_InitRGBATexture(R_RGBATexture *texture, String8 img_path);
+function void R_InitRGBATextureSystem(R_RGBATextureSystem *system, U32 max_w, U32 max_h, V2F32 *uv_slots, U32 slot_count);
+function void R_InitRGBATextureFromFile(R_RGBATexture *texture, R_RGBATextureSystem *system, U32 slot, String8 path);
 
 function void R_SelectFont(R_Font *font);
-function void R_SelectRGBATexture(R_RGBATexture *texture);
+function void R_SelectRGBATextureSystem(R_RGBATextureSystem *system);
 
 function void R_Rect(RectF32 rect, V3F32 color, F32 a);
 function void R_RectOutline(RectF32 rect, F32 thickness, V3F32 color, F32 a);
@@ -135,6 +142,6 @@ function V2F32 R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringBaseline(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a);
 function V2F32 R_StringBaselineCapped(V2F32 p, F32 max_x, F32 scale, String8 string, V3F32 color, F32 a);
-function void R_RGBARect(RectF32 rect, V3F32 color, F32 a);
+function void R_RGBARect(RectF32 rect, U32 slot, V3F32 color, F32 a);
 
 #endif //RENDER_H

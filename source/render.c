@@ -21,7 +21,7 @@ struct R_GL_State
     U64 vertex_max;
     
     R_Font *selected_font;
-    R_RGBATexture *selected_rgba_texture;
+    R_RGBATextureSystem *selected_rgba_system;
     U32 selected_texture_id;
     
     GLuint program_mono_texture;
@@ -265,7 +265,7 @@ R_Init(M_Arena *arena){
     
     // NOTE(allen): select null texture
     global_render->selected_font = 0;
-    global_render->selected_rgba_texture = 0;
+    global_render->selected_rgba_system = 0;
     global_render->selected_texture_id = 0;
 }
 
@@ -584,67 +584,117 @@ R_StringDim(F32 scale, String8 string){
 #include "ext/stb_image.h"
 
 function void
-R_InitRGBATexture(R_RGBATexture *texture, String8 img_path){
-    texture->initialized = 0;
-    
+R_InitRGBATextureSystem(R_RGBATextureSystem *system, U32 max_w, U32 max_h,
+                        V2F32 *uv_slots, U32 slot_count){
     M_Arena *scratch = OS_GetScratch();
     
-    void *data = 0;
-    U64 data_len = 0;
-    OS_LoadEntireFile(scratch, img_path, &data, &data_len);
+    U32 round_max_w = U32RoundUpFast(max_w, 4);
+    U32 round_max_h = U32RoundUpFast(max_h, 4);
     
-    if (data_len > 0){
-        S32 w;
-        S32 h;
-        S32 channels;
-        stbi_uc *img_data = stbi_load_from_memory((stbi_uc*)data, data_len, &w, &h, &channels, 4);
-        if (img_data != 0){
-            if (w > 0 && h > 0){
-                // NOTE(allen): init
-                texture->initialized = 1;
-                texture->dim = v2F32(w, h);
-                
-                U32 texture_w = U32RoundUpFast(w, 4);
-                U32 texture_h = U32RoundUpFast(h, 4);
-                texture->uv.x = (F32)w/(F32)texture_w;
-                texture->uv.y = (F32)h/(F32)texture_h;
-                
-                // NOTE(allen): setup texture
-                glGenTextures(1, &texture->var[0]);
-                glBindTexture(GL_TEXTURE_2D_ARRAY, texture->var[0]);
-                glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, texture_w, texture_h, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                
-                // NOTE(allen): rgba slice
-                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
-                                0, 0, 1,
-                                w, h, 1,
-                                GL_RGBA, GL_UNSIGNED_BYTE, img_data);
-                
-                // NOTE(allen): white slice
-                U64 white_byte_count = texture_w*texture_h*4;
-                U8 *white_buffer = PushArray(scratch, U8, white_byte_count);
-                U8 *ptr = white_buffer;
-                U8 *opl = white_buffer + white_byte_count;
-                for (; ptr < opl; ptr += 1){
-                    *ptr = 0xFF;
-                }
-                glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
-                                0, 0, 0,
-                                texture_w, texture_h, 1,
-                                GL_RGBA, GL_UNSIGNED_BYTE, white_buffer);
-                
-                _R_RestoreSelectedTexture();
-            }
-            
-            stbi_image_free(img_data);
-        }
+    system->initialized = 1;
+    system->dim_int.x = round_max_w;
+    system->dim_int.y = round_max_h;
+    system->dim = v2F32(round_max_w, round_max_h);
+    system->slot_count = slot_count;
+    system->slots = uv_slots;
+    
+    glGenTextures(1, &system->var[0]);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, system->var[0]);
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, round_max_w, round_max_h, slot_count + 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    U64 white_byte_count = round_max_w*round_max_h*4;
+    U8 *white_buffer = PushArray(scratch, U8, white_byte_count);
+    U8 *ptr = white_buffer;
+    U8 *opl = white_buffer + white_byte_count;
+    for (; ptr < opl; ptr += 1){
+        *ptr = 0xFF;
     }
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
+                    0, 0, 0,
+                    round_max_w, round_max_h, 1,
+                    GL_RGBA, GL_UNSIGNED_BYTE, white_buffer);
+    
+    _R_RestoreSelectedTexture();
     
     OS_ReleaseScratch(scratch);
+}
+
+function void
+R_InitRGBATextureFromFile(R_RGBATexture *texture, R_RGBATextureSystem *system, U32 slot, String8 path){
+    MemoryZeroStruct(texture);
+    if (system != 0 && system->initialized &&
+        0 < slot && slot <= system->slot_count){
+        texture->system = system;
+        texture->slot = slot;
+        
+        U32 max_w = system->dim_int.x;
+        U32 max_h = system->dim_int.y;
+        
+        M_Arena *scratch = OS_GetScratch();
+        
+        void *data = 0;
+        U64 data_len = 0;
+        OS_LoadEntireFile(scratch, path, &data, &data_len);
+        
+        B32 filled = 0;
+        S32 w;
+        S32 h;
+        U8 *img_data = 0;
+        B32 free_by_stb = 0;
+        
+        if (data_len > 0){
+            S32 channels;
+            img_data = stbi_load_from_memory((stbi_uc*)data, data_len, &w, &h, &channels, 4);
+            if (img_data != 0){
+                if (0 < w && w <= max_w && 0 < h && h <= max_h){
+                    free_by_stb = 1;
+                }
+                else{
+                    stbi_image_free(img_data);
+                    img_data = 0;
+                }
+            }
+        }
+        
+        if (img_data == 0){
+            w = max_w;
+            h = max_h;
+            U32 img_buffer_size = max_w*max_h*4;
+            img_data = PushArray(scratch, U8, img_buffer_size);
+            U8 *ptr = img_data;
+            U8 *opl = img_data + img_buffer_size;
+            for (; ptr < opl; ptr += 4){
+                ptr[0] = 0xFF;
+                ptr[1] = 0x00;
+                ptr[2] = 0xFF;
+                ptr[3] = 0xFF;
+            }
+        }
+        
+        Assert(0 < w && w <= max_w && 0 < h && h <= max_h);
+        
+        V2F32 dim = v2F32(w, h);
+        texture->dim = dim;
+        system->slots[slot - 1] = v2F32(dim.x/system->dim.x,
+                                        dim.y/system->dim.y);
+        
+        glBindTexture(GL_TEXTURE_2D_ARRAY, system->var[0]);
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0,
+                        0, 0, slot,
+                        w, h, 1,
+                        GL_RGBA, GL_UNSIGNED_BYTE, img_data);
+        _R_RestoreSelectedTexture();
+        
+        if (free_by_stb){
+            stbi_image_free(img_data);
+        }
+        
+        OS_ReleaseScratch(scratch);
+    }
 }
 
 ////////////////////////////////
@@ -655,7 +705,7 @@ R_SelectFont(R_Font *font){
     if (global_render->selected_font != font){
         _R_Flush();
         global_render->selected_font = font;
-        global_render->selected_rgba_texture = 0;
+        global_render->selected_rgba_system = 0;
         global_render->selected_texture_id = font->var[0];
         _R_RestoreSelectedTexture();
         _R_RequireProgramMonoTexture();
@@ -663,12 +713,12 @@ R_SelectFont(R_Font *font){
 }
 
 function void
-R_SelectRGBATexture(R_RGBATexture *texture){
-    if (global_render->selected_rgba_texture != texture){
+R_SelectRGBATextureSystem(R_RGBATextureSystem *system){
+    if (global_render->selected_rgba_system != system){
         _R_Flush();
         global_render->selected_font = 0;
-        global_render->selected_rgba_texture = texture;
-        global_render->selected_texture_id = texture->var[0];
+        global_render->selected_rgba_system = system;
+        global_render->selected_texture_id = system->var[0];
         _R_RestoreSelectedTexture();
         _R_RequireProgramRGBATexture();
     }
@@ -842,12 +892,15 @@ R_String(V2F32 p, F32 scale, String8 string, V3F32 color, F32 a){
 }
 
 function void
-R_RGBARect(RectF32 rect, V3F32 color, F32 a){
-    R_RGBATexture *texture = global_render->selected_rgba_texture;
-    if (texture != 0 && texture->initialized){
-        F32 w = 1.f;
+R_RGBARect(RectF32 rect, U32 slot, V3F32 color, F32 a){
+    R_RGBATextureSystem *system = global_render->selected_rgba_system;
+    if (system != 0 && system->initialized && slot <= system->slot_count){
+        F32 w = slot;
         
-        V2F32 uv = texture->uv;
+        V2F32 uv = v2F32(0.f, 0.f);
+        if (slot > 0){
+            uv = system->slots[slot - 1];
+        }
         
         R_GL_Vertex *vertices = _R_AllocVertices(6);
         vertices[0].xy  = rect.p0;

@@ -39,7 +39,10 @@ void APP_Init(void)
     R_InitFont(&vars->test_font, str8_lit("liberation-mono.ttf"), 48);
     R_InitFont(&vars->test_font_small, str8_lit("liberation-mono.ttf"), 24);
     
-    R_InitRGBATexture(&vars->test_texture, str8_lit("test-image.png"));
+    V2F32 *uv_slots = PushArray(arena, V2F32, 128);
+    R_InitRGBATextureSystem(&vars->texture_system, 64, 64, uv_slots, 128);
+    R_InitRGBATextureFromFile(&vars->test_texture, &vars->texture_system, 1, str8_lit("test-image.png"));
+    R_InitRGBATextureFromFile(&vars->test_texture2, &vars->texture_system, 2, str8_lit("test-image2.png"));
 }
 
 void APP_Update(void){
@@ -94,8 +97,10 @@ void APP_Update(void){
     dim = R_String(p, 0.8f, string, cl_white, 1.f);
     p.y += dim.y;
     
+    
+    R_SelectRGBATextureSystem(&vars->texture_system);
+    
     {
-        R_SelectRGBATexture(&vars->test_texture);
         V2F32 img_p0 = v2F32(800.f, 300.f);
         V2F32 img_p1 = V2Add(img_p0, vars->test_texture.dim);
         RectF32 img_rect = MakeRectVec(img_p0, img_p1);
@@ -111,7 +116,14 @@ void APP_Update(void){
         }
         back_counter -= 1;
         R_Rect(back_rect, back_color, 1.f);
-        R_RGBARect(img_rect, cl_white, 1.f);
+        R_RGBARect(img_rect, vars->test_texture.slot, cl_white, 1.f);
+    }
+    
+    {
+        V2F32 img_p0 = v2F32(700.f, 450.f);
+        V2F32 img_p1 = V2Add(img_p0, vars->test_texture2.dim);
+        RectF32 img_rect = MakeRectVec(img_p0, img_p1);
+        R_RGBARect(img_rect, vars->test_texture2.slot, cl_white, 1.f);
     }
     
     R_End();

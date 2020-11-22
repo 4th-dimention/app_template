@@ -12,7 +12,9 @@ struct APP_Variables
     R_Font test_font;
     R_Font test_font_small;
     
+    R_RGBATextureSystem texture_system;
     R_RGBATexture test_texture;
+    R_RGBATexture test_texture2;
 };
 
 #endif //APP_H
